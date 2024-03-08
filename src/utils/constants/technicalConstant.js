@@ -1,0 +1,1 @@
+export const commissionApporteur = 0.01;
