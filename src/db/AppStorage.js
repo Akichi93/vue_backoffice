@@ -400,6 +400,9 @@ class AppStorage {
         return allContrats.find(contrat => contrat.uuidContrat === uuidContrat);
     }
 
+   
+    
+
     // static async getContratByUuid(uuidContrat) {
     //     const allClients = await this.getData('contrats') || [];
     //     return allClients.find(client => client.uuidContrat === uuidContrat);
@@ -459,6 +462,39 @@ class AppStorage {
         return this.getData('avenants') || [];
     }
 
+    static async getAvenantsByUUIDApporteur(uuidApporteur) {
+        const allAvenants = await this.getData('avenants') || [];
+        return allAvenants.filter(avenant => avenant.uuidApporteur === uuidApporteur);
+    }
+
+    static async getSommeCommissionsApporteur(uuidApporteur) {
+        // Récupérer les données des avenants
+        const avenants = await this.getAvenants();
+    
+        // Filtrer les avenants pour trouver ceux correspondant à uuidApporteur
+        const avenantsApporteur = avenants.filter(avenant => avenant.uuidApporteur === uuidApporteur);
+    
+        // Calculer la somme des commissions_apporteur
+        const sommeCommissions = avenantsApporteur.reduce((total, avenant) => total + avenant.commission, 0);
+    
+        return sommeCommissions;
+    }
+
+    static async getSommeCommissionsApporteurPayer(uuidApporteur) {
+        // Récupérer les données des avenants
+        const avenants = await this.getAvenants();
+    
+        // Filtrer les avenants pour trouver ceux correspondant à uuidApporteur et payer_apporteur = 1
+        const avenantsApporteur = avenants.filter(avenant => avenant.uuidApporteur === uuidApporteur && avenant.payer_apporteur === 1);
+    
+        // Calculer la somme des commissions_apporteur
+        const sommeCommissions = avenantsApporteur.reduce((total, avenant) => total + avenant.commission, 0);
+    
+        return sommeCommissions;
+    }
+    
+    
+
     static async getAvenantByUuid(uuidAvenant) {
         const allAvenants = await this.getData('avenants') || [];
         return allAvenants.find(avenant => avenant.uuidAvenant === uuidAvenant);
@@ -510,6 +546,33 @@ class AppStorage {
             await this.updateDataInIndexedDB('avenants', allAvenants);
 
 
+
+            return allAvenants;
+        } else {
+            throw new Error('Avenant non trouvé');
+        }
+    }
+
+    static async updateAvenantPayerApporteur(uuidAvenant, newPayer, newSyncState) {
+        // Obtenez la liste des prospects
+        const allAvenants = await this.getData('avenants') || [];
+
+        // Recherche du prospect par son UUID
+        const avenantIndex = allAvenants.findIndex(avenant => avenant.uuidAvenant === uuidAvenant);
+
+        console.log(avenantIndex)
+
+        if (avenantIndex !== -1) {
+            // Mettre à jour l'état du prospect
+            allAvenants[avenantIndex].payer_apporteur = newPayer;
+
+            // Mettre à jour l'état de synchronisation
+            allAvenants[avenantIndex].sync = newSyncState;
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('avenants', allAvenants);
+
+            console.log(allAvenants)
 
             return allAvenants;
         } else {
@@ -630,6 +693,64 @@ class AppStorage {
     static async getCompagnies() {
         return this.getData('compagnies') || [];
     }
+
+    static async getAvenantsByUUIDCompagnie(uuidCompagnie) {
+        const allAvenants = await this.getData('avenants') || [];
+        return allAvenants.filter(avenant => avenant.uuidCompagnie === uuidCompagnie);
+    }
+
+    static async updateAvenantPayerCompagnie(uuidAvenant, newPayer, newSyncState) {
+        // Obtenez la liste des prospects
+        const allAvenants = await this.getData('avenants') || [];
+
+        // Recherche du prospect par son UUID
+        const avenantIndex = allAvenants.findIndex(avenant => avenant.uuidAvenant === uuidAvenant);
+
+        console.log(avenantIndex)
+
+        if (avenantIndex !== -1) {
+            // Mettre à jour l'état du prospect
+            allAvenants[avenantIndex].payer_courtier = newPayer;
+
+            // Mettre à jour l'état de synchronisation
+            allAvenants[avenantIndex].sync = newSyncState;
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('avenants', allAvenants);
+
+            return allAvenants;
+        } else {
+            throw new Error('Avenant non trouvé');
+        }
+    }
+
+    static async getSommeCommissionsCompagnie(uuidCompagnie) {
+        // Récupérer les données des avenants
+        const avenants = await this.getAvenants();
+    
+        // Filtrer les avenants pour trouver ceux correspondant à uui
+        const avenantsCompagnie = avenants.filter(avenant => avenant.uuidCompagnie === uuidCompagnie);
+    
+        // Calculer la somme des commissions_apporteur
+        const sommeCommissions = avenantsCompagnie.reduce((total, avenant) => total + avenant.commission_courtier, 0);
+    
+        return sommeCommissions;
+    }
+
+    static async getSommeCommissionsCompagniePayer(uuidCompagnie) {
+        // Récupérer les données des avenants
+        const avenants = await this.getAvenants();
+    
+        // Filtrer les avenants pour trouver ceux correspondant à uuidCompagnie et payer_apporteur = 1
+        const avenantsCompagnie = avenants.filter(avenant => avenant.uuidCompagnie === uuidCompagnie && avenant.payer_courtier === 1);
+    
+        // Calculer la somme des commissions_apporteur
+        const sommeCommissions = avenantsCompagnie.reduce((total, avenant) => total + avenant.commission_courtier, 0);
+    
+        return sommeCommissions;
+    }
+
+   
 
     static async searchCompagniesByName(name) {
         const allCompagnies = await this.getData('compagnies') || [];

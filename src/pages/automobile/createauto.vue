@@ -30,18 +30,16 @@
               <div class="card-body">
                 <div class="row">
                   <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3 row">
+                    
                       <label class="col-lg-3 col-form-label">Cie</label>
                       <div class="col-lg-9">
                         <Multiselect v-model="zone" :options="localisations" valueProp="nom_ville"
                           placeholder="Selectionnez zone" label="nom_ville" track-by="nom_ville" :searchable="true">
                         </Multiselect>
                       </div>
-                    </div>
+                  
                   </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-6 col-md-3">
+                  <div class="col-sm-3 col-md-3">
                     <div class="input-block mb-3 row">
                       <label class="col-lg-3 col-form-label">Code tarif</label>
                       <div class="col-lg-9">
@@ -61,8 +59,6 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="row">
                   <div class="col-sm-6 col-md-3">
                     <div class="input-block mb-6 row">
                       <label class="col-lg-3 col-form-label">Police</label>
@@ -73,6 +69,10 @@
                       </div>
                     </div>
                   </div>
+                </div>
+              
+                <div class="row">
+
                   <div class="col-sm-6 col-md-3">
                     <div class="input-block mb-3 row">
                       <label class="col-lg-3 col-form-label">Zone</label>
@@ -180,7 +180,7 @@
                   <label>Susprime passager transportés</label>
                   <input type="number" class="form-control" />
                 </div>
-            
+
               </div>
             </div>
           </div>
@@ -284,7 +284,7 @@
                         </div>
                         <div class="col-md-12">
                           <div class="form-group">
-                            <label>Red permis  + 2ans:</label>
+                            <label>Red permis + 2ans:</label>
                             <input type="text" class="form-control" />
                           </div>
                         </div>
@@ -312,7 +312,7 @@
                             <input type="text" class="form-control" />
                           </div>
                         </div>
-                     
+
                       </div>
                     </div>
                   </div>
@@ -371,7 +371,7 @@
                       </tbody>
                     </table>
                   </div>
-               
+
                 </div>
               </div>
               <div class="submit-section">

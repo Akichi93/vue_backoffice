@@ -59,7 +59,8 @@
                   <template v-for="(apporteur, i) in apporteurs" :key="i">
                     <tr>
                       <td v-text="apporteur.code_apporteur"></td>
-                      <td v-text="apporteur.nom_apporteur"></td>
+                      <td v-text="apporteur.nom_apporteur ">
+                      </td>
                       <td v-text="apporteur.code_postal"></td>
                       <td v-text="apporteur.adresse_apporteur"></td>
                       <td v-text="apporteur.contact_apporteur"></td>
@@ -80,7 +81,7 @@
                         <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
                           @click="editApporteur(apporteur.uuidApporteur)" title="Modifier"><i class="fas fa-pen"></i>
                         </a>
-                        <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_apporteur"
+                        <a href="#"  data-bs-toggle="modal" data-bs-target="#delete_apporteur"
                           @click="editApporteur(apporteur.uuidApporteur)" title="supprimer"><i
                             class="fas fa-trash-alt"></i>
                         </a>

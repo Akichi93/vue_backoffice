@@ -20,6 +20,7 @@ import tauxapporteur from "../pages/apporteur/tauxapporteur.vue";
 import listcompagnie from "../pages/compagnie/listCompagnie.vue";
 import createcompagnie from "../pages/compagnie/createCompagnie.vue";
 import tauxcompagnie from "../pages/compagnie/tauxcompagnie.vue";
+import detailscompagnie from "../pages/compagnie/detailscompagnie.vue";
 import listprospect from "../pages/prospect/listProspect.vue";
 import createprospect from "../pages/prospect/createProspect.vue";
 import detailsprospect from "../pages/prospect/detailsProspect.vue";
@@ -164,6 +165,13 @@ const routes = [
     path: '/tauxcompagnie/:uuidCompagnie',
     name: 'tauxcompagnie',
     component: tauxcompagnie,
+    props: true,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/detailscompagnie/:uuidCompagnie',
+    name: 'detailscompagnie',
+    component: detailscompagnie,
     props: true,
     meta: { requiresAuth: true }
   },

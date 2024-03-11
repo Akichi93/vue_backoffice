@@ -476,7 +476,7 @@ export default {
           id: userId,
           uuidApporteur: uuid,
           code_apporteur: codeApporteur,
-          supprimer_appporteur: 0,
+          supprimer_apporteur: 0,
         }];
 
 

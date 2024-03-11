@@ -42,7 +42,8 @@
           </div>
           <div class="col-md-12">
             <div class="table-responsive">
-              <table class="table table-striped custom-table mb-0" cellspacing="0" cellpadding="1" border="1" width="300">
+              <table class="table table-striped custom-table mb-0" cellspacing="0" cellpadding="1" border="1"
+                width="300">
                 <thead>
                   <tr>
                     <th>Nom de la compagnie</th>
@@ -60,8 +61,15 @@
                       <td v-text="compagnie.contact_compagnie"></td>
                       <td v-text="compagnie.adresse_compagnie"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <router-link :to="{ name: 'tauxcompagnie', params: { uuidCompagnie: compagnie.uuidCompagnie } }">
+                        <router-link
+                          :to="{ name: 'tauxcompagnie', params: { uuidCompagnie: compagnie.uuidCompagnie } }">
                           <i class="fa fa-pen-fancy"></i>
+                        </router-link>
+                        <router-link :to="{
+              name: 'detailscompagnie',
+              params: { uuidCompagnie: compagnie.uuidCompagnie },
+            }">
+                          <i class="fa fa-eye"></i>
                         </router-link>
 
 
@@ -150,14 +158,14 @@ export default {
 
       //   });
       // } else {
-        AppStorage.getCompagnies().then((result) => {
-          this.compagnies = result;
-        });
+      AppStorage.getCompagnies().then((result) => {
+        this.compagnies = result;
+      });
       // }
 
     },
 
-   async editCompagnie(uuidCompagnie) {
+    async editCompagnie(uuidCompagnie) {
       try {
         this.compagnietoedit = await AppStorage.getCompagnieByUuid(uuidCompagnie);
       } catch (error) {

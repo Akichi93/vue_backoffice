@@ -9,14 +9,14 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="page-head-box">
-                            <h3>Detail de l'apporteur</h3>
+                            <h3>Detail de la compagnie</h3>
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item">
                                         <router-link to="/home">Tableau de bord</router-link>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">
-                                        Detail de l'apporteur
+                                        Detail de la compagnie
                                     </li>
                                 </ol>
                             </nav>
@@ -87,14 +87,14 @@
                                                     <h5>{{ contrat.nom_branche }}</h5>
                                                 </td>
                                                 <td>{{ contrat.numero_police }}</td>
-                                                <td>{{ contrat.commission }}</td>
-                                                <td v-if="contrat.payer_apporteur == 0">
+                                                <td>{{ contrat.commission_courtier }}</td>
+                                                <td v-if="contrat.payer_courtier == 0">
                                                     <span class="badge badge-pill bg-danger">NON</span>
                                                 </td>
                                                 <td v-else>
                                                     <span class="badge badge-pill bg-success">OUI</span>
                                                 </td>
-                                                <td v-if="contrat.payer_apporteur == 0">
+                                                <td v-if="contrat.payer_courtier == 0">
                                                     <a href="#" @click="editAvenant(contrat.uuidAvenant)"
                                                         data-bs-toggle="modal" data-bs-target="#payer_apporteur"
                                                         title="Payer"><i class="fas fa-check"></i>
@@ -170,9 +170,9 @@ export default {
 
         async fetchData() {
 
-            const uuidApporteur = this.$route.params.uuidApporteur;
+            const uuidCompagnie = this.$route.params.uuidCompagnie;
             try {
-                const contrats = await AppStorage.getAvenantsByUUIDApporteur(uuidApporteur);
+                const contrats = await AppStorage.getAvenantsByUUIDCompagnie(uuidCompagnie);
 
                 this.contrats = contrats;
 
@@ -203,15 +203,15 @@ export default {
         },
 
         async fetchDataSomme() {
-            const uuidApporteur = this.$route.params.uuidApporteur; // Remplacez "votre_uuid_apporteur" par l'UUID approprié
-            const sommes = await AppStorage.getSommeCommissionsApporteur(uuidApporteur)
+            const uuidCompagnie = this.$route.params.uuidCompagnie; // Remplacez "votre_uuid_apporteur" par l'UUID approprié
+            const sommes = await AppStorage.getSommeCommissionsCompagnie(uuidCompagnie)
             this.sommes = sommes;
 
         },
 
         async fetchDataSommePayer() {
-            const uuidApporteur = this.$route.params.uuidApporteur; // Remplacez "votre_uuid_apporteur" par l'UUID approprié
-            const sommepayes = await AppStorage.getSommeCommissionsApporteurPayer(uuidApporteur)
+            const uuidCompagnie = this.$route.params.uuidCompagnie; // Remplacez "votre_uuid_apporteur" par l'UUID approprié
+            const sommepayes = await AppStorage.getSommeCommissionsCompagniePayer(uuidCompagnie)
             this.sommepayes = sommepayes;
 
         },

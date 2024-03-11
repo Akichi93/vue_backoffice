@@ -1283,9 +1283,13 @@ export default {
             taxes_totales: this.form.taxes_totales,
             code_avenant: codeAvenant,
             uuidAvenant: uuidAvenant,
+            uuidApporteur: this.form.apporteur_id,
+            uuidCompagnie: this.form.compagnie_id,
             sync: 0,
             solder: 0,
             reverser: 0,
+            payer_apporteur: 0,
+            payer_courtier: 0,
             supprimer_avenant: 0,
             id_entreprise: entrepriseId,
           }];
