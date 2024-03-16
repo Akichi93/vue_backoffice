@@ -498,6 +498,7 @@ export default {
             sync: 0,
             taux: donnees[i],
             nom_branche: nom_branche,
+            id_entreprise: entrepriseId,
             uuidBranche: datas[i],
           }];
 

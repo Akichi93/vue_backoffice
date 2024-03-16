@@ -40,7 +40,7 @@
               @keyup="searchtask" />
           </div>
           <div class="col-md-12" style="display: flex; justify-content: end">
-            <!-- <contratexport></contratexport> -->
+            <contratexport></contratexport>
           </div>
           <div class="col-md-12">
             <div class="table-responsive">
@@ -108,7 +108,7 @@ import { getContratsExport } from "../../services/contratService";
 import { getRoleActif } from "../../services/roleservice";
 import deletecontrat from "../contrat/deletecontrat.vue";
 // import pagination from "laravel-vue-pagination";
-// import contratexport from "../../components/export/contratexport.vue";
+import contratexport from "../../components/export/contratexport.vue";
 import AppStorage from "../../db/AppStorage.js";
 export default {
   components: {
@@ -116,7 +116,7 @@ export default {
     Sidebar,
     deletecontrat,
     // pagination,
-    // contratexport,
+    contratexport,
   },
   data() {
     return {

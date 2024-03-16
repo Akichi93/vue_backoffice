@@ -680,7 +680,8 @@
                   </p>
                 </div>
                 <div class="form-group" v-if="form.branche_id.nom_branche == 'AUTOMOBILE' ||
-                              form.branche_id.nom_branche == 'MOTO'
+                              form.branche_id.nom_branche == 'MOTO' || form.branche_id.nom_branche == 'AUTOMOBILE HORS TPV' ||
+                              form.branche_id.nom_branche == 'AUTOMOBILE TPV'
                               ">
                   <label>FGA</label>
                   <input type="number" class="form-control" v-model="cfga" />
@@ -1190,7 +1191,7 @@ export default {
             id_entreprise: entrepriseId,
             uuidBranche: this.form.branche_id.uuidBranche,
             nom_branche: this.form.branche_id.nom_branche,
-            id_client: this.form.client_id,
+            uuidClient: this.form.client_id,
             nom_client: clientName,
             numero_client: clientCode,
             nom_compagnie: compagnieName,
@@ -1297,7 +1298,9 @@ export default {
           // Enregistré les avenants dans IndexedDB
           await AppStorage.storeDataInIndexedDB("avenants", newAvenantsData);
 
-          if (this.form.branche_id.nom_branche == "AUTOMOBILE" || this.form.branche_id.nom_branche == "MOTO") {
+          if (this.form.branche_id.nom_branche == "AUTOMOBILE" || this.form.branche_id.nom_branche == "MOTO" || this.form.branche_id.nom_branche == "MOTO" ||
+            form.branche_id.nom_branche == 'AUTOMOBILE HORS TPV' ||
+            form.branche_id.nom_branche == 'AUTOMOBILE TPV') {
 
             const uuidAutomobile = uuidv4();
 

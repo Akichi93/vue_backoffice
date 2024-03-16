@@ -4,6 +4,7 @@
 </template>
 <script>
 import { getCompagniesExport } from "../../services/compagnieService";
+import AppStorage from "../../db/AppStorage";
 export default {
   created() {
     this.getCompagnie();
@@ -11,7 +12,7 @@ export default {
 
   methods: {
     getCompagnie() {
-      getCompagniesExport().then((result) => {
+      AppStorage.getCompagnies().then((result) => {
         this.compagnies = result;
       });
     },

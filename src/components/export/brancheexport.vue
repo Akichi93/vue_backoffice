@@ -4,6 +4,7 @@
 </template>
 <script>
 import { getbrancheExport } from "../../services/brancheService";
+import AppStorage from "../../db/AppStorage";
 export default {
   created() {
     this.getBranche();
@@ -11,9 +12,14 @@ export default {
 
   methods: {
     getBranche() {
-      getbrancheExport().then((result) => {
+      AppStorage.getBranches().then((result) => {
         this.branches = result;
-      });
+
+      
+        });
+      // getbrancheExport().then((result) => {
+      //   this.branches = result;
+      // });
     },
     exportToCSV() {
       const header = Object.keys(this.branches[0]).join(",");

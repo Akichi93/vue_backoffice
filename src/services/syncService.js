@@ -10,6 +10,9 @@ export default {
         const apporteursToSync = await this.getApporteursToSync();
         const tauxapporteursToSync = await this.getTauxApporteursToSync();
         const contratsToSync = await this.getContratsToSync();
+        const avenantsToSync = await this.getAvenantsToSync();
+        const automobilesToSync = await this.getAutomobilesToSync();
+        const garantiesToSync = await this.getGarantiesToSync();
 
         // Synchroniser uniquement les données qui ont sync = 0
         if (branchesToSync.length > 0) {
@@ -42,6 +45,18 @@ export default {
 
         if (contratsToSync.length > 0) {
             await this.syncData('https://fl4ir.loca.lt/api/auth/sync-contrats', contratsToSync, 'contrats');
+        }
+
+        if (avenantsToSync.length > 0) {
+            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-avenants', avenantsToSync, 'avenants');
+        }
+
+        if (automobilesToSync.length > 0) {
+            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-automobiles', automobilesToSync, 'avenants');
+        }
+
+        if (garantiesToSync.length > 0) {
+            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-garanties', garantiesToSync, 'garanties');
         }
     },
 
@@ -86,6 +101,23 @@ export default {
         const queue = await AppStorage.getContrats();
         return queue.filter(contrat => contrat.sync === 0);
     },
+
+    async getAvenantsToSync() {
+        const queue = await AppStorage.getAvenants();
+        return queue.filter(avenant => avenant.sync === 0);
+    },
+
+    async getAutomobilesToSync() {
+        const queue = await AppStorage.getAutomobiles();
+        return queue.filter(automobile => automobile.sync === 0);
+    },
+
+    async getGarantiesToSync() {
+        const queue = await AppStorage.getGaranties();
+        return queue.filter(garantie => garantie.sync === 0);
+    },
+
+    
 
     async syncData(endpoint, dataToSync, dataType) {
         const token = AppStorage.getToken();

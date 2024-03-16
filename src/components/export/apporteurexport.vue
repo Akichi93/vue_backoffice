@@ -4,6 +4,7 @@
   </template>
   <script>
   import { getApporteursExport } from "../../services/apporteurService";
+  import AppStorage from "../../db/AppStorage";
   export default {
     created() {
       this.getApporteur();
@@ -11,7 +12,7 @@
   
     methods: {
       getApporteur() {
-        getApporteursExport().then((result) => {
+        AppStorage.getApporteurs().then((result) => {
           this.apporteurs = result;
         });
       },

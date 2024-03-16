@@ -89,7 +89,7 @@
 
                         }"><i class="fas fa-eye"></i></router-link>
 
-                        <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_prospect"
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#delete_prospect"
                           @click="editProspect(prospect.uuidProspect)" title="Modifier"><i class="fas fa-trash-alt"></i>
                         </a>
                       </td>

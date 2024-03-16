@@ -4,6 +4,7 @@
   </template>
   <script>
   import { getContratsExport } from "../../services/contratService";
+  import AppStorage from "../../db/AppStorage";
   export default {
     created() {
       this.getContrat();
@@ -11,7 +12,7 @@
   
     methods: {
       getContrat() {
-        getContratsExport().then((result) => {
+        AppStorage.getContrats().then((result) => {
           this.contrats = result;
         });
       },

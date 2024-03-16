@@ -34,6 +34,7 @@
   </div>
 </template>
 <script>
+import AppStorage from "../../db/AppStorage";
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
 const toaster = createToaster({
@@ -42,21 +43,39 @@ const toaster = createToaster({
 export default {
   props: ["prospectoedit"],
   methods: {
-    deleteProspect() {
-      const entrepriseId = localStorage.getItem("entreprise");
-      axios
-        .patch("/api/auth/deleteProspect/" + this.prospectoedit.id_prospect, {
-          id_entreprise: entrepriseId,
-        })
-        .then((response) => {
-          this.$emit("prospect-deleted", response);
-          if (response.status === 200) {
-            toaster.success(`Prospect supprimé avec succes`, {
-              position: "top-right",
-            });
-          }
-        })
-        .catch((error) => console.log(error));
+    async deleteProspect() {
+      const uuidProspectToUpdate = this.prospectoedit.uuidProspect;
+
+      // Nouvel état du prospect
+      const newDelete = 1;
+
+      const newSyncState = 0;
+
+      const avenantMisAJour = await AppStorage.updateProspectDelete(uuidProspectToUpdate, newDelete, newSyncState);
+
+      // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
+      const updatedProspects = await AppStorage.getProspects();
+
+      // Émettre un événement avec les prospects mis à jour
+      // this.$emit("avenant-solder", updatedAvenants);
+
+      toaster.success(`Prospect soldé`, {
+        position: "top-right",
+      });
+      // const entrepriseId = localStorage.getItem("entreprise");
+      // axios
+      //   .patch("/api/auth/deleteProspect/" + this.prospectoedit.id_prospect, {
+      //     id_entreprise: entrepriseId,
+      //   })
+      //   .then((response) => {
+      //     this.$emit("prospect-deleted", response);
+      //     if (response.status === 200) {
+      //       toaster.success(`Prospect supprimé avec succes`, {
+      //         position: "top-right",
+      //       });
+      //     }
+      //   })
+      //   .catch((error) => console.log(error));
     },
   },
 };

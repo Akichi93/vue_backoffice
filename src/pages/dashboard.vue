@@ -315,33 +315,23 @@ export default {
 
       const yearSelected = this.year;
 
+      
+
       // Si branch est défini, utilisez sa valeur, sinon utilisez une valeur par défaut
       const branch = this.branch !== null ? this.branch : 'Aucune branche sélectionnée';
 
-      const data = await AppStorage.getDataByYearAndBranch(yearSelected, branch);
-
       console.log(branch)
-      console.log(data)
 
-      const params = {
-        year: yearSelected,
-        branch: this.branch,
-      };
-
-      axios
-        .get(apiUrl.statistiques, {
-          params: params,
-          headers: headers,
-        })
+      const data = await AppStorage.getDataByYearAndBranch(yearSelected, branch)
         .then((response) => {
-          this.contrat = response.data.contrat;
-          this.prospect = response.data.prospect;
-          this.sinistre = response.data.sinistre;
-          this.comissioncourtier = response.data.comissioncourtier;
-          this.comissionapporteur = response.data.comissionapporteur;
-          this.echeance = response.data.echeance;
-          this.countemission = response.data.countemission;
-          this.compagnies = response.data.compagnies;
+
+          this.contrat = response.contratsCount;
+          this.prospect = response.prospectsCount;
+          this.sinistre = response.sinistresCount;
+          this.comissioncourtier = response.commissionCompagnieSum;
+          this.comissionapporteur = response.commissionApporteurSum;
+          this.echeance = response.expiredContractsCount;
+          this.countemission = response.countemission;
 
           const moisNoms = {
             "01": "JANVIER",
@@ -358,8 +348,8 @@ export default {
             12: "Décembre",
           };
 
-          // Remplacer les nombres de mois par leurs noms correspondants dans les labels
-          const labels = response.data.primes.map((prime) => {
+          // // Remplacer les nombres de mois par leurs noms correspondants dans les labels
+          const labels = response.primes.map((prime) => {
             const moisNumber = prime.name; // Supposons que le nombre de mois est stocké dans la propriété "name" de l'objet
 
             if (moisNoms[moisNumber]) {
@@ -370,24 +360,25 @@ export default {
             return moisNumber;
           });
 
-          const data = response.data.primes.map((prime) => prime.y);
+          const data = response.primes.map((prime) => prime.y);
 
-          const label = response.data.accesoires.map(
+          const label = response.accessoires.map(
             (accesoire) => accesoire.name
           );
 
-          const donnees = response.data.accesoires.map(
+          const donnees = response.accessoires.map(
             (accesoire) => accesoire.y
           );
 
-          const titre = response.data.compagnies.map(
+          const titre = response.compagnies.map(
             (compagnie) => compagnie.name
           );
 
-          const graphs = response.data.compagnies.map(
+          const graphs = response.compagnies.map(
             (compagnie) => compagnie.y
           );
 
+          // Graph chiffre d'affaire par mois
           this.chartData = {
             labels: labels,
             datasets: [
@@ -410,6 +401,7 @@ export default {
             ],
           };
 
+          // Graph chiffre d'affaire par branche
           this.chartDonnees = {
             labels: label,
             datasets: [
@@ -432,6 +424,7 @@ export default {
             ],
           };
 
+          // Graph chiffre d'affaire par compagnie
           this.chartGraphs = {
             labels: titre,
             datasets: [
@@ -453,8 +446,22 @@ export default {
               },
             ],
           };
+
+        console.log(response)
+
+          return response; // Si vous voulez transmettre la réponse à la prochaine étape
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          // Gérer les erreurs éventuelles
+          console.error(error);
+          throw error; // Si vous voulez transmettre l'erreur à la prochaine étape
+        });
+
+
+    
+
+
+      
     },
   },
 };
