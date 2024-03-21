@@ -25,30 +25,7 @@
         </div>
 
         <div class="row">
-          <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
-            <div class="card flex-fill tickets-card">
-              <div class="card-header">
-                <div class="text-center w-100 p-3">
-                  <h2>
-                    <router-link to="">Statistiques utilisateurs</router-link>
-                  </h2>
-                  <h2 class="bl-text mb-1" v-text="users"></h2>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
-            <div class="card flex-fill tickets-card">
-              <div class="card-header">
-                <div class="text-center w-100 p-3">
-                  <h2>
-                    <router-link to="/statclient">Statistiques Clients</router-link>
-                  </h2>
-                  <h2 class="bl-text mb-1" v-text="clients"></h2>
-                </div>
-              </div>
-            </div>
-          </div>
+
           <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
             <div class="card flex-fill tickets-card">
               <div class="card-header">
@@ -61,56 +38,15 @@
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="row">
           <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
             <div class="card flex-fill tickets-card">
               <div class="card-header">
                 <div class="text-center w-100 p-3">
                   <h2>
-                    <router-link to="/statsinistre">Statistiques sinistres</router-link>
+                    <router-link to="/statsinistre">Statistiques rh</router-link>
                   </h2>
                   <h2 class="bl-text mb-1" v-text="sinistres"></h2>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
-            <div class="card flex-fill tickets-card">
-              <div class="card-header">
-                <div class="text-center w-100 p-3">
-                  <h2>
-                    <router-link to="">Statistiques dépenses</router-link>
-                  </h2>
-                  <h2 class="bl-text mb-1" v-text="depenses"></h2>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
-            <div class="card flex-fill tickets-card">
-              <div class="card-header">
-                <div class="text-center w-100 p-3">
-                  <h2>
-                    <router-link to="">Statistiques salariés</router-link>
-                  </h2>
-                  <h2 class="bl-text mb-1" v-text="salaires"></h2>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
-            <div class="card flex-fill tickets-card">
-              <div class="card-header">
-                <div class="text-center w-100 p-3">
-                  <h2>
-                    <router-link to="/statapporteur">Statistiques apporteurs</router-link>
-                  </h2>
-                  <h2 class="bl-text mb-1"></h2>
                 </div>
               </div>
             </div>
@@ -129,6 +65,10 @@
             </div>
           </div>
         </div>
+
+
+
+
       </div>
     </div>
   </div>

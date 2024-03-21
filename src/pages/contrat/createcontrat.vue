@@ -1299,8 +1299,8 @@ export default {
           await AppStorage.storeDataInIndexedDB("avenants", newAvenantsData);
 
           if (this.form.branche_id.nom_branche == "AUTOMOBILE" || this.form.branche_id.nom_branche == "MOTO" || this.form.branche_id.nom_branche == "MOTO" ||
-            form.branche_id.nom_branche == 'AUTOMOBILE HORS TPV' ||
-            form.branche_id.nom_branche == 'AUTOMOBILE TPV') {
+            this.form.branche_id.nom_branche == 'AUTOMOBILE HORS TPV' ||
+            this.form.branche_id.nom_branche == 'AUTOMOBILE TPV') {
 
             const uuidAutomobile = uuidv4();
 

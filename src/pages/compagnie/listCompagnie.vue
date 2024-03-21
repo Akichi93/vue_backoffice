@@ -77,10 +77,10 @@
                         <a href="#" data-bs-toggle="modal" data-bs-target="#edit_compagnie"
                           @click="editCompagnie(compagnie.uuidCompagnie)" title="Modifier"><i class="fas fa-pen"></i>
                         </a>
-                        <!-- <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_compagnie"
-                          @click="editCompagnie(compagnie.id_compagnie)" title="supprimer"><i
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#delete_compagnie"
+                          @click="editCompagnie(compagnie.uuidCompagnie)" title="supprimer"><i
                             class="fas fa-trash-alt"></i>
-                        </a> -->
+                        </a>
                       </td>
                     </tr>
                   </template>

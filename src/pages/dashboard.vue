@@ -315,16 +315,14 @@ export default {
 
       const yearSelected = this.year;
 
-      
+
 
       // Si branch est défini, utilisez sa valeur, sinon utilisez une valeur par défaut
       const branch = this.branch !== null ? this.branch : 'Aucune branche sélectionnée';
 
-      console.log(branch)
-
       const data = await AppStorage.getDataByYearAndBranch(yearSelected, branch)
         .then((response) => {
-
+        
           this.contrat = response.contratsCount;
           this.prospect = response.prospectsCount;
           this.sinistre = response.sinistresCount;
@@ -378,24 +376,28 @@ export default {
             (compagnie) => compagnie.y
           );
 
+          const colorPalette = [
+            "#123E6B",
+            "#97B0C4",
+            "#A5C8ED",
+            "#F26D85",
+            "#4CAF50",
+            "#FFC107",
+            "#9C27B0",
+            "#FF5722",
+            "#795548",
+            "#009688",
+          ];
+
+          // Générer des couleurs de fond dynamiques
+          const backgroundColors = colorPalette.slice(0, labels.length);
           // Graph chiffre d'affaire par mois
           this.chartData = {
             labels: labels,
             datasets: [
               {
                 label: "Chiffre d'affaire par mois dans l'année",
-                backgroundColor: [
-                  "#123E6B",
-                  "#97B0C4",
-                  "#A5C8ED",
-                  "#F26D85",
-                  "#4CAF50",
-                  "#FFC107",
-                  "#9C27B0",
-                  "#FF5722",
-                  "#795548",
-                  "#009688",
-                ],
+                backgroundColor: backgroundColors,
                 data: data,
               },
             ],
@@ -447,8 +449,6 @@ export default {
             ],
           };
 
-        console.log(response)
-
           return response; // Si vous voulez transmettre la réponse à la prochaine étape
         })
         .catch((error) => {
@@ -458,10 +458,10 @@ export default {
         });
 
 
-    
 
 
-      
+
+
     },
   },
 };

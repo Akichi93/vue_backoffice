@@ -49,6 +49,10 @@
 import axios from 'axios';
 import User from "../../db/User";
 import { apiUrl } from "../../utils/constants/apiUrl";
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({
+  /* options */
+});
 export default {
 
     data() {
@@ -67,7 +71,13 @@ export default {
                     User.responseAfterLogin(res)
                     this.$router.push({ name: 'localstorage' })
                 })
-                .catch(error => console.log(error.message))
+                .catch((error) => {
+                    this.errors = error.response.data.errors;
+                    // console.log(error.response.data.errors);
+                    toaster.error(`Une erreur`, {
+                        position: "top-right",
+                    });
+                });
         }
     }
 
@@ -75,7 +85,7 @@ export default {
 }
 </script>
 <style>
-    .form-group label {
-        float: left;
-    }
+.form-group label {
+    float: left;
+}
 </style>

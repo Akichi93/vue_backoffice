@@ -186,7 +186,7 @@ export default {
       await AppStorage.storeDataInIndexedDB("avenants", newAvenantsData);
 
       // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-      const updatedAvenants = await AppStorage.getAvenants();
+      const updatedAvenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
 
       // Émettre un événement avec les prospects mis à jour
       this.$emit("avenant-add", updatedAvenants);

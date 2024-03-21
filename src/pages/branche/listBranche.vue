@@ -57,7 +57,7 @@
                     <td class="text-end ico-sec d-flex justify-content-end">
                       <a href="#" data-bs-toggle="modal" data-bs-target="#edit_branche"
                         @click="editbranche(branche.uuidBranche)"><i class="fas fa-pen"></i></a>
-                      <a href="#" v-if="roleactif == 'ADMIN'" data-bs-toggle="modal" data-bs-target="#delete_branche"
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#delete_branche"
                         @click="editbranche(branche.uuidBranche)"><i class="far fa-trash-alt"></i></a>
                     </td>
                   </tr>

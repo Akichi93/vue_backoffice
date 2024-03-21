@@ -134,7 +134,7 @@ export default {
             });
 
             if (response.ok) {
-                console.error(`La synchronisation des ${dataType} a reussi.`);
+                console.log(`La synchronisation des ${dataType} a reussi.`);
                 // AppStorage.clearSyncedData(dataType);
             } else {
                 console.error(`La synchronisation des ${dataType} a échoué.`);

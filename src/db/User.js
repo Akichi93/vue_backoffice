@@ -19,6 +19,7 @@ class User {
             { endpoint: 'getavenants', storageKey: 'avenants' },
             { endpoint: 'getautomobiles', storageKey: 'automobiles' },
             { endpoint: 'getgaranties', storageKey: 'garanties' },
+            { endpoint: 'getsinistres', storageKey: 'sinistres' },
 
             { endpoint: 'getlocalisations', storageKey: 'localisations' },
             { endpoint: 'getprofessions', storageKey: 'professions' },

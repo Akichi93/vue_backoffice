@@ -140,20 +140,20 @@
                     <ul class="personal-info">
                       <li>
                         <div class="title">Commission courtier:</div>
-                        <div class="text" v-text="sommes.sommeCommissionCourtier"></div>
+                        <div class="text">{{ sommes.sommeCommissionCourtier }}</div>
                       </li>
                       <li>
                         <div class="title">Gestion</div>
-                        <div class="text" v-if="gestion == null">0</div>
-                        <div class="text" v-else v-text="contrats.gestion"></div>
+                        <div class="text" v-if="infos.gestion == null">0</div>
+                        <div class="text" v-else v-text="infos.gestion"></div>
                       </li>
                       <li>
                         <div class="title">Commission apporteur:</div>
-                        <div class="text" v-text="sommes.sommeCommission"></div>
+                        <div class="text">{{ sommes.sommeCommission }}</div>
                       </li>
                       <li>
                         <div class="title">Apporteur</div>
-                        <div class="text" v-text="contrats.nom_apporteur"></div>
+                        <div class="text" v-text="infos.nom_apporteur"></div>
                       </li>
                     </ul>
                   </div>

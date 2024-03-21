@@ -342,7 +342,7 @@ export default {
                         tel_prospect: this.form.tel_prospect,
                         profession_prospect: this.form.profession_prospect,
                         email_prospect: this.form.email_prospect,
-                        fax_prospect: this.form.fax_prospect,
+                        fax_prospect: this.fax_prospect,
                         etat: 0,
                         statut: this.form.etat,
                         id_entreprise: entrepriseId,

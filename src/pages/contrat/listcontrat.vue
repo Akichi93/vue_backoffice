@@ -206,6 +206,7 @@ export default {
       if (this.q.length > 3) {
         AppStorage.searchContratsByName(this.q).then((result) => {
           this.contrats = result;
+          console.log(result)
         });
       } else {
         this.getContrat();

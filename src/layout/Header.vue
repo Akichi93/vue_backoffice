@@ -104,32 +104,15 @@
           >Statistiques</a
         >
         <div class="dropdown-menu">
-          <router-link class="dropdown-item" to=""
-            >Statistiques utilisateurs</router-link
-          >
-          <router-link class="dropdown-item" to="/statclient"
-            >Statistiques clients</router-link
-          >
           <router-link class="dropdown-item" to="/statcontrat"
-            >Statistiques contrats</router-link
+            >Statistiques courtage</router-link
           >
           <router-link class="dropdown-item" to="/statsinistre"
-            >Statistiques sinistres</router-link
+            >Statistiques rh</router-link
           >
-          <router-link class="dropdown-item" to=""
-            >Statistiques dépenses</router-link
-          >
-          <router-link class="dropdown-item" to=""
-            >Statistiques salariés</router-link
-          >
-          <router-link class="dropdown-item" to="/statapporteur"
-            >Statistiques apporteurs</router-link
-          >
+         
           <router-link class="dropdown-item" to="/statsupprime"
             >Supprimes</router-link
-          >
-          <router-link class="dropdown-item" to="/reporting"
-            >Reporting</router-link
           >
         </div>
       </li>

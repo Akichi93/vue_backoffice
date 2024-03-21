@@ -37,7 +37,8 @@
 
         <div class="row">
           <div class="col-row">
-            <input type="text" class="form-control" placeholder="Rechercher un avenant" v-model="q" @keyup="searchtask" />
+            <input type="text" class="form-control" placeholder="Rechercher un avenant" v-model="q"
+              @keyup="searchtask" />
           </div>
           <div class="col-md-12">
             <div class="table-responsive">
@@ -64,7 +65,7 @@
                 <tbody>
                   <template v-for="avenant in avenants" :key="avenant.id_avenant">
                     <tr>
-                      <td>{{ avenant.type }}</td>
+                      <td v-text="avenant.type"></td>
                       <td>{{ avenant.nom_compagnie }}</td>
                       <td>{{ avenant.numero_police }}</td>
                       <td>{{ avenant.nom_branche }}</td>
@@ -112,8 +113,8 @@
                         </a>
 
                         <a v-if="avenant.solder == 1 && avenant.reverser == 0" href="#" data-bs-toggle="modal"
-                          data-bs-target="#reverser_contrat" @click="editAvenant(avenant.uuidAvenant)" title="Reverser"><i
-                            class="fa fa-times"></i>
+                          data-bs-target="#reverser_contrat" @click="editAvenant(avenant.uuidAvenant)"
+                          title="Reverser"><i class="fa fa-times"></i>
                         </a>
 
                       </td>
@@ -255,7 +256,8 @@ export default {
     // },
 
     refresh() {
-      AppStorage.getAvenants().then((result) => {
+      const uuidContrat = this.$route.params.uuidContrat;
+      AppStorage.getAvenantsByUuidContrat(uuidContrat).then((result) => {
         this.avenants = result;
       });
     }
@@ -266,4 +268,3 @@ export default {
   },
 };
 </script>
-  
