@@ -117,11 +117,11 @@ export default {
         return queue.filter(garantie => garantie.sync === 0);
     },
 
-    
+
 
     async syncData(endpoint, dataToSync, dataType) {
         const token = AppStorage.getToken();
-        
+
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
@@ -134,7 +134,9 @@ export default {
             });
 
             if (response.ok) {
-                console.log(`La synchronisation des ${dataType} a reussi.`);
+                console.log(`La synchronisation des ${dataType} a réussi.`);
+                await this.handleSuccessfulSync(dataType)
+
                 // AppStorage.clearSyncedData(dataType);
             } else {
                 console.error(`La synchronisation des ${dataType} a échoué.`);
@@ -143,4 +145,43 @@ export default {
             console.error(`Erreur lors de la synchronisation des ${dataType} :`, error);
         }
     },
+
+    async handleSuccessfulSync(dataType) {
+        // Vous pouvez stocker les types de données synchronisés avec succès
+        // AppStorage.storeSuccessfulSync(dataType);
+
+        // Ensuite, récupérez les données mises à jour pour le type de données synchronisé avec succès
+        const updatedData = await this.fetchUpdatedData(dataType);
+        // Vous pouvez ensuite traiter ces données mises à jour, par exemple, les enregistrer dans la base de données locale, etc.
+        console.log(`Données mises à jour pour ${dataType}:`, updatedData);
+    },
+
+    async fetchUpdatedData(dataTypes) {
+        try {
+            // Initialise un objet pour stocker les données mises à jour
+            const updatedData = {};
+    
+            // Boucle à travers chaque type de données spécifié
+            for (const dataType of dataTypes) {
+                // Effectue une requête pour récupérer les données mises à jour pour le type actuel
+                const response = await fetch(`https://fl4ir.loca.lt/api/auth/get${dataType}`);
+                
+                if (response.ok) {
+                    // Convertit la réponse en format JSON et stocke les données dans l'objet mis à jour
+                    updatedData[dataType] = await response.json();
+                } else {
+                    // Affiche un message d'erreur si la requête échoue pour ce type de données
+                    console.error(`La requête pour récupérer les données mises à jour pour ${dataType} a échoué.`);
+                }
+            }
+    
+            // Retourne l'objet contenant les données mises à jour pour chaque type
+            return updatedData;
+        } catch (error) {
+            // Affiche une erreur si une exception survient pendant le processus
+            console.error('Erreur lors de la récupération des données mises à jour:', error);
+            return null;
+        }
+    }
+    
 };

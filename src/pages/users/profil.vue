@@ -33,11 +33,12 @@
                                         <div class="row">
                                             <div class="col-md-5">
                                                 <div class="profile-info-left">
-                                                    <h3 class="user-name m-t-0 mb-0" v-text="user.name"></h3>
+                                                    <h3 class="user-name m-t-0 mb-0" v-text="users.name"></h3>
                                                     <h6 class="text-muted">UI/UX Design Team</h6>
 
                                                     <div class="staff-msg"><a class="btn btn-custom"
-                                                            data-bs-target="#profile_info" data-bs-toggle="modal">Changer
+                                                            data-bs-target="#profile_info"
+                                                            data-bs-toggle="modal">Changer
                                                             mot de passe
                                                         </a></div>
                                                 </div>
@@ -46,23 +47,23 @@
                                                 <ul class="personal-info">
                                                     <li>
                                                         <div class="title">Contact:</div>
-                                                        <div class="text" v-text="user.contact"></div>
+                                                        <div class="text" v-text="users.contact"></div>
                                                     </li>
                                                     <li>
                                                         <div class="title">Email:</div>
-                                                        <div class="text" v-text="user.email"></div>
+                                                        <div class="text" v-text="users.email"></div>
                                                     </li>
                                                     <li>
                                                         <div class="title">Anniversaire:</div>
-                                                        <div class="text" v-text="user.anniversaire"></div>
+                                                        <div class="text" v-text="users.anniversaire"></div>
                                                     </li>
                                                     <li>
                                                         <div class="title">Adresse:</div>
-                                                        <div class="text" v-text="user.adresse"></div>
+                                                        <div class="text" v-text="users.adresse"></div>
                                                     </li>
                                                     <li>
                                                         <div class="title">Sexe:</div>
-                                                        <div class="text" v-text="user.sexe"></div>
+                                                        <!-- <div class="text" v-text="users.sexe"></div> -->
                                                     </li>
 
                                                 </ul>
@@ -129,19 +130,20 @@
     </div>
 </template>
 <script>
+import axios from "axios";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import AppStorage from "../../db/AppStorage.js";
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({
-  /* options */
+    /* options */
 });
 export default {
     components: { Header, Sidebar },
     data() {
         return {
             loading: true,
-            user: "",
+            users: {},
             confirmPassword: "",
             newpassword: "",
             oldpassword: "",
@@ -151,18 +153,28 @@ export default {
     methods: {
         info() {
             const token = localStorage.getItem("token");
+            // const users = [];
 
-            // Configurez les en-têtes de la requête
-            const headers = {
-                Authorization: "Bearer " + token,
-                "x-access-token": token,
-            };
+            // Vérifier si le token existe
+            if (token) {
+                // Faire quelque chose avec le token, par exemple récupérer les informations de l'utilisateur
+                const user = AppStorage.getUser();
+                const role = AppStorage.getRole();
+                const email = AppStorage.getEmail();
+                const adresse = AppStorage.getAdresse();
+                const contact = AppStorage.getContact();
+                const anniversaire = "";
+                const sexe = "";
 
-            axios
-                .get("/api/auth/me", { headers })
-                .then((response) => (this.user = response.data))
-                .catch((error) => console.log(error));
+                // Créer un objet contenant les informations de l'utilisateur et son rôle
+                const users = { user, role, email, adresse, contact, anniversaire, sexe };
+
+                this.users = users;
+            } else {
+                console.log("Token non trouvé dans le stockage local.");
+            }
         },
+
         validateForm() {
             if (this.newpassword !== this.confirmPassword) {
                 this.errorMessage = 'Passwords do not match';
@@ -182,7 +194,7 @@ export default {
             };
 
             axios
-                .post("/api/auth/changepassword", {
+                .post("https://fl4ir.loca.lt/api/auth/changepassword", {
                     oldpassword: this.oldpassword,
                     newpassword: this.newpassword,
                 }, { headers })

@@ -25,6 +25,18 @@ class AppStorage {
         localStorage.setItem('role', role);
     }
 
+    static async storeContact(contact) {
+        localStorage.setItem('contact', contact);
+    }
+
+    static async storeAdresse(adresse) {
+        localStorage.setItem('adresse', adresse);
+    }
+
+    static async storeEmail(email) {
+        localStorage.setItem('email', email);
+    }
+
     static async storeData(key, data) {
         // localStorage.setItem(key, JSON.stringify(data));
         await this.storeDataInIndexedDB(key, data);
@@ -1846,12 +1858,15 @@ class AppStorage {
 
 
 
-    static async store(token, user, id, entreprise, role) {
+    static async store(token, user, id, entreprise, role,contact,adresse,email) {
         await this.storeToken(token);
         await this.storeUser(user);
         await this.storeId(id);
         await this.storeEntreprise(entreprise);
         await this.storeRole(role);
+        await this.storeContact(contact);
+        await this.storeAdresse(adresse);
+        await this.storeEmail(email);
     }
 
     static async clear() {
@@ -1882,6 +1897,18 @@ class AppStorage {
 
     static getRole() {
         return localStorage.getItem('role');
+    }
+
+    static getContact() {
+        return localStorage.getItem('contact');
+    }
+
+    static getAdresse() {
+        return localStorage.getItem('adresse');
+    }
+
+    static getEmail() {
+        return localStorage.getItem('email');
     }
 
     static async clearClients() {

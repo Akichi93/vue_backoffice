@@ -5,9 +5,9 @@ import router from '../routers';
 
 class User {
     static async responseAfterLogin(res) {
-        const { access_token, name, user_id, id_entreprise, role } = res.data;
+        const { access_token, name, user_id, id_entreprise, role, contact, adresse, email } = res.data;
 
-        await AppStorage.store(access_token, name, user_id, id_entreprise, role);
+        await AppStorage.store(access_token, name, user_id, id_entreprise, role, contact, adresse, email);
 
         const apiCalls = [
             { endpoint: 'getclients', storageKey: 'clients' },
@@ -57,9 +57,9 @@ class User {
 
 
     }
-    
+
     static redirectToDashboard() {
-       
+
 
         // Redirection vers le tableau de bord
         router.push({ name: 'dashboard' });
