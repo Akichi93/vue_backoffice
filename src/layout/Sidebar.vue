@@ -41,6 +41,7 @@
 <script>
 import AppStorage from "../db/AppStorage.js";
 import syncservice from "../services/syncService";
+import { timeSynchronise } from '../utils/constants/technicalConstant';
 export default {
   data() {
     return {
@@ -67,8 +68,8 @@ export default {
     },
   },
   mounted() {
-    // Check connection status every 2 seconds
-    setInterval(this.checkConnection, 15 * 60 * 1000);
+    
+    setInterval(this.checkConnection, timeSynchronise);
   },
   methods: {
     async checkConnection() {

@@ -104,10 +104,6 @@ export default {
       accessoires: "",
       date_debut: "",
       date_fin: "",
-
-
-
-
     };
   },
   methods: {
@@ -147,11 +143,15 @@ export default {
           0.01;
       };
 
+      const userId = parseInt(AppStorage.getId(), 10);
+      const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
       const calculateCommissionCourtier = () => {
         return this.prime_nette * tauxcomp * 0.01;
       };
 
       const newAvenantsData = [{
+        id: userId,
         uuidContrat: uuidContrat,
         annee: annee,
         mois: mois,
@@ -179,6 +179,7 @@ export default {
         solder: 0,
         reverser: 0,
         sync: 0,
+        id_entreprise: entrepriseId,
       }];
 
 

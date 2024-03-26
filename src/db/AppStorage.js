@@ -102,6 +102,37 @@ class AppStorage {
         await tx.complete;
     }
 
+    static async updateSyncIndexedDB(key, newData) {
+        try {
+            const db = await openDB(this.dbName, 1);
+            const tx = db.transaction('apiData', 'readwrite');
+            const store = tx.objectStore('apiData');
+
+            // Supprimer toutes les données existantes de l'object store
+            await store.delete(key);
+
+            await store.put(newData, key);
+
+
+            // await store.clear();
+
+            // Ajouter les nouvelles données dans l'object store
+            // for (const data of newData) {
+            //     // await store.put(data);
+            //     await store.put(data, key);
+            // }
+
+            // Attendre la fin de la transaction
+            await tx.done;
+
+            console.log(`Données de type ${key} mises à jour avec succès dans IndexedDB.`);
+        } catch (error) {
+            console.error(`Erreur lors de la mise à jour des données de ${key} dans IndexedDB:`, error);
+            throw error;
+        }
+    }
+
+
 
 
     static async clearData(key) {
@@ -976,7 +1007,7 @@ class AppStorage {
 
 
     static async searchApporteursByName(name) {
-        const allApporteurs = await this.getData('compagnies') || [];
+        const allApporteurs = await this.getData('apporteurs') || [];
         const filteredApporteurs = allApporteurs.filter(apporteur => apporteur.nom_apporteur.toLowerCase().includes(name.toLowerCase()));
         return filteredApporteurs;
     }
@@ -1852,13 +1883,7 @@ class AppStorage {
         }
     }
 
-
-
-
-
-
-
-    static async store(token, user, id, entreprise, role,contact,adresse,email) {
+    static async store(token, user, id, entreprise, role, contact, adresse, email) {
         await this.storeToken(token);
         await this.storeUser(user);
         await this.storeId(id);

@@ -1,6 +1,14 @@
 // SyncService.js
 import AppStorage from '../db/AppStorage.js';
+import DataAPI from '../db/DataAPI.js';
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({
+    /* options */
+});
+
 export default {
+    syncedTables: [], // Tableau pour stocker les tables synchronisées
+
     async checkAndSyncData() {
         const branchesToSync = await this.getBranchesToSync();
         const prospectsToSync = await this.getProspectsToSync();
@@ -14,49 +22,121 @@ export default {
         const automobilesToSync = await this.getAutomobilesToSync();
         const garantiesToSync = await this.getGarantiesToSync();
 
-        // Synchroniser uniquement les données qui ont sync = 0
+        const syncPromises = [];
+
         if (branchesToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-branches', branchesToSync, 'branches');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-branches', branchesToSync, 'branches'));
         }
 
         if (prospectsToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-prospects', prospectsToSync, 'prospects');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-prospects', prospectsToSync, 'prospects'));
         }
 
         if (clientsToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-clients', clientsToSync, 'clients');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-clients', clientsToSync, 'clients'));
         }
 
         if (compagniesToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-compagnies', compagniesToSync, 'compagnies');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-compagnies', compagniesToSync, 'compagnies'));
         }
 
         if (tauxcompagniesToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-tauxcompagnies', tauxcompagniesToSync, 'tauxcompagnies');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-tauxcompagnies', tauxcompagniesToSync, 'tauxcompagnies'));
         }
 
         if (apporteursToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-apporteurs', apporteursToSync, 'apporteurs');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-apporteurs', apporteursToSync, 'apporteurs'));
         }
 
         if (tauxapporteursToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-tauxapporteurs', tauxapporteursToSync, 'tauxapporteurs');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-tauxapporteurs', tauxapporteursToSync, 'tauxapporteurs'));
         }
 
         if (contratsToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-contrats', contratsToSync, 'contrats');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-contrats', contratsToSync, 'contrats'));
         }
 
         if (avenantsToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-avenants', avenantsToSync, 'avenants');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-avenants', avenantsToSync, 'avenants'));
         }
 
         if (automobilesToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-automobiles', automobilesToSync, 'avenants');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-automobiles', automobilesToSync, 'automobiles'));
         }
 
         if (garantiesToSync.length > 0) {
-            await this.syncData('https://fl4ir.loca.lt/api/auth/sync-garanties', garantiesToSync, 'garanties');
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-garanties', garantiesToSync, 'garanties'));
+        }
+
+        // Attendre que toutes les synchronisations soient terminées
+        await Promise.all(syncPromises);
+
+        // Vérifier s'il y a eu des synchronisations
+        const anySynced = this.syncedTables.length > 0;
+
+        // Afficher le message uniquement s'il y a eu des synchronisations
+        if (anySynced) {
+            console.log('Toutes les synchronisations ont été effectuées.');
+            await this.retrieveGraveData();
+            toaster.success(`Synchronisation effectuée avec succès`, {
+                position: "top-right",
+            });
+
+        } else {
+            console.log('Aucune donnée à synchroniser.');
+        }
+
+    },
+
+    async retrieveGraveData() {
+
+        for (const table of this.syncedTables) {
+            switch (table) {
+                case 'branches':
+                    const branchesData = await DataAPI.getGraveBranchesData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des branches synchronisées :', branchesData);
+                    break;
+                case 'prospects':
+                    const prospectsData = await DataAPI.getGraveProspectsData();
+                    // console.log('Données graves des prospects synchronisés :', prospectsData);
+                    break;
+                case 'clients':
+                    const clientsData = await DataAPI.getGraveClientsData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des clients synchronisés :', clientsData);
+                    break;
+                case 'compagnies':
+                    const compagniesData = await DataAPI.getGraveCompagniesData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des compagnies synchronisés :', compagniesData);
+                    break;
+                case 'tauxcompagnies':
+                    const tauxcompagniesData = await DataAPI.getGraveTauxCompagniesData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des taux compagnies synchronisés :', tauxcompagniesData);
+                    break;
+                case 'apporteurs':
+                    const apporteursData = await DataAPI.getGraveApporteursData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des apporteurs synchronisés :', apporteursData);
+                    break;
+                case 'tauxapporteurs':
+                    const tauxapporteursData = await DataAPI.getGraveTauxApporteursData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des taux apporteurs synchronisés :', tauxapporteursData);
+                    break;
+                case 'contrats':
+                    const contratsData = await DataAPI.getGraveContratsData();
+                    console.log('Données graves des contrats synchronisés :', contratsData);
+                    break;
+                case 'avenants':
+                    const avenantsData = await DataAPI.getGraveAvenantsData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des avenants synchronisés :', avenantsData);
+                    break;
+                case 'automobiles':
+                    const automobilesData = await DataAPI.getGraveAutomobilesData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des automobiles synchronisés :', automobilesData);
+                    break;
+                case 'garanties':
+                    const garantiesData = await DataAPI.getGraveGarantiesData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des  garanties synchronisés :', garantiesData);
+                    break;
+            }
         }
     },
 
@@ -70,12 +150,10 @@ export default {
         return queue.filter(prospect => prospect.sync === 0);
     },
 
-
     async getClientsToSync() {
         const queue = await AppStorage.getClients();
         return queue.filter(client => client.sync === 0);
     },
-
 
     async getCompagniesToSync() {
         const queue = await AppStorage.getCompagnies();
@@ -117,8 +195,6 @@ export default {
         return queue.filter(garantie => garantie.sync === 0);
     },
 
-
-
     async syncData(endpoint, dataToSync, dataType) {
         const token = AppStorage.getToken();
 
@@ -134,10 +210,9 @@ export default {
             });
 
             if (response.ok) {
-                console.log(`La synchronisation des ${dataType} a réussi.`);
-                await this.handleSuccessfulSync(dataType)
-
-                // AppStorage.clearSyncedData(dataType);
+                if (!this.syncedTables.includes(dataType)) {
+                    this.syncedTables.push(dataType);
+                }
             } else {
                 console.error(`La synchronisation des ${dataType} a échoué.`);
             }
@@ -145,43 +220,4 @@ export default {
             console.error(`Erreur lors de la synchronisation des ${dataType} :`, error);
         }
     },
-
-    async handleSuccessfulSync(dataType) {
-        // Vous pouvez stocker les types de données synchronisés avec succès
-        // AppStorage.storeSuccessfulSync(dataType);
-
-        // Ensuite, récupérez les données mises à jour pour le type de données synchronisé avec succès
-        const updatedData = await this.fetchUpdatedData(dataType);
-        // Vous pouvez ensuite traiter ces données mises à jour, par exemple, les enregistrer dans la base de données locale, etc.
-        console.log(`Données mises à jour pour ${dataType}:`, updatedData);
-    },
-
-    async fetchUpdatedData(dataTypes) {
-        try {
-            // Initialise un objet pour stocker les données mises à jour
-            const updatedData = {};
-    
-            // Boucle à travers chaque type de données spécifié
-            for (const dataType of dataTypes) {
-                // Effectue une requête pour récupérer les données mises à jour pour le type actuel
-                const response = await fetch(`https://fl4ir.loca.lt/api/auth/get${dataType}`);
-                
-                if (response.ok) {
-                    // Convertit la réponse en format JSON et stocke les données dans l'objet mis à jour
-                    updatedData[dataType] = await response.json();
-                } else {
-                    // Affiche un message d'erreur si la requête échoue pour ce type de données
-                    console.error(`La requête pour récupérer les données mises à jour pour ${dataType} a échoué.`);
-                }
-            }
-    
-            // Retourne l'objet contenant les données mises à jour pour chaque type
-            return updatedData;
-        } catch (error) {
-            // Affiche une erreur si une exception survient pendant le processus
-            console.error('Erreur lors de la récupération des données mises à jour:', error);
-            return null;
-        }
-    }
-    
 };

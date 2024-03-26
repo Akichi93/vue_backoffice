@@ -6,6 +6,7 @@ import { createPinia } from 'pinia'
 import User from './db/User.js';
 import VueHtmlToPaper from 'vue-html-to-paper';
 
+
 const options = {
     name: '_blank',
     specs: [

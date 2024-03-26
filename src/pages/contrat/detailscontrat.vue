@@ -18,6 +18,10 @@
                   <li class="breadcrumb-item">
                     <router-link to="/home">Tableau de bord</router-link>
                   </li>
+                  <li class="breadcrumb-item">
+                    <router-link to="/listcontrat">Liste des contrats</router-link>
+
+                  </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Contrats
                   </li>

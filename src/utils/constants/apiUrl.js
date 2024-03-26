@@ -33,5 +33,7 @@ export const apiUrl = {
     statistiques: `${base_url}/stat/`,
     year: `${base_url}/year`,
     retrievebranche: `${base_url}/retrievebranche`,
+    getgarantie: `${base_url}/getgaranties`,
+    getautomobile: `${base_url}/getautomobiles`,
     // settauxCompagny: (compagnyId) => `/gettauxcompagnie/${compagnyId}`,
 }

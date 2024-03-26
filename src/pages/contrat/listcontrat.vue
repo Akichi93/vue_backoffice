@@ -62,8 +62,8 @@
                     <td v-text="contrat.nom_client"></td>
                     <td v-text="contrat.nom_compagnie"></td>
                     <td v-text="contrat.nom_branche"></td>
-                    <td v-text="contrat.effet_police"></td>
-                    <td v-text="contrat.expire_le"></td>
+                    <td v-text="formatDate(contrats.effet_police)"></td>
+                    <td v-text="formatDate(contrat.expire_le)"></td>
                     <td class="text-end ico-sec d-flex justify-content-end">
                       <router-link :to="{
               name: 'detailscontrat',
@@ -110,6 +110,7 @@ import deletecontrat from "../contrat/deletecontrat.vue";
 // import pagination from "laravel-vue-pagination";
 import contratexport from "../../components/export/contratexport.vue";
 import AppStorage from "../../db/AppStorage.js";
+import { formatDate, formatDateTime } from '../../utils/helpers/dateFormat';
 export default {
   components: {
     Header,
@@ -134,6 +135,8 @@ export default {
   },
 
   methods: {
+    formatDate,
+    formatDateTime,
     async editContrat(uuidContrat) {
       try {
         this.contrattoedit = await AppStorage.getContratByUuid(uuidContrat);

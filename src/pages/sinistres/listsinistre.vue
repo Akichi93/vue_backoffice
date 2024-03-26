@@ -27,8 +27,8 @@
                     <div class="col-md-8"></div>
                     <div class="col-md-4">
                         <div class="add-emp-section">
-                            <router-link to="/createsinistre" class="btn btn-success btn-add-emp" style="width: auto;"><i
-                                    class="fas fa-plus"></i>Ajouter sinistre</router-link>
+                            <router-link to="/createsinistre" class="btn btn-success btn-add-emp"
+                                style="width: auto;"><i class="fas fa-plus"></i>Ajouter sinistre</router-link>
                             <!-- <a href="/creersinistre" class="btn btn-success btn-add-emp" style="width: auto;"><i
                                     class="fas fa-plus"></i>
                                 Ajouter sinistre
@@ -88,16 +88,16 @@
                                             </td>
                                             <td class="text-end ico-sec d-flex justify-content-end">
                                                 <router-link v-if="sinistre.etat == 0" :to="{
-                                                    name: 'voirsinistre',
-                                                    params: { id_sinistre: sinistre.id_sinistre },
+                            name: 'voirsinistre',
+                            params: { id_sinistre: sinistre.id_sinistre },
 
-                                                }"><i class="fas fa-eye"></i></router-link>
+                        }"><i class="fas fa-eye"></i></router-link>
 
                                                 <router-link :to="{
-                                                    name: 'editsinistre',
-                                                    params: { id_sinistre: sinistre.id_sinistre },
+                            name: 'editsinistre',
+                            params: { id_sinistre: sinistre.id_sinistre },
 
-                                                }"><i class="fas fa-pen"></i></router-link>
+                        }"><i class="fas fa-pen"></i></router-link>
 
                                                 <a href="#" @click="addPiece(sinistre.id_sinistre)"
                                                     v-if="sinistre.etat == 0" title="Ajouter pièce"><i
@@ -109,26 +109,27 @@
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title">Ajouter pièce</h5>
-                                                                <button type="button" class="close" data-bs-dismiss="modal"
-                                                                    aria-label="Close">
+                                                                <button type="button" class="close"
+                                                                    data-bs-dismiss="modal" aria-label="Close">
                                                                     <i class="fas fa-times"></i>
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
 
 
-                                                                <b-form @submit="submit" @keydown="form.onKeydown($event)">
+                                                                <b-form @submit="submit"
+                                                                    @keydown="form.onKeydown($event)">
                                                                     <div class="row">
                                                                         <div class="col-md-12">
-                                                                            <input v-model="form.id_sinistre" type="hidden"
-                                                                                name="name"
+                                                                            <input v-model="form.id_sinistre"
+                                                                                type="hidden" name="name"
                                                                                 :modelValue="sinistre.id_sinistre" />
                                                                             <HasError :form="form" field="name"
                                                                                 class="form-control" />
 
                                                                             <b-form-group id="titre"
-                                                                                label="Titre de la pièce" label-for="titre"
-                                                                                description="">
+                                                                                label="Titre de la pièce"
+                                                                                label-for="titre" description="">
                                                                                 <b-form-input id="titre"
                                                                                     v-model="form.titre" type="text"
                                                                                     placeholder="Titre de la pièce"
@@ -161,10 +162,10 @@
                                                 </div>
 
                                                 <router-link :to="{
-                                                    name: 'reglement',
-                                                    params: { id_sinistre: sinistre.id_sinistre },
+                            name: 'reglement',
+                            params: { id_sinistre: sinistre.id_sinistre },
 
-                                                }"><i class="fas fa-file"></i></router-link>
+                        }"><i class="fas fa-file"></i></router-link>
 
                                                 <!-- <a href="#" @click="addReglement(sinistre.id_sinistre)"
                                                     v-if="sinistre.etat == 0" title="Ajouter reglement"><i
@@ -215,6 +216,8 @@
 </template>
 
 <script>
+import axios from "axios";
+import AppStorage from "../../db/AppStorage";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import Form from "vform";
@@ -277,22 +280,25 @@ export default {
 
 
         fetchData() {
-            const token = localStorage.getItem("token");
+            AppStorage.getSinistres().then((result) => {
+                this.sinistres = result;
+            });
+            // const token = localStorage.getItem("token");
 
-            // Configurez les en-têtes de la requête
-            const headers = {
-                Authorization: "Bearer " + token,
-                "x-access-token": token,
-            };
-            axios
-                .get("/api/auth/get/sinistres", { headers })
-                .then((response) => {
-                    this.sinistres = response.data;
-                })
-                .catch((error) => {
-                    this.loading = false;
-                    this.error = error.response.data.message || error.message;
-                });
+            // // Configurez les en-têtes de la requête
+            // const headers = {
+            //     Authorization: "Bearer " + token,
+            //     "x-access-token": token,
+            // };
+            // axios
+            //     .get("/api/auth/get/sinistres", { headers })
+            //     .then((response) => {
+            //         this.sinistres = response.data;
+            //     })
+            //     .catch((error) => {
+            //         this.loading = false;
+            //         this.error = error.response.data.message || error.message;
+            //     });
         },
 
         // editSinistre(id) {

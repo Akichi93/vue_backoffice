@@ -12,7 +12,11 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <router-link to="/listcontrat">Liste des contrats</router-link>
+
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Modifier contrat
@@ -44,9 +48,9 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Branche</label>
-                            <Multiselect disabled :value="contrats.id_branche" :options="branches" :custom-label="({ id_branche, nom_branche }) =>
-                              `${id_branche} - [${nom_branche}]`
-                              " valueProp="id_branche" label="nom_branche" track-by="nom_branche" :searchable="true">
+                            <Multiselect disabled :value="contrats.uuidBranche" :options="branches" :custom-label="({ uuidBranche, nom_branche }) =>
+                              `${uuidBranche} - [${nom_branche}]`
+                              " valueProp="uuidBranche" label="nom_branche" track-by="nom_branche" :searchable="true">
                             </Multiselect>
                           </div>
                         </div>
@@ -55,10 +59,10 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Compagnie:</label>
-                            <Multiselect @select="optionSelected" :value="contrats.id_compagnie" :options="compagnies"
-                              :custom-label="({ id_compagnie, nom_compagnie }) =>
-                                `${id_compagnie} - [${nom_compagnie}]`
-                                " valueProp="id_compagnie" placeholder="Choisir une compagnie" label="nom_compagnie"
+                            <Multiselect @select="optionSelected" :value="contrats.uuidCompagnie" :options="compagnies"
+                              :custom-label="({ uuidCompagnie, nom_compagnie }) =>
+                              `${uuidCompagnie} - [${nom_compagnie}]`
+                              " valueProp="uuidCompagnie" placeholder="Choisir une compagnie" label="nom_compagnie"
                               track-by="nom_compagnie" :searchable="true">
                             </Multiselect>
                           </div>
@@ -91,17 +95,18 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Client:</label>
-                            <Multiselect v-model="client_id" :value="contrats.id_client" :options="clients" :custom-label="({ id_client, nom_client }) =>
-                              `${id_client} - [${nom_client}]`
-                              " valueProp="id_client" placeholder="Choisir un client" label="nom_client"
+                            <Multiselect v-model="client_id" :value="contrats.uuidClient" :options="clients"
+                              :custom-label="({ uuidClient, nom_client }) =>
+                              `${uuidClient} - [${nom_client}]`
+                              " valueProp="uuidClient" placeholder="Choisir un client" label="nom_client"
                               track-by="nom_client" :searchable="true">
                             </Multiselect>
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal"
-                              style="margin-top: 25px">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                              data-bs-target="#add_client" style="margin-top: 25px">
                               Ajouter client
                             </button>
                           </div>
@@ -111,10 +116,10 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Apporteur:</label>
-                            <Multiselect @select="optionSelect" :value="contrats.id_apporteur" :options="apporteurs"
-                              :custom-label="({ id_apporteur, nom_apporteur }) =>
-                                `${id_apporteur} - [${nom_apporteur}]`
-                                " valueProp="id_apporteur" placeholder="Choisir un apporteur" label="nom_apporteur"
+                            <Multiselect @select="optionSelect" :value="contrats.uuidApporteur" :options="apporteurs"
+                              :custom-label="({ uuidApporteur, nom_apporteur }) =>
+                              `${uuidApporteur} - [${nom_apporteur}]`
+                              " valueProp="uuidApporteur" placeholder="Choisir un apporteur" label="nom_apporteur"
                               track-by="nom_apporteur" :searchable="true">
                             </Multiselect>
                           </div>
@@ -184,13 +189,19 @@
             Enregistrer
           </button>
         </div>
+
+        <addclient @client-add="refresh"></addclient>
+
       </div>
     </div>
   </div>
 
+
+
   <!-- </div> -->
 </template>
 <script>
+import AppStorage from "../../db/AppStorage";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import Multiselect from "@vueform/multiselect";
@@ -202,6 +213,7 @@ import {
   getBrancheList,
 } from "../../services/formService";
 import { createToaster } from "@meforma/vue-toaster";
+import addclient from "../../pages/clients/addclient.vue";
 const toaster = createToaster({
   /* options */
 });
@@ -209,7 +221,8 @@ export default {
   components: {
     Multiselect,
     Header,
-    Sidebar
+    Sidebar,
+    addclient
   },
   data() {
     return {
@@ -218,7 +231,7 @@ export default {
       clients: {},
       branches: {},
       apporteurs: {},
-      compagnies:{},
+      compagnies: {},
       value: null,
       typegarantie: [],
       localisations: {},
@@ -236,13 +249,22 @@ export default {
 
   methods: {
 
-    fetchData() {
-      var that = this;
-      axios.all([axios.get("/api/auth/getViewContrat?contrat=" + this.$route.params.id_contrat)]).then(
-        axios.spread(function (contrats) {
-          that.contrats = contrats.data;
-        })
-      );
+   async fetchData() {
+      const uuidContrat = this.$route.params.uuidContrat;
+
+      try {
+        const infos = await AppStorage.getInfoContratByUuid(uuidContrat);
+
+        this.contrats = infos;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
+      }
+      // var that = this;
+      // axios.all([axios.get("/api/auth/getViewContrat?contrat=" + this.$route.params.id_contrat)]).then(
+      //   axios.spread(function (contrats) {
+      //     that.contrats = contrats.data;
+      //   })
+      // );
     },
 
     editContrat() {
@@ -265,7 +287,7 @@ export default {
           cfga: this.contrats.cfga,
           taxes_totales: this.contrats.taxes_totales,
           gestion: this.contrats.gestion,
-          id_contrat :  this.$route.params.id_contrat
+          id_contrat: this.$route.params.id_contrat
 
         })
         .then((response) => {
@@ -321,4 +343,3 @@ export default {
 };
 </script>
 <style src="@vueform/multiselect/themes/default.css"></style>
-  

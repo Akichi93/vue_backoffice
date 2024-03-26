@@ -15,6 +15,10 @@
                     <router-link to="/home">Tableau de bord</router-link>
 
                   </li>
+                  <li class="breadcrumb-item">
+                    <router-link to="/listcontrat">Liste des contrats</router-link>
+
+                  </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Contrats
                   </li>
@@ -1260,6 +1264,7 @@ export default {
           const uuidAvenant = uuidv4();
 
           const newAvenantsData = [{
+            id: userId,
             uuidContrat: uuid,
             annee: annee,
             mois: mois,
