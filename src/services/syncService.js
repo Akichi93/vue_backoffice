@@ -21,6 +21,21 @@ export default {
         const avenantsToSync = await this.getAvenantsToSync();
         const automobilesToSync = await this.getAutomobilesToSync();
         const garantiesToSync = await this.getGarantiesToSync();
+        const sinistresToSync = await this.getSinistresToSync();
+        const reglementsToSync = await this.getReglementsToSync();
+
+        let syncMessageDisplayed = false; // Ajouter un drapeau pour suivre si le message a été affiché
+
+        // Vérifier s'il y a des données à synchroniser
+        const anyDataToSync = branchesToSync.length > 0 || prospectsToSync.length > 0 || clientsToSync.length > 0 || compagniesToSync.length > 0 || tauxcompagniesToSync.length > 0 || apporteursToSync.length > 0 || tauxapporteursToSync.length > 0 || contratsToSync.length > 0 || avenantsToSync.length > 0 || automobilesToSync.length > 0 || garantiesToSync.length > 0 || sinistresToSync.length > 0 || reglementsToSync.length > 0;
+
+        // Si des données doivent être synchronisées et que le message n'a pas été affiché, informer l'utilisateur que la synchronisation commence
+        if (anyDataToSync && !syncMessageDisplayed) {
+            toaster.info(`La synchronisation des données commence`, {
+                position: "top-right",
+            });
+            syncMessageDisplayed = true; // Mettre à jour le drapeau pour indiquer que le message a été affiché
+        }
 
         const syncPromises = [];
 
@@ -68,23 +83,39 @@ export default {
             syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-garanties', garantiesToSync, 'garanties'));
         }
 
+        if (sinistresToSync.length > 0) {
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-sinistres', sinistresToSync, 'sinistres'));
+        }
+
+        if (reglementsToSync.length > 0) {
+            syncPromises.push(this.syncData('https://fl4ir.loca.lt/api/auth/sync-reglements', reglementsToSync, 'reglements'));
+        }
+
         // Attendre que toutes les synchronisations soient terminées
         await Promise.all(syncPromises);
+
+        // Ajoutez une variable pour suivre si la synchronisation a été effectuée avec succès
+        let syncSuccessDisplayed = false;
 
         // Vérifier s'il y a eu des synchronisations
         const anySynced = this.syncedTables.length > 0;
 
-        // Afficher le message uniquement s'il y a eu des synchronisations
-        if (anySynced) {
-            console.log('Toutes les synchronisations ont été effectuées.');
+        // Afficher le message de succès uniquement s'il y a eu des synchronisations et si le message n'a pas encore été affiché
+        if (anySynced && !syncSuccessDisplayed) {
+            // Marquez le message de succès comme déjà affiché
+            syncSuccessDisplayed = true;
+
+            // Effectuez la récupération des données graves
             await this.retrieveGraveData();
+
+            // Affichez le message de succès
             toaster.success(`Synchronisation effectuée avec succès`, {
                 position: "top-right",
             });
-
         } else {
             console.log('Aucune donnée à synchroniser.');
         }
+
 
     },
 
@@ -193,6 +224,16 @@ export default {
     async getGarantiesToSync() {
         const queue = await AppStorage.getGaranties();
         return queue.filter(garantie => garantie.sync === 0);
+    },
+
+    async getSinistresToSync() {
+        const queue = await AppStorage.getSinistres();
+        return queue.filter(sinistre => sinistre.sync === 0);
+    },
+
+    async getReglementsToSync() {
+        const queue = await AppStorage.getReglements();
+        return queue.filter(reglement => reglement.sync === 0);
     },
 
     async syncData(endpoint, dataToSync, dataType) {

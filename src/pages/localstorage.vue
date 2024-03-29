@@ -17,7 +17,7 @@
         </div>
         <div class="spoke"></div>
     </div>
-    <div class="loading-text">Chargement en cours. Nous preparons botre espace de travail...</div>
+    <div class="loading-text">Chargement en cours. Nous preparons votre espace de travail ...</div>
 </template>
 
 <script>

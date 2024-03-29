@@ -258,21 +258,21 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/editsinistre/:id_sinistre',
+    path: '/editsinistre/:uuidSinistre',
     name: 'editsinistre',
     component: editsinistre,
     props: true,
     meta: { requiresAuth: true }
   },
   {
-    path: '/voirsinistre/:id_sinistre',
+    path: '/voirsinistre/:uuidSinistre',
     name: 'voirsinistre',
     component: voirsinistre,
     props: true,
     meta: { requiresAuth: true }
   },
   {
-    path: '/reglement/:id_sinistre',
+    path: '/reglement/:uuidSinistre',
     name: 'reglement',
     component: reglement,
     props: true,

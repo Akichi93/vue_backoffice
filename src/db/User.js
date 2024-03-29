@@ -20,6 +20,7 @@ class User {
             { endpoint: 'getautomobiles', storageKey: 'automobiles' },
             { endpoint: 'getgaranties', storageKey: 'garanties' },
             { endpoint: 'getsinistres', storageKey: 'sinistres' },
+            { endpoint: 'getreglements', storageKey: 'reglements' },
 
             { endpoint: 'getlocalisations', storageKey: 'localisations' },
             { endpoint: 'getprofessions', storageKey: 'professions' },
@@ -59,8 +60,6 @@ class User {
     }
 
     static redirectToDashboard() {
-
-
         // Redirection vers le tableau de bord
         router.push({ name: 'dashboard' });
     }

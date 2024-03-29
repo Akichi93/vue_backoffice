@@ -72,16 +72,18 @@ export default {
 
     async getGraveCompagniesData() {
         const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
         try {
-            const response = await fetch(apiUrl.getcompagnie, {
-                headers: {
-                    Authorization: "Bearer " + token,
-                    "x-access-token": token,
-                }
-            });
-            if (!response.ok) {
-                throw new Error('Erreur lors de la récupération des données graves des compagnies.');
-            }
+            const response = await axios.get(apiUrl.getcompagnie, { headers });
+
+            // if (!response.ok) {
+            //     throw new Error('Erreur lors de la récupération des données graves des compagnies.');
+            // }
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("compagnies", newData);
         } catch (error) {
@@ -92,13 +94,15 @@ export default {
 
     async getGraveTauxCompagniesData() {
         const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
         try {
-            const response = await fetch(apiUrl.gettauxcompagnie, {
-                headers: {
-                    Authorization: "Bearer " + token,
-                    "x-access-token": token,
-                }
-            });
+            const response = await axios.get(apiUrl.gettauxcompagnie, { headers });
+
             // if (!response.ok) {
             //     throw new Error('Erreur lors de la récupération des données graves des taux compagnies.');
             // }
@@ -112,13 +116,15 @@ export default {
 
     async getGraveApporteursData() {
         const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
         try {
-            const response = await fetch(apiUrl.getapporteur, {
-                headers: {
-                    Authorization: "Bearer " + token,
-                    "x-access-token": token,
-                }
-            });
+            const response = await axios.get(apiUrl.getapporteur, { headers });
+
             // if (!response.ok) {
             //     throw new Error('Erreur lors de la récupération des données graves des apporteurs.');
             // }
@@ -132,16 +138,18 @@ export default {
 
     async getGraveTauxApporteursData() {
         const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
         try {
-            const response = await fetch(apiUrl.gettauxapporteur, {
-                headers: {
-                    Authorization: "Bearer " + token,
-                    "x-access-token": token,
-                }
-            });
-            if (!response.ok) {
-                throw new Error('Erreur lors de la récupération des données graves des taux apporteurs.');
-            }
+            const response = await axios.get(apiUrl.gettauxapporteur, { headers });
+
+            // if (!response.ok) {
+            //     throw new Error('Erreur lors de la récupération des données graves des taux apporteurs.');
+            // }
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("tauxapporteurs", newData);
         } catch (error) {
@@ -172,17 +180,21 @@ export default {
 
     async getGraveContratsData() {
         const token = AppStorage.getToken();
-        try {
 
-            const response = await axios.get(apiUrl.getcontrat, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+            const response = await axios.get(apiUrl.getcontrat, { headers });
+
             // Vérification de la réussite de la requête
             // if (response.status !== 200) {
             //     throw new Error('Erreur lors de la récupération des données graves des contrats.');
             // }
             const newData = response.data;
-        
+
             await AppStorage.updateSyncIndexedDB("contrats", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des contrats:', error);
@@ -192,10 +204,15 @@ export default {
 
     async getGraveAvenantsData() {
         const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
         try {
-            const response = await axios.get(apiUrl.getavenant, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await axios.get(apiUrl.getavenant, { headers });
+
             // if (!response.ok) {
             //     throw new Error('Erreur lors de la récupération des données graves des avenants.');
             // }
@@ -209,13 +226,15 @@ export default {
 
     async getGraveGarantiesData() {
         const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
         try {
-            const response = await fetch(apiUrl.getgarantie, {
-                headers: {
-                    Authorization: "Bearer " + token,
-                    "x-access-token": token,
-                }
-            });
+            const response = await axios.get(apiUrl.getgarantie, { headers });
+
             // if (!response.ok) {
             //     throw new Error('Erreur lors de la récupération des données graves des garanties.');
             // }
@@ -229,13 +248,16 @@ export default {
 
     async getGraveAutomobilesData() {
         const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
         try {
-            const response = await fetch(apiUrl.getautomobile, {
-                headers: {
-                    Authorization: "Bearer " + token,
-                    "x-access-token": token,
-                }
-            });
+
+            const response = await axios.get(apiUrl.getautomobile, { headers });
+            
             // if (!response.ok) {
             //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
             // }

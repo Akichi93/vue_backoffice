@@ -1706,8 +1706,40 @@ class AppStorage {
     }
 
     static async getSinistres() {
-        return this.getData('sinistres') || [];
+        // return this.getData('sinistres') || [];
+    
+        // Récupérer les données des différentes tables
+        const sinistres = await this.getData('sinistres') || [];
+        const clients = await this.getData('clients') || [];
+        const contrats = await this.getData('contrats') || [];
+        const branches = await this.getData('branches') || [];
+    
+        // Joindre les données des clients, branches et contrats aux sinistres
+        const contratsAvecDonnees = sinistres.map(sinistre => {
+            const contrat = contrats.find(contrat => contrat.uuidContrat === sinistre.uuidContrat);
+            const client = clients.find(client => client.uuidClient === contrat.uuidClient);
+            const branche = branches.find(branche => branche.uuidBranche === contrat.uuidBranche);
+    
+            return {
+                ...sinistre,
+                client,
+                contrat,
+                branche
+            };
+        });
+    
+        return contratsAvecDonnees;
     }
+
+     //Reglements
+     static async storeRegelements(reglements) {
+        await this.storeData('reglements', reglements);
+    }
+
+    static async getReglements() {
+        return this.getData('reglements') || [];
+    }
+    
 
     // statistiques
 

@@ -251,6 +251,28 @@ export function validateContratForm(form) {
   return errors;
 }
 
+export function validateSinistreForm(form) {
+  const errors = {};
+
+  if (!form.gestion_compagnie) {
+    errors.gestion_compagnie = 'La gestion de la compagnie est requise.';
+  } else if (form.gestion_compagnie.length < 3) {
+    errors.gestion_compagnie = 'La gestion de la compagnie doit avoir au moins 3 caractères.';
+  }
+
+  if (!form.reference_compagnie) {
+    errors.reference_compagnie = 'La référence de la compagnie est requise.';
+  } 
+
+  if (!form.commentaire) {
+    errors.commentaire = 'Le commentaire est requis.';
+  } else if (form.commentaire.length < 10) {
+    errors.commentaire = 'Le commentaire doit avoir au moins 10 caractères.';
+  }
+
+  return errors;
+}
+
 
 export function isValidEmail(email) {
   // Logique pour vérifier si l'email est valide

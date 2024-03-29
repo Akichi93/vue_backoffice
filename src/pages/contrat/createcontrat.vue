@@ -301,8 +301,7 @@
                         </div>
                         <div class="form-group">
                           <label>Type technique ou commercial:</label>
-                          <typecomponent :placeholder="'Choisir un type'" v-model="type">
-                          </typecomponent>
+                          <typecomponent :placeholder="'Choisir un type'" v-model="type"></typecomponent>
                         </div>
                         <div class="form-group">
                           <label>Carrosserie:</label>
@@ -1319,7 +1318,7 @@ export default {
               zone: this.zone,
               categorie: this.categorie_id,
               marque: this.marque_id,
-              genre_id: this.genre_id,
+              genre: this.genre_id,
               type: this.type,
               carosserie: this.carosserie,
               couleur: this.couleur_id,

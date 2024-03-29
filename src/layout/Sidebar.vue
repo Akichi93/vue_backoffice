@@ -1,37 +1,91 @@
 <template>
   <div class="sidebar" id="sidebar">
     <div class="sidebar-left slimscroll">
-      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <router-link v-if="isAdmin || isSuperadmin || isCourtier || isCommercial" class="nav-link menu" to="/home"
-          title="Accueil" role="tab" aria-controls="v-pills-dashboard" aria-selected="false"
-          :class="{ active: $route.path === '/home' }">
+      <div
+        class="nav flex-column nav-pills"
+        id="v-pills-tab"
+        role="tablist"
+        aria-orientation="vertical"
+      >
+        <router-link
+          v-if="isAdmin || isSuperadmin || isCourtier || isCommercial"
+          class="nav-link menu"
+          to="/home"
+          title="Accueil"
+          role="tab"
+          aria-controls="v-pills-dashboard"
+          aria-selected="false"
+          :class="{ active: $route.path === '/home' }"
+        >
           <span class="material-icons-outlined"> home </span>
         </router-link>
 
-        <router-link v-if="isAdmin || isSuperadmin || isCourtier || isCommercial" to="/courtage" class="nav-link menu"
-          title="Courtage" role="tab" aria-controls="v-pills-apps" aria-selected="false"
-          :class="{ active: $route.path === '/courtage' }" :replace="true">
+        <router-link
+          v-if="isAdmin || isSuperadmin || isCourtier || isCommercial"
+          to="/courtage"
+          class="nav-link menu"
+          title="Courtage"
+          role="tab"
+          aria-controls="v-pills-apps"
+          aria-selected="false"
+          :class="{ active: $route.path === '/courtage' }"
+          :replace="true"
+        >
           <span class="material-icons-outlined"> dashboard </span>
         </router-link>
 
-        <router-link v-if="isAdmin || isSuperadmin || isRh" to="/rh" class="nav-link menu" title="RH" role="tab"
-          aria-controls="v-pills-apps" aria-selected="false" :class="{ active: $route.path === '/rh' }" :replace="true">
+        <router-link
+          v-if="isAdmin || isSuperadmin || isRh"
+          to="/rh"
+          class="nav-link menu"
+          title="RH"
+          role="tab"
+          aria-controls="v-pills-apps"
+          aria-selected="false"
+          :class="{ active: $route.path === '/rh' }"
+          :replace="true"
+        >
           <span class="material-icons-outlined"> people </span>
         </router-link>
 
-        <router-link to="/statistique" class="nav-link menu" title="Statistiques" role="tab" aria-controls="v-pills-apps"
-          aria-selected="false" :class="{ active: $route.path === '/statistique' }" :replace="true">
+        <router-link
+          to="/statistique"
+          class="nav-link menu"
+          title="Statistiques"
+          role="tab"
+          aria-controls="v-pills-apps"
+          aria-selected="false"
+          :class="{ active: $route.path === '/statistique' }"
+          :replace="true"
+        >
           <span class="material-icons-outlined"> leaderboard </span>
         </router-link>
 
-        <router-link to="/tarification" class="nav-link menu" id="module" title="Tarifications" role="tab"
-          aria-controls="v-pills-apps" aria-selected="false" :class="{ active: $route.path === '/tarification' }"
-          :replace="true">
+        <router-link
+          to="/tarification"
+          class="nav-link menu"
+          id="module"
+          title="Tarifications"
+          role="tab"
+          aria-controls="v-pills-apps"
+          aria-selected="false"
+          :class="{ active: $route.path === '/tarification' }"
+          :replace="true"
+        >
           <span class="material-icons-outlined"> attach_money </span>
         </router-link>
 
-        <router-link v-if="isSuperadmin" to="entreprise" class="nav-link menu" title="Settings" id="enterprise" role="tab"
-          aria-selected="false" :class="{ active: $route.path === '/entreprise' }" :replace="true">
+        <router-link
+          v-if="isSuperadmin"
+          to="entreprise"
+          class="nav-link menu"
+          title="Settings"
+          id="enterprise"
+          role="tab"
+          aria-selected="false"
+          :class="{ active: $route.path === '/entreprise' }"
+          :replace="true"
+        >
           <span class="material-icons-outlined"> settings </span>
         </router-link>
       </div>
@@ -41,7 +95,7 @@
 <script>
 import AppStorage from "../db/AppStorage.js";
 import syncservice from "../services/syncService";
-import { timeSynchronise } from '../utils/constants/technicalConstant';
+import { timeSynchronise } from "../utils/constants/technicalConstant";
 export default {
   data() {
     return {
@@ -68,8 +122,12 @@ export default {
     },
   },
   mounted() {
-    
-    setInterval(this.checkConnection, timeSynchronise);
+    this.intervalId = setInterval(this.checkConnection, timeSynchronise);
+    // setInterval(this.checkConnection, timeSynchronise);
+  },
+  beforeDestroy() {
+    // Nettoyez l'intervalle lors de la destruction du composant
+    clearInterval(this.intervalId);
   },
   methods: {
     async checkConnection() {
@@ -78,7 +136,7 @@ export default {
         const response = await fetch(
           "https://fl4ir.loca.lt/api/check-internet-connection"
         );
-        
+
         const data = await response.json();
 
         this.isConnected = data.connected;
@@ -88,7 +146,7 @@ export default {
           // Execute checkAndSyncData service
           await syncservice.checkAndSyncData(); // Assuming syncservice is an async function that returns a promise
         } else {
-          console.log("Pas de connexion internet ")
+          console.log("Pas de connexion internet ");
         }
       } catch (error) {
         // Handle errors, e.g., network issues or server errors
