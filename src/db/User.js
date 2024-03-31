@@ -65,8 +65,10 @@ class User {
     }
 
     static async storeDataInIndexedDB(endpoint, storageKey, accessToken) {
+        const apiUrl = process.env.VUE_APP_API_BASE_URL;
         try {
-            const response = await axios.get(`https://fl4ir.loca.lt/api/auth/${endpoint}`, {
+
+            const response = await axios.get(`${apiUrl}/api/auth/${endpoint}`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
             });
 

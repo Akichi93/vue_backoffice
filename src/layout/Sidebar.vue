@@ -132,10 +132,14 @@ export default {
   methods: {
     async checkConnection() {
       try {
+        const apiUrl = process.env.VUE_APP_API_BASE_URL;
+
+        // Then use it in your fetch request
+        const response = await fetch(`${apiUrl}/api/check-internet-connection`);
         // Make an API request to your endpoint
-        const response = await fetch(
-          "https://fl4ir.loca.lt/api/check-internet-connection"
-        );
+        // const response = await fetch(
+        //   "https://fl4ir.loca.lt/api/check-internet-connection"
+        // );
 
         const data = await response.json();
 
