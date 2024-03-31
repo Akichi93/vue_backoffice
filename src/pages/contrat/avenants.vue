@@ -66,7 +66,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="avenant in avenants" :key="avenant.id_avenant">
+                  <template v-for="avenant in avenants" :key="avenant.uuidAvenant">
                     <tr>
                       <td v-text="avenant.type"></td>
                       <td>{{ avenant.nom_compagnie }}</td>

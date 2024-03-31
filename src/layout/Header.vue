@@ -195,8 +195,11 @@ export default {
       return this.roleactif === "COURTIER";
     },
   },
+  
   name: "Header",
 };
 </script>
+
+
 
 <style scoped></style>

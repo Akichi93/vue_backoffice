@@ -7,21 +7,31 @@
     <div class="page-wrapper">
       <div class="content container-fluid pb-0"></div>
 
-
-
       <form method="get">
         <div class="row">
           <div class="col-xl-3 col-md-6">
-            <select class="form-select mb-3" v-model="year" @select="optionSelected">
+            <select
+              class="form-select mb-3"
+              v-model="year"
+              @select="optionSelected"
+            >
               <option v-for="data in getYear" :value="data" :key="data">
                 {{ data }}
               </option>
             </select>
           </div>
-          <div class="col-xl-3 col-md-6" v-if="year != null" @change="getData()">
+          <div
+            class="col-xl-3 col-md-6"
+            v-if="year != null"
+            @change="getData()"
+          >
             <select class="form-select mb-3" v-model="branch">
               <option value="tous">Toutes les branches</option>
-              <option v-for="branche in branches" :value="branche.uuidBranche" :key="branche.uuidBranche">
+              <option
+                v-for="branche in branches"
+                :value="branche.uuidBranche"
+                :key="branche.uuidBranche"
+              >
                 {{ branche.nom_branche }}
               </option>
             </select>
@@ -77,7 +87,7 @@
           <div class="card flex-fill tickets-card">
             <div class="card-header">
               <div class="text-center w-100 p-3">
-                <h3 class="bl-text mb-1" v-text="countemission"></h3>
+                <h3 class="bl-text mb-1">{{ countemission }}</h3>
                 <h2>Emissions</h2>
               </div>
             </div>
@@ -123,7 +133,8 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
+import { formatNumberDecimalWithThousandsSeparator } from "../utils/helpers/thousandSeparator";
 import Header from "../layout/Header.vue";
 import Sidebar from "../layout/Sidebar.vue";
 import { Bar } from "vue-chartjs";
@@ -139,7 +150,7 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
-import AppStorage from '../db/AppStorage';
+import AppStorage from "../db/AppStorage";
 
 ChartJS.register(
   Title,
@@ -201,11 +212,11 @@ export default {
       },
     };
   },
+
   created() {
     this.getCategory();
     this.getTypes();
     this.getData();
-
 
     // Vérification initiale de la connexion
     // this.checkInternetConnectivity();
@@ -213,9 +224,6 @@ export default {
   name: "dashboard",
 
   components: { Header, Sidebar, Bar },
-
-
-
 
   methods: {
     // async checkInternetConnectivity() {
@@ -238,9 +246,6 @@ export default {
     //   }
     // },
 
-
-
-
     // showNotification(message, type) {
     //   // Configuration du toaster
     //   const toaster = createToaster({
@@ -259,7 +264,6 @@ export default {
     //   }
     // },
 
-
     optionSelected() {
       // L'année sélectionnée est stockée dans la variable 'year'
       console.log("Année sélectionnée :", this.year);
@@ -267,8 +271,7 @@ export default {
 
     async getCategory() {
       const groupedData = await AppStorage.getAvenantsGroupedByYear();
-      this.getYear = Object.keys(groupedData).map(year => parseInt(year));
-
+      this.getYear = Object.keys(groupedData).map((year) => parseInt(year));
 
       // console.log(this.getYear)
       // const token = localStorage.getItem("token");
@@ -304,7 +307,6 @@ export default {
     },
 
     async getData() {
-
       const token = localStorage.getItem("token");
 
       // Configurez les en-têtes de la requête
@@ -315,21 +317,27 @@ export default {
 
       const yearSelected = this.year;
 
-
-
       // Si branch est défini, utilisez sa valeur, sinon utilisez une valeur par défaut
-      const branch = this.branch !== null ? this.branch : 'Aucune branche sélectionnée';
+      const branch =
+        this.branch !== null ? this.branch : "Aucune branche sélectionnée";
 
       const data = await AppStorage.getDataByYearAndBranch(yearSelected, branch)
         .then((response) => {
-        
           this.contrat = response.contratsCount;
           this.prospect = response.prospectsCount;
           this.sinistre = response.sinistresCount;
           this.comissioncourtier = response.commissionCompagnieSum;
           this.comissionapporteur = response.commissionApporteurSum;
           this.echeance = response.expiredContractsCount;
-          this.countemission = response.countemission;
+          const nombre = response.countemission;
+
+          const nombreFormate = formatNumberDecimalWithThousandsSeparator(
+            nombre,
+            "fr-FR",
+            { style: "decimal" }
+          );
+
+          this.countemission = nombreFormate;
 
           const moisNoms = {
             "01": "JANVIER",
@@ -360,21 +368,13 @@ export default {
 
           const data = response.primes.map((prime) => prime.y);
 
-          const label = response.accessoires.map(
-            (accesoire) => accesoire.name
-          );
+          const label = response.accessoires.map((accesoire) => accesoire.name);
 
-          const donnees = response.accessoires.map(
-            (accesoire) => accesoire.y
-          );
+          const donnees = response.accessoires.map((accesoire) => accesoire.y);
 
-          const titre = response.compagnies.map(
-            (compagnie) => compagnie.name
-          );
+          const titre = response.compagnies.map((compagnie) => compagnie.name);
 
-          const graphs = response.compagnies.map(
-            (compagnie) => compagnie.y
-          );
+          const graphs = response.compagnies.map((compagnie) => compagnie.y);
 
           const colorPalette = [
             "#123E6B",
@@ -456,12 +456,6 @@ export default {
           console.error(error);
           throw error; // Si vous voulez transmettre l'erreur à la prochaine étape
         });
-
-
-
-
-
-
     },
   },
 };

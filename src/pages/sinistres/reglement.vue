@@ -58,209 +58,29 @@
                           <th scope="col">Beneficiaire</th>
                           <th scope="col">Type de reglement</th>
                           <th scope="col">Montant</th>
-                          <th scope="col">Actions</th>
+                          <!-- <th scope="col">Actions</th> -->
                         </tr>
                       </thead>
                       <tbody>
                         <template
-                          v-for="reglements_client in reglements_clients"
-                          :key="reglements_client.id_reglement"
+                          v-for="reglement in reglements"
+                          :key="reglement.uuiReglement"
                         >
                           <tr>
-                            <td>{{ reglements_client.date_reglement }}</td>
-                            <td>{{ reglements_client.mode }}</td>
-                            <td>{{ reglements_client.nom }}</td>
-                            <td>{{ reglements_client.type_reglement }}</td>
-                            <td>{{ reglements_client.montant }}</td>
-                            <td>
-                              <a
-                                href="#"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editReglementss"
-                                class="btn btn-secondary"
-                                @click="
-                                  updateReglement(
-                                    reglements_client.id_reglement
-                                  )
-                                "
-                              >
-                                <i class="ri-edit-box-line align-middle"></i
-                              ></a>
-
-                              <div
-                                class="modal fade"
-                                id="editReglement"
-                                tabindex="-1"
-                                aria-labelledby="exampleModalLabel"
-                                aria-hidden="true"
-                              >
-                                <div class="modal-dialog modal-dialog-centered">
-                                  <div class="modal-content">
-                                    <div class="modal-header bg-light p-3">
-                                      <h5
-                                        class="modal-title"
-                                        id="exampleModalLabel"
-                                      >
-                                        Modifier Reglememt
-                                      </h5>
-                                      <button
-                                        type="button"
-                                        class="btn-close"
-                                        data-bs-dismiss="modal"
-                                        aria-label="Close"
-                                        id="close-modal"
-                                      ></button>
-                                    </div>
-                                    <form>
-                                      <div class="modal-body">
-                                        <div class="form-group">
-                                          <input
-                                            type="hidden"
-                                            v-model="form.id_sinistre"
-                                            :modelValue="form.id_sinistre"
-                                          />
-                                        </div>
-                                        <div
-                                          class="mb-3"
-                                          id="modal-id"
-                                          style="display: none"
-                                        >
-                                          <label
-                                            for="id-field"
-                                            class="form-label"
-                                            >ID</label
-                                          >
-                                          <input
-                                            type="text"
-                                            id="id-field"
-                                            class="form-control"
-                                            placeholder="ID"
-                                            readonly=""
-                                          />
-                                        </div>
-
-                                        <div class="mb-3">
-                                          <label
-                                            for="customername-field"
-                                            class="form-label"
-                                            >Type de reglement</label
-                                          >
-                                          <select
-                                            class="form-control"
-                                            data-trigger=""
-                                            name="status-field"
-                                            id="status-field"
-                                            v-model="form.type"
-                                          >
-                                            <option value="">
-                                              Selectionnez
-                                            </option>
-                                            <option value="Client">
-                                              Client
-                                            </option>
-                                            <option value="Expert">
-                                              Expert
-                                            </option>
-                                            <option value="Garage">
-                                              Garage
-                                            </option>
-                                            <option value="Tiers">Tiers</option>
-                                          </select>
-                                        </div>
-
-                                        <div class="mb-3">
-                                          <label
-                                            for="nom-field"
-                                            class="form-label"
-                                            >Nom</label
-                                          >
-                                          <input
-                                            type="text"
-                                            id="nom-field"
-                                            class="form-control"
-                                            placeholder="Nom ...."
-                                            required=""
-                                            v-model="form.nom"
-                                            :modelValue="form.nom"
-                                          />
-                                        </div>
-
-                                        <div class="mb-3">
-                                          <label
-                                            for="phone-field"
-                                            class="form-label"
-                                            >Mode</label
-                                          >
-                                          <Multiselect
-                                            v-model="form.mode"
-                                            :options="modes"
-                                            placeholder="Choisir le mode"
-                                            :searchable="true"
-                                          />
-                                        </div>
-                                        <div class="mb-3">
-                                          <label
-                                            for="montant"
-                                            class="form-label"
-                                            >Montant</label
-                                          >
-                                          <input
-                                            type="number"
-                                            class="form-control"
-                                            v-model="form.montant"
-                                            :modelValue="form.montant"
-                                            id="montant"
-                                            name="montant"
-                                            placeholder="Montant"
-                                          />
-                                        </div>
-                                        <div>
-                                          <label
-                                            for="status-field"
-                                            class="form-label"
-                                            >Date</label
-                                          >
-                                          <input
-                                            type="date"
-                                            class="form-control"
-                                            v-model="form.date"
-                                            name="date"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                        <div
-                                          class="hstack gap-2 justify-content-end"
-                                        >
-                                          <button
-                                            type="button"
-                                            class="btn btn-light"
-                                            data-bs-dismiss="modal"
-                                          >
-                                            Annuler
-                                          </button>
-                                          <button
-                                            type="button"
-                                            class="btn btn-success"
-                                            id="add-btn"
-                                            @click="changeReglement()"
-                                          >
-                                            Modifier
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </form>
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
+                            <td>{{ reglement.date }}</td>
+                            <td>{{ reglement.mode }}</td>
+                            <td>{{ reglement.nom }}</td>
+                            <td>{{ reglement.type }}</td>
+                            <td>{{ formatMontant(reglement.montant) }}</td>
                           </tr>
                         </template>
                       </tbody>
                       <tfoot>
                         <tr>
-                          <th id="total" colspan="5">Total reversé :</th>
-                          <td>{{ reglements_client_sum }}</td>
+                          <th id="total" colspan="4">Total reversé :</th>
+                          <td>
+                            {{ sommes }}
+                          </td>
                         </tr>
                       </tfoot>
                     </table>
@@ -274,8 +94,7 @@
           <!-- end col -->
         </div>
 
-        <addReglement></addReglement>
-
+        <addReglement @reglement-add="refresh"></addReglement>
       </div>
     </div>
   </div>
@@ -285,195 +104,75 @@ import axios from "axios";
 import addReglement from "./addReglement.vue";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import Form from "vform";
-import $ from "jquery";
-import Multiselect from "@vueform/multiselect";
-
 import { createToaster } from "@meforma/vue-toaster";
+import { formatNumberWithThousandsSeparator } from "../../utils/helpers/thousandSeparator";
+import AppStorage from "../../db/AppStorage";
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
 });
 export default {
   components: {
-    Multiselect,
     Header,
     Sidebar,
     addReglement,
   },
   data() {
     return {
-      // id_sinistre:'',
-      form: new Form({
-        id: "",
-        referent: "",
-        mode: "",
-        date: "",
-        type: "",
-        nom: "",
-        montant: "",
-        id_sinistre: "",
-      }),
-      compagnieform: new Form({
-        id: "",
-        referent: "",
-        mode: "",
-        date: "",
-        type: "",
-        nom: "",
-        montant: "",
-        id_sinistre: "",
-      }),
       value: null,
-      referents: {},
-      reglements_clients: {},
+      //   referents: {},
+      reglements: {},
+      sommes: "",
       reglements_compagnies: {},
-      reglements_compagnie_sum: "",
-      reglements_client_sum: "",
+      //   reglements_compagnie_sum: "",
+      //   reglements_client_sum: "",
       modes: ["Espèces", "Carte", "Chèques"],
     };
   },
 
   methods: {
-    fetchData() {
-      this.error = this.contrats = null;
-      // this.loading = true;
-      axios
-        .get("/api/auth/get/apporteur")
-        .then((response) => {
-          // this.loading = true;
-          this.referents = response.data.apporteurs;
-        })
-        .catch((error) => {
-          // this.loading = false;
-          this.error = error.response.data.message || error.message;
-        });
+    formatMontant(montant) {
+      return formatNumberWithThousandsSeparator(montant);
     },
-    getReglement() {
-      let id = this.$route.params.id_sinistre;
-      // this.form.id_sinistre = myParam
-      axios
-        .get("/api/auth/get/reglements?sinistre=" + id)
-        .then((response) => {
-          // this.loading = true;
-          this.reglements_clients = response.data.reglements_client;
-          this.reglements_compagnies = response.data.reglements_compagnie;
-          this.reglements_compagnie_sum =
-            response.data.reglements_compagnie_sum;
-          this.reglements_client_sum = response.data.reglements_client_sum;
-        })
-        .catch((error) => {
-          // this.loading = false;
-          this.error = error.response.data.message || error.message;
-        });
-    },
-    showModal() {
-      this.form.reset();
-      let myParam = this.$route.params.id_sinistre;
-      this.form.id_sinistre = myParam;
-      window.$("#addReglement").modal("show");
-    },
-    
-    updateReglement(id, client = "Beneficiaire") {
-      let sinistre = this.$route.params.id_sinistre;
-      axios
-        .get(
-          "/api/auth/get/reglement?sinistre=" +
-            sinistre +
-            "&id=" +
-            id +
-            "&type=" +
-            client
-        )
-        .then((response) => {
-          // this.loading = true;
-          // this.reglements_clients = response.data.reglements_client;
-          // this.form.referent = response.data.reglement.referent
-          this.form.id = response.data.reglement.id_reglement;
-          this.form.mode = response.data.reglement.mode;
-          this.form.date = response.data.reglement.date_reglement;
-          this.form.type = response.data.reglement.type_reglement;
-          this.form.montant = response.data.reglement.montant;
-          this.form.nom = response.data.reglement.nom;
-          this.form.id_sinistre = response.data.reglement.id_sinistre;
-        })
-        .catch((error) => {
-          // this.loading = false;
-          this.error = error.response.data.message || error.message;
-        });
+    async getReglement() {
+      const uuidSinistre = this.$route.params.uuidSinistre;
 
-      window.$("#editReglement").modal("show");
-      // this.form.put('/api/update/reglement/'+id).then((response) => {
-      //     console.log(response.data)
-      // })
-    },
-    updateReglementCompagnie(id, client = "Block") {
-      let sinistre = this.$route.params.id_sinistre;
-      axios
-        .get(
-          "/api/auth/get/reglement?sinistre=" +
-            sinistre +
-            "&id=" +
-            id +
-            "&type=" +
-            client
-        )
-        .then((response) => {
-          // this.loading = true;
-          // this.reglements_clients = response.data.reglements_client;
-          // this.form.referent = response.data.reglement.referent
-          this.compagnieform.id = response.data.reglement.id_reglement;
-          this.compagnieform.mode = response.data.reglement.mode;
-          this.compagnieform.date = response.data.reglement.date_reglement;
-          this.compagnieform.type = response.data.reglement.type_reglement;
-          this.compagnieform.montant = response.data.reglement.montant;
-          this.compagnieform.nom = response.data.reglement.nom;
-          this.compagnieform.id_sinistre = response.data.reglement.id_sinistre;
-        })
-        .catch((error) => {
-          // this.loading = false;
-          this.error = error.response.data.message || error.message;
-        });
+      const reglements = await AppStorage.getReglementsByUuidSinistre(
+        uuidSinistre
+      );
 
-      window.$("#editReglementCompagnie").modal("show");
-      // this.form.put('/api/update/reglement/'+id).then((response) => {
-      //     console.log(response.data)
-      // })
+      this.reglements = reglements;
     },
 
-    changeReglement(id) {
-      this.form.put("/api/auth/change/reglement/" + id).then((response) => {
-        this.getReglement();
-        window.$("#editReglement").modal("hide");
-        toaster.success(`Reglement ajouté avec succès`, {
-          position: "top-right",
-        });
-        this.$toast.success("Reglement modifiée avec succès", {
-          // override the global option
-          position: "top-right",
-        });
+    async getSomme() {
+      const uuidSinistre = this.$route.params.uuidSinistre;
+
+      const reglements = await AppStorage.getSommeReglementsByUuidSinistre(
+        uuidSinistre
+      );
+
+     
+      const nombreFormate = formatNumberWithThousandsSeparator(
+        nombre,
+        "fr-FR",
+        { style: "decimal" }
+      );
+
+      this.sommes = nombreFormate;
+    },
+
+    async refresh() {
+      const uuidSinistre = this.$route.params.uuidSinistre;
+      AppStorage.getReglementsByUuidSinistre(uuidSinistre).then((result) => {
+        this.reglements = result;
       });
-    },
-
-    changeReglementCompagnie(id) {
-      this.compagnieform
-        .put("/api/auth/change/reglement/" + id)
-        .then((response) => {
-          this.getReglement();
-          toaster.success(`Client ajouté avec succès`, {
-            position: "top-right",
-          });
-          window.$("#editReglementCompagnie").modal("hide");
-          this.$toast.success("Reglement modifiée avec succès", {
-            // override the global option
-            position: "top-right",
-          });
-        });
+      await this.getSomme();
     },
   },
   created() {
-    this.fetchData();
+    // this.fetchData();
     this.getReglement();
+    this.getSomme();
   },
 };
 </script>

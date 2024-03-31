@@ -119,7 +119,7 @@ export default {
       return year + month + day;
     },
 
-    async addAvenant() {
+    async addAvenant() { 
       const uuidContrat = this.$route.params.uuidContrat;
       const uuidAvenant = uuidv4();
 

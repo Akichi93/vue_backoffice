@@ -71,7 +71,7 @@
                   <template v-for="(sinistre, i) in sinistres" :key="i">
                     <tr>
                       <td>
-                        {{ sinistre.contrat.numero_police }}
+                        <!-- {{ sinistre.contrat.numero_police }} -->
                       </td>
                       <td>{{ sinistre.client.nom_client }}</td>
                       <td>{{ sinistre.reference_compagnie }}</td>
@@ -251,6 +251,7 @@ export default {
     fetchData() {
       AppStorage.getSinistres().then((result) => {
         this.sinistres = result;
+        console.log(result)
       });
       // const token = localStorage.getItem("token");
 

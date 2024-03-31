@@ -1706,20 +1706,19 @@ class AppStorage {
     }
 
     static async getSinistres() {
-        // return this.getData('sinistres') || [];
-    
+
         // Récupérer les données des différentes tables
         const sinistres = await this.getData('sinistres') || [];
         const clients = await this.getData('clients') || [];
         const contrats = await this.getData('contrats') || [];
         const branches = await this.getData('branches') || [];
-    
+
         // Joindre les données des clients, branches et contrats aux sinistres
         const contratsAvecDonnees = sinistres.map(sinistre => {
             const contrat = contrats.find(contrat => contrat.uuidContrat === sinistre.uuidContrat);
             const client = clients.find(client => client.uuidClient === contrat.uuidClient);
             const branche = branches.find(branche => branche.uuidBranche === contrat.uuidBranche);
-    
+
             return {
                 ...sinistre,
                 client,
@@ -1727,19 +1726,64 @@ class AppStorage {
                 branche
             };
         });
-    
+
         return contratsAvecDonnees;
     }
 
-     //Reglements
-     static async storeRegelements(reglements) {
+    static async getInfoSinistreByUuid(uuidSinistre) {
+
+        const sinistres = await this.getSinistres();
+        const sinistreTrouve = sinistres.find(sinistre => sinistre.uuidSinistre === uuidSinistre);
+
+        const contrats = await this.getData('contrats') || [];
+
+        const contrat = contrats.find(contrat => contrat.uuidContrat === sinistreTrouve.uuidContrat);
+        const sinistreAvecDonnees = {
+            ...sinistreTrouve,
+            contrat
+        };
+
+        return sinistreAvecDonnees;
+
+    }
+
+    //Reglements
+    static async storeRegelements(reglements) {
         await this.storeData('reglements', reglements);
     }
 
     static async getReglements() {
         return this.getData('reglements') || [];
     }
-    
+
+    static async getReglementsByUuidSinistre(uuidSinistre) {
+        const allReglements = await this.getReglements();
+
+        // Filtrer les avenants en fonction de l'uuidReglement
+        const reglementsByUuidSinistre = allReglements.filter(reglement => reglement.uuidSinistre === uuidSinistre);
+
+        return reglementsByUuidSinistre;
+
+    }
+
+    static async getSommeReglementsByUuidSinistre(uuidSinistre) {
+        // Obtenir tous les règlements
+        const reglements = await this.getData('reglements') || [];
+
+        // // Filtrer les règlements par uuidSinistre spécifié
+        const reglementsByUuidSinistre = reglements.filter(reglement => reglement.uuidSinistre === uuidSinistre);
+
+        // Calculer la somme des règlements par uuidSinistre
+        const sumByUuidSinistre = reglementsByUuidSinistre.reduce((total, reglement) => total + reglement.montant, 0);
+
+        // Retourner les règlements par uuidSinistre ainsi que la somme des règlements
+        return sumByUuidSinistre
+
+    }
+
+
+
+
 
     // statistiques
 
