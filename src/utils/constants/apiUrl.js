@@ -1,6 +1,6 @@
 // const base_url = 'https://fl4ir.loca.lt/api/auth';
 
-const base_url = process.env.VUE_APP_API_BASE_URL;
+const base_url = import.meta.env.VITE_API_BASE_URL;
 
 export const apiUrl = {
     authentification: `${base_url}/login`,

@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     async logout() {
-      const apiUrl = process.env.VUE_APP_API_BASE_URL;
+      const apiUrl = import.meta.env.VUE_APP_API_BASE_URL;
 
       // Then use it in your fetch request
       const response = await fetch(`${apiUrl}/api/check-internet-connection`);
