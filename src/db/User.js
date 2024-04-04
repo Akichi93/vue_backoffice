@@ -65,7 +65,8 @@ class User {
     }
 
     static async storeDataInIndexedDB(endpoint, storageKey, accessToken) {
-        const apiUrl = import.meta.env.VUE_APP_API_BASE_URL;
+        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
         try {
 
             const response = await axios.get(`${apiUrl}/api/auth/${endpoint}`, {

@@ -132,7 +132,7 @@ export default {
   methods: {
     async checkConnection() {
       try {
-        const apiUrl = import.meta.env.VUE_APP_API_BASE_URL;
+        const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
         // Then use it in your fetch request
         const response = await fetch(`${apiUrl}/api/check-internet-connection`);

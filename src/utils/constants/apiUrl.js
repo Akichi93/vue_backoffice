@@ -3,7 +3,7 @@
 const base_url = import.meta.env.VITE_API_BASE_URL;
 
 export const apiUrl = {
-    authentification: `${base_url}/login`,
+    authentification: `${base_url}/api/auth/login`,
     postcontrat: `${base_url}/postcontrat`,
     getcontrat: `${base_url}/getcontrats`,
     postapporteur: `${base_url}/postapporteur`,
