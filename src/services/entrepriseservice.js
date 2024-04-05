@@ -11,7 +11,9 @@ export async function getEntreprisesList() {
     //     "x-access-token": token,
     // };
 
-    const response = await axios.get("https://fl4ir.loca.lt/api/auth/entreprises")
+    
+
+    const response = await axios.get("https://app.fl4ir.com/api/auth/entreprises")
     return response.data;
 
 }
