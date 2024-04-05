@@ -95,6 +95,7 @@
   
 </template>
 <script>
+import axios from "axios";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { getEntreprisesList } from "../../services/entrepriseservice";
