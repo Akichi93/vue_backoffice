@@ -44,7 +44,7 @@ export default {
   methods: {
     editEntreprise() {
       axios
-        .patch("/api/auth/entreprises/" + this.entreprisetoedit.id_entreprise, {
+        .patch("https://app.fl4ir.com/api/auth/entreprises/" + this.entreprisetoedit.id_entreprise, {
           nom: this.entreprisetoedit.nom,
           contact: this.entreprisetoedit.contact,
           email: this.entreprisetoedit.email,
