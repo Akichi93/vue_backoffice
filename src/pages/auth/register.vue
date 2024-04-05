@@ -124,25 +124,25 @@ export default {
           .catch((error) => {
             // console.log(error.response.headers);
 
-            if (error.response.status === 422) {
-              this.errors = error.response.data.errors;
-              // console.log(error.response.data.errors);
-              toaster.error(`Veuillez `, {
-                position: "top-right",
-              });
+            // if (error.response.status === 422) {
+            //   this.errors = error.response.data.errors;
+            //   // console.log(error.response.data.errors);
+            //   toaster.error(`Veuillez `, {
+            //     position: "top-right",
+            //   });
 
-              // console.log("Message non enregisté")
-            }
+            //   // console.log("Message non enregisté")
+            // }
 
-            if (error.response.status === 423) {
-              this.errors = error.response.data.errors;
-              // console.log(error.response.data.errors);
-              toaster.error(`Entreprise existante`, {
-                position: "top-right",
-              });
+            // if (error.response.status === 423) {
+            //   this.errors = error.response.data.errors;
+            //   // console.log(error.response.data.errors);
+            //   toaster.error(`Entreprise existante`, {
+            //     position: "top-right",
+            //   });
 
-              // console.log("Message non enregisté")
-            }
+            //   // console.log("Message non enregisté")
+            // }
 
             // else if (error.request) {
             //     // The request was made but no response was received
