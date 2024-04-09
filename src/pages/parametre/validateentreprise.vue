@@ -39,28 +39,40 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   props: ["entreprisetoedit"],
   methods: {
-    editEntreprise() {
-      axios
-        .patch("https://fl4ir.loca.lt/api/auth/entreprises/" + this.entreprisetoedit.id_entreprise, {
+    async editEntreprise() {
+      try {
+        const base_url = import.meta.env.VITE_API_BASE_URL;
+        const apiUrl = `${base_url}/api/auth/validateentreprise`;
+
+        const response = await axios.patch(apiUrl, {
+          entreprise: this.entreprisetoedit.id_entreprise,
           nom: this.entreprisetoedit.nom,
           contact: this.entreprisetoedit.contact,
           email: this.entreprisetoedit.email,
           adresse: this.entreprisetoedit.adresse,
-        })
-        .then((response) => {
-          this.fetchData();
-          if (response.status === 200) {
-            toaster.success(`Nouvelle entreprise enregistré`, {
-              position: "top-right",
-            });
-          }
-          console.log(response.data);
-        })
-        .catch((error) => console.log(error));
+        });
+
+        if (response.status === 200) {
+          // this.fetchData(); // Assuming fetchData() updates enterprise data after editing
+          toaster.success("Nouvelle entreprise enregistrée", {
+            position: "top-right",
+          });
+        }
+
+        console.log(response.data); // Log the response data if needed
+      } catch (error) {
+        console.error("Error updating entreprise:", error);
+        // Optionally, show a user-friendly error message or handle the error
+      }
     },
   },
 };

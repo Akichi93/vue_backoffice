@@ -68,7 +68,7 @@
                           data-bs-target="#edit_department"
                           ><i class="fas fa-check"></i
                         ></a>
-                        
+
                         <a
                           href="#"
                           data-bs-toggle="modal"
@@ -76,7 +76,6 @@
                           data-bs-target="#edit_department"
                           ><i class="fas fa-close"></i
                         ></a>
-
                       </td>
                       <td v-if="entreprise.statut == 1">PAS D'ACTION</td>
                     </tr>
@@ -88,18 +87,18 @@
         </div>
       </div>
 
-      <validateentreprise v-bind:entreprisetoedit="entreprisetoedit"></validateentreprise>
+      <validateentreprise
+        v-bind:entreprisetoedit="entreprisetoedit"
+      ></validateentreprise>
     </div>
   </div>
-
-  
 </template>
 <script>
 import axios from "axios";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { getEntreprisesList } from "../../services/entrepriseservice";
-import validateentreprise from "./validateentreprise.vue"
+import validateentreprise from "./validateentreprise.vue";
 import Multiselect from "@vueform/multiselect";
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
@@ -111,7 +110,7 @@ export default {
     Multiselect,
     Header,
     Sidebar,
-    validateentreprise
+    validateentreprise,
   },
   data() {
     return {
@@ -129,15 +128,18 @@ export default {
       });
     },
 
-    getEntreprise(id_entreprise) {
-      axios
-        .get("https://fl4ir.loca.lt/api/auth/entreprises/edit/" + id_entreprise)
-        .then((response) => {
-          this.entreprisetoedit = response.data;
-        })
-        .catch((error) => console.log(error));
+    async getEntreprise(id_entreprise) {
+      try {
+        const base_url = import.meta.env.VITE_API_BASE_URL;
+        const apiUrl = `${base_url}/api/auth/entreprises/edit/${id_entreprise}`;
+
+        const response = await axios.get(apiUrl);
+        this.entreprisetoedit = response.data;
+      } catch (error) {
+        console.error("Error fetching enterprise details:", error);
+        // Optionally, show a user-friendly error message
+      }
     },
-  
   },
 };
 </script>

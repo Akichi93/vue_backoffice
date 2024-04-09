@@ -13,7 +13,7 @@ export default {
     AppStorage.clear();
     AppStorage.deleteIndexedDB();
     this.$router.push({ name: "welcome" });
-    // this.logout();
+    this.logout();
   },
   methods: {
     async logout() {

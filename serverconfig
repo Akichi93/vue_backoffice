@@ -1,8 +1,8 @@
 
-# DEMO_APP
+# 3A_BACK_APP
 server {
 
-        server_name demo.fl4ir.com;
+        server_name back3a.fl4ir.com;
         add_header X-Frame-Options "SAMEORIGIN";
         add_header X-Content-Type-Options "nosniff";
         root /var/www/fl4ircourtage/backend_app/public;
@@ -21,7 +21,7 @@ server {
     error_page 404 /index.php;
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
         include snippets/fastcgi-php.conf;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
@@ -32,8 +32,8 @@ server {
     }
 
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/demo.fl4ir.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/demo.fl4ir.com/privkey.pem; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/back3a.fl4ir.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/back3a.fl4ir.com/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
@@ -41,14 +41,62 @@ server {
 }
 
 server {
-    if ($host = demo.fl4ir.com) {
+    if ($host = back3a.fl4ir.com) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
 
         listen 80;
 
-        server_name demo.fl4ir.com;
+        server_name back3a.fl4ir.com;
+    return 404; # managed by Certbot
+
+
+
+
+}
+
+#config 3A_VUE_APP_PANEL
+
+server {
+
+        server_name 3aassocies.fl4ir.com;
+        add_header X-Frame-Options "SAMEORIGIN";
+        add_header X-Content-Type-Options "nosniff";
+        root /var/www/fl4ircourtage/frontend_app/dist;
+        add_header X-XSS-Protection "1; mode=block";
+
+        index index.html;
+          charset utf-8;
+
+    location / {
+        root /var/www/fl4ircourtage/frontend_3a/dist;
+        try_files $uri  /index.html;
+    }
+
+    error_log  /var/log/nginx/vuecourtage-app-error.log;
+    access_log /var/log/nginx/vuecourtage-app-access.log;
+
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/3aassocies.fl4ir.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/3aassocies.fl4ir.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+}
+
+server {
+    if ($host = 3aassocies.fl4ir.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+        listen 80;
+
+        server_name 3aassocies.fl4ir.com;
     return 404; # managed by Certbot
 
 

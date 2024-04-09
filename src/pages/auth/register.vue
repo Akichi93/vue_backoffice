@@ -88,6 +88,11 @@
 <script>
 import axios from "axios";
 import { validateForm } from "../../utils/helpers/formValidation";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   data() {
     return {
@@ -115,7 +120,7 @@ export default {
           .post(`${base_url}/api/post-registration`, this.form)
           .then((res) => {
             toaster.success(
-              `Entreprise ajouté avec succès. Votre dossier est en traitemaent`,
+              `Entreprise ajouté avec succès. Votre dossier est en traitement`,
               {
                 position: "top-right",
               }
@@ -134,15 +139,13 @@ export default {
             //   // console.log("Message non enregisté")
             // }
 
-            // if (error.response.status === 423) {
-            //   this.errors = error.response.data.errors;
-            //   // console.log(error.response.data.errors);
-            //   toaster.error(`Entreprise existante`, {
-            //     position: "top-right",
-            //   });
-
-            //   // console.log("Message non enregisté")
-            // }
+            if (error.response.status === 423) {
+              this.errors = error.response.data.errors;
+              // console.log(error.response.data.errors);
+              toaster.error(`Entreprise existante`, {
+                position: "top-right",
+              });
+            }
 
             // else if (error.request) {
             //     // The request was made but no response was received
@@ -152,7 +155,7 @@ export default {
             //     console.log("Error", error.message);
             // }
           });
-        console.log("Formulaire soumis avec succès !");
+        // console.log("Formulaire soumis avec succès !");
       } else {
         console.log("Le formulaire contient des erreurs.");
       }

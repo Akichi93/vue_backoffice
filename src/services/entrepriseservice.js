@@ -11,9 +11,12 @@ export async function getEntreprisesList() {
     //     "x-access-token": token,
     // };
 
-    
+    const base_url = import.meta.env.VITE_API_BASE_URL;
 
-    const response = await axios.get("https://app.fl4ir.com/api/auth/entreprises")
+    const apiUrl = `${base_url}/api/auth/entreprises`;
+    const response = await axios.get(apiUrl);
+
+    // const response = await axios.get("https://app.fl4ir.com/api/auth/entreprises")
     return response.data;
 
 }

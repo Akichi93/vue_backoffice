@@ -1261,14 +1261,15 @@ class AppStorage {
             // Parcourir les avenants pour calculer la somme des commissions d'apporteurs pour l'année spécifiée
             avenants.forEach(avenant => {
                 // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = new Date(avenant.effet_police).getFullYear(); // Supposons que la propriété effet_police existe dans chaque objet avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété effet_police existe dans chaque objet avenant
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
-                if (anneeAvenant === annee) {
+                if (anneeAvenant === annee.toString()) {
                     // Ajouter la commission de cet avenant à la somme totale
                     commissionSum += avenant.commission || 0;
                 }
             });
+
 
             // Retourner la somme calculée
             return commissionSum;
@@ -1326,10 +1327,10 @@ class AppStorage {
             // Parcourir les avenants pour calculer la somme des commissions de la compagnie pour l'année spécifiée
             avenants.forEach(avenant => {
                 // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = new Date(avenant.effet_police).getFullYear(); // Supposons que la propriété effet_police existe dans chaque objet avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété effet_police existe dans chaque objet avenant
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
-                if (anneeAvenant === annee) {
+                if (anneeAvenant === annee.toString()) {
                     // Ajouter la commission de la compagnie de cet avenant à la somme totale
                     commissionCompagnieSum += avenant.commission_courtier || 0;
                 }
@@ -1398,10 +1399,10 @@ class AppStorage {
             // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque compagnie
             avenants.forEach(avenant => {
                 // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = new Date(avenant.effet_police).getFullYear(); // Supposons que la propriété effet_police existe dans chaque objet avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété effet_police existe dans chaque objet avenant
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
-                if (anneeAvenant === annee) {
+                if (anneeAvenant === annee.toString()) {
                     // Calculer la somme des accessoires et de la prime nette de cet avenant
                     const sum = (avenant.accessoires || 0) + (avenant.prime_nette || 0);
 
@@ -1476,12 +1477,13 @@ class AppStorage {
             // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque mois de l'année spécifiée
             avenants.forEach(avenant => {
                 // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = new Date(avenant.effet_police).getFullYear(); // Supposons que la propriété effet_police existe dans chaque objet avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4);// Supposons que la propriété effet_police existe dans chaque objet avenant
                 // Extraire le mois de la date d'effet_police de chaque avenant
-                const moisAvenant = new Date(avenant.effet_police).getMonth() + 1; // Les mois commencent à partir de 0, donc on ajoute 1
+                const moisAvenant = avenant.date_debut.substring(5, 7);
+                // const moisAvenant = new Date(avenant.effet_police).getMonth() + 1; // Les mois commencent à partir de 0, donc on ajoute 1
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
-                if (anneeAvenant === annee) {
+                if (anneeAvenant === annee.toString()) {
                     // Trouver l'objet correspondant au mois dans le tableau de résultats
                     let monthObject = results.find(obj => obj.name === moisAvenant);
 
@@ -1562,10 +1564,10 @@ class AppStorage {
             // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque branche de l'année spécifiée
             avenants.forEach(avenant => {
                 // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = new Date(avenant.effet_police).getFullYear(); // Supposons que la propriété effet_police existe dans chaque objet avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété effet_police existe dans chaque objet avenant
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
-                if (anneeAvenant === annee) {
+                if (anneeAvenant === annee.toString()) {
                     // Trouver l'objet correspondant à la branche dans le tableau de résultats
                     let branchObject = results.find(obj => obj.name === avenant.nom_branche);
 
@@ -1673,10 +1675,10 @@ class AppStorage {
             // Parcourir les avenants pour calculer la somme des émissions pour l'année spécifiée
             avenants.forEach(avenant => {
                 // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = new Date(avenant.effet_police).getFullYear(); // Supposons que la propriété effet_police existe dans chaque objet avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété effet_police existe dans chaque objet avenant
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
-                if (anneeAvenant === annee) {
+                if (anneeAvenant === annee.toString()) {
                     // Calculer la somme des émissions de cet avenant (accessoires, prime nette et frais courtier)
                     const sum = (avenant.accessoires || 0) + (avenant.prime_nette || 0) + (avenant.frais_courtier || 0);
 
@@ -1804,6 +1806,7 @@ class AppStorage {
     }
 
     static async getContratsByYear(annee) {
+
         // Récupérer tous les contrats
         const contrats = await this.getData('contrats') || [];
 
@@ -1816,6 +1819,7 @@ class AppStorage {
             return anneeEffetPolice === annee.toString(); // Convertir l'année spécifiée en chaîne de caractères pour la comparaison
         });
 
+
         return contratsDeAnnee;
     }
 
@@ -1827,11 +1831,12 @@ class AppStorage {
             // Filtrer les contrats pour obtenir ceux qui expirent dans l'année spécifiée
             const contratsExpirantDansAnnee = contrats.filter(contrat => {
                 // Extraire l'année de l'expiration de chaque contrat
-                const anneeExpiration = new Date(contrat.expire_le).getFullYear(); // Supposons que la propriété expire_le existe dans chaque objet contrat
+                const anneeExpiration = contrat.expire_le.substring(0, 4);
 
                 // Vérifier si l'année d'expiration du contrat correspond à l'année spécifiée
-                return anneeExpiration === annee;
+                return anneeExpiration === annee.toString();
             });
+
 
             return contratsExpirantDansAnnee;
         } catch (error) {
@@ -1840,10 +1845,67 @@ class AppStorage {
         }
     }
 
+    static async getContratsByBranch(annee, branche) {
+        // Récupérer tous les contrats
+        const contrats = await this.getData('contrats') || [];
+
+        // Filtrer les contrats par année et branche
+        const contratsFiltres = contrats.filter(contrat => {
+
+            const anneeEffet = contrat.effet_police.substring(0, 4);
+
+            return anneeEffet === annee.toString() && contrat.uuidBranche === branche;
+        });
+
+
+
+        return contratsFiltres;
+    }
+
+    static async getContratsExpireByBranch(annee, branche) {
+        const contrats = await this.getData('contrats') || [];
+
+        // Filtrer les contrats pour obtenir ceux qui expirent dans l'année spécifiée
+        const contratsFiltres = contrats.filter(contrat => {
+            // Extraire l'année de l'expiration de chaque contrat
+            const anneeExpiration = contrat.expire_le.substring(0, 4);
+
+            // Vérifier si l'année d'expiration du contrat correspond à l'année spécifiée
+            return anneeExpiration === annee.toString() && contrat.uuidBranche === branche;
+        });
+
+
+        return contratsFiltres;
+    }
+
+    static async getCommissionApporteurSumByBranch(annee, branche) {
+        // Obtenir les données des avenants
+        const avenants = await this.getData('avenants') || [];
+
+        // Initialiser la somme des commissions
+        let commissionSum = 0;
+
+        // Parcourir les avenants pour calculer la somme des commissions d'apporteurs pour l'année spécifiée
+        avenants.forEach(avenant => {
+            // Extraire l'année de la date d'effet_police de chaque avenant
+            const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété effet_police existe dans chaque objet avenant
+
+            // Vérifier si l'année de l'avenant correspond à l'année spécifiée
+            if (anneeAvenant === annee.toString() && contrat.uuidBranche === branche) {
+                // Ajouter la commission de cet avenant à la somme totale
+                commissionSum += avenant.commission || 0;
+            }
+        });
+
+        console.log(commissionSum)
+
+        // Retourner la somme calculée
+        return commissionSum;
+    }
+
 
 
     static async getDataByYearAndBranch(year, branch) {
-
         if (branch == 'Aucune branche sélectionnée') {
             // Si year est null, compter les prospects, les clients et les sinistres
             const contrats = await this.getData('contrats') || [];
@@ -1884,6 +1946,8 @@ class AppStorage {
         } else {
             if (branch == 'tous') {
 
+
+
                 const contrats = await this.getContratsByYear(year);
                 const prospects = await this.getData('prospects') || [];
                 const clients = await this.getData('clients') || [];
@@ -1892,8 +1956,8 @@ class AppStorage {
                 // Récupérer le nombre de contrats expirés
                 const expiredContractsCount = await this.getContratsExpireByYear(year);
 
-                const commissionApporteurSum = await this.getCommissionApporteurSumByYear(year);
-                const commissionCompagnieSum = await this.getCommissionCompagnieSumByYear(year);
+                const commissionApporteurSumYear = await this.getCommissionApporteurSumByYear(year);
+                const commissionCompagnieSumYear = await this.getCommissionCompagnieSumByYear(year);
                 const compagnies = await this.getAccessoiresPrimeNetteSumWithCompanyNameByYear(year);
                 const primes = await this.getAccessoiresPrimeNetteSumWithMonthByYear(year);
                 const accessoires = await this.getAccessoiresPrimeNetteSumWithAccessoryByYear(year);
@@ -1905,8 +1969,8 @@ class AppStorage {
                     clientsCount: clients.length,
                     sinistresCount: sinistres.length,
                     expiredContractsCount: expiredContractsCount.length,
-                    commissionApporteurSum: commissionApporteurSum,
-                    commissionCompagnieSum: commissionCompagnieSum,
+                    commissionApporteurSum: commissionApporteurSumYear,
+                    commissionCompagnieSum: commissionCompagnieSumYear,
                     compagnies: compagnies,
                     primes: primes,
                     accessoires: accessoires,
@@ -1915,15 +1979,30 @@ class AppStorage {
 
 
             } else {
+                const contrats = await this.getContratsByBranch(year, branch);
+                const prospects = await this.getData('prospects') || [];
+                const clients = await this.getData('clients') || [];
+                const sinistres = await this.getData('sinistres') || [];
+                // Récupérer le nombre de contrats expirés
+                const expiredContractsCount = await this.getContratsExpireByBranch(year, branch);
+                const commissionApporteurSumBranch = await this.getCommissionApporteurSumByBranch(year, branch);
+
+
+                return {
+                    contratsCount: contrats.length,
+                    prospectsCount: prospects.length,
+                    clientsCount: clients.length,
+                    sinistresCount: sinistres.length,
+                    expiredContractsCount: expiredContractsCount.length,
+                    commissionApporteurSum: commissionApporteurSumBranch,
+                    // commissionCompagnieSum: commissionCompagnieSumYear,
+                    // compagnies: compagnies,
+                    // primes: primes,
+                    // accessoires: accessoires,
+                    // countemission: emissionssum
+                };
 
             }
-
-
-            // Sinon, récupérer les prospects pour l'année spécifiée
-            // Implémentez ici la logique pour récupérer les prospects en fonction de l'année
-            // Par exemple :
-            // const prospects = await fetchDataForYear(year);
-            // return prospects;
         }
 
     }

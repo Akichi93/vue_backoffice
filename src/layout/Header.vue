@@ -110,7 +110,7 @@
           <router-link class="dropdown-item" to="/statsinistre"
             >Statistiques rh</router-link
           >
-         
+
           <router-link class="dropdown-item" to="/statsupprime"
             >Supprimes</router-link
           >
@@ -140,9 +140,10 @@
           <router-link class="dropdown-item" to="/profil"
             >Mon profile</router-link
           >
-          <router-link to="/logout" class="dropdown-item"
+          <a class="dropdown-item" href="#" @click="logout">Se déconnecter</a>
+          <!-- <router-link to="/logout" class="dropdown-item"
             >Se deconnecter</router-link
-          >
+          > -->
         </div>
       </li>
     </ul>
@@ -157,15 +158,18 @@
       ></a>
       <div class="dropdown-menu dropdown-menu-right">
         <a class="dropdown-item" href="">Mon profile</a>
-        <router-link to="/logout" class="dropdown-item"
+        <a class="dropdown-item" href="#" @click="logout">Se déconnecter</a>
+        <!-- <router-link to="/logout" class="dropdown-item"
           >Se deconnecter</router-link
-        >
+        > -->
       </div>
     </div>
   </div>
 </template>
 <script>
 import AppStorage from "../db/AppStorage.js";
+import syncservice from "../services/syncService.js";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -195,7 +199,34 @@ export default {
       return this.roleactif === "COURTIER";
     },
   },
-  
+  methods: {
+    async logout() {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+      // Then use it in your fetch request
+      const response = await axios.get(`${apiUrl}/api/check-internet-connection`);
+
+      // const data = await response.json();
+      const isConnected = response.data.connected;
+
+      if (isConnected) {
+        console.log("Déconnexion en cours...");
+        await syncservice.checkAndSyncData();
+
+        AppStorage.clear();
+        AppStorage.deleteIndexedDB();
+        this.$router.push({ name: "welcome" });
+      } else {
+        console.log("Veuillez vous connectez à internet");
+      }
+    
+      
+      {
+    
+}
+    },
+  },
+
   name: "Header",
 };
 </script>

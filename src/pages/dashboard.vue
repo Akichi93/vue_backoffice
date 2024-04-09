@@ -264,7 +264,10 @@ export default {
     //   }
     // },
 
-    optionSelected() {
+   async optionSelected() {
+      if(this.branch){
+        await this.getData();
+      }
       // L'année sélectionnée est stockée dans la variable 'year'
       console.log("Année sélectionnée :", this.year);
     },
@@ -321,6 +324,8 @@ export default {
       const branch =
         this.branch !== null ? this.branch : "Aucune branche sélectionnée";
 
+
+
       const data = await AppStorage.getDataByYearAndBranch(yearSelected, branch)
         .then((response) => {
           this.contrat = response.contratsCount;
@@ -329,15 +334,15 @@ export default {
           this.comissioncourtier = response.commissionCompagnieSum;
           this.comissionapporteur = response.commissionApporteurSum;
           this.echeance = response.expiredContractsCount;
-          const nombre = response.countemission;
+          this.countemission = response.countemission;
 
-          const nombreFormate = formatNumberDecimalWithThousandsSeparator(
-            nombre,
-            "fr-FR",
-            { style: "decimal" }
-          );
+          // const nombreFormate = formatNumberDecimalWithThousandsSeparator(
+          //   nombre,
+          //   "fr-FR",
+          //   { style: "decimal" }
+          // );
 
-          this.countemission = nombreFormate;
+          // this.countemission = nombreFormate;
 
           const moisNoms = {
             "01": "JANVIER",
