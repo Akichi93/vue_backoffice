@@ -1878,31 +1878,318 @@ class AppStorage {
         return contratsFiltres;
     }
 
+    // Fonction pour récupérer l'UUID de la branche à partir du nom de la branche
+    // static async getUuidBrancheNameByNomBranche(nomBranche) {
+    //     try {
+    //         // Charger les données des branches
+    //         const branches = await this.getData('branches') || [];
+
+    //         // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
+    //         for (const branch of branches) {
+    //             if (branch.nom_branche === nomBranche) {
+    //                 return branch.uuidBranche; // Retourner l'UUID de la branche trouvée
+    //             }
+    //         }
+
+    //         // Si aucun UUID n'est trouvé pour le nom de branche spécifié, retourner null ou une valeur par défaut
+    //         return null; // Ou retourner une valeur par défaut comme undefined, selon votre cas d'utilisation
+    //     } catch (error) {
+    //         console.error('Erreur lors de la recherche de l\'UUID de la branche :', error);
+    //         throw error;
+    //     }
+    // }
+
+
     static async getCommissionApporteurSumByBranch(annee, branche) {
-        // Obtenir les données des avenants
+        try {
+            // Obtenir les données des avenants
+            const avenants = await this.getData('avenants') || [];
+            const branches = await this.getData('branches') || [];
+
+            // console.log(branche)
+
+            // Initialiser la somme des commissions
+            let commissionSum = 0;
+
+            // Parcourir les avenants pour calculer la somme des commissions d'apporteurs pour l'année spécifiée et la branche spécifiée
+            avenants.forEach(avenant => {
+                // Extraire l'année de la date de début de chaque avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4);
+                let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
+
+                // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
+                for (const branch of branches) {
+                    if (branch.nom_branche === avenant.nom_branche) {
+                        uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
+                        break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                    }
+                }
+
+
+                // Vérifier si l'année de l'avenant correspond à l'année spécifiée et que la branche correspond
+                if (anneeAvenant === annee.toString()) {
+
+
+                    if (uuidBrancheFound && uuidBrancheFound === branche) {
+                        // Ajouter la commission de cet avenant à la somme totale
+                        commissionSum += avenant.commission || 0;
+                    }
+                }
+            });
+            // console.log(commissionSum)
+            // Retourner la somme calculée
+            return commissionSum;
+        } catch (error) {
+            console.error('Erreur lors du calcul de la somme des commissions :', error);
+            throw error;
+        }
+    }
+
+    static async getCommissionCompagnieSumByBranch(annee, branche) {
+        try {
+            // Obtenir les données des avenants
+            const avenants = await this.getData('avenants') || [];
+            const branches = await this.getData('branches') || [];
+
+            // console.log(branche)
+
+            // Initialiser la somme des commissions
+            let commissionSum = 0;
+
+            // Parcourir les avenants pour calculer la somme des commissions d'apporteurs pour l'année spécifiée et la branche spécifiée
+            avenants.forEach(avenant => {
+                // Extraire l'année de la date de début de chaque avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4);
+                let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
+
+                // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
+                for (const branch of branches) {
+                    if (branch.nom_branche === avenant.nom_branche) {
+                        uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
+                        break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                    }
+                }
+
+
+                // Vérifier si l'année de l'avenant correspond à l'année spécifiée et que la branche correspond
+                if (anneeAvenant === annee.toString()) {
+
+
+                    if (uuidBrancheFound && uuidBrancheFound === branche) {
+                        // Ajouter la commission de cet avenant à la somme totale
+                        commissionSum += avenant.commission_courtier || 0;
+                    }
+                }
+            });
+            // console.log(commissionSum)
+            // Retourner la somme calculée
+            return commissionSum;
+        } catch (error) {
+            console.error('Erreur lors du calcul de la somme des commissions :', error);
+            throw error;
+        }
+    }
+
+    static async getAccessoiresPrimeNetteSumWithCompanyNameByBranch(annee, branche) {
         const avenants = await this.getData('avenants') || [];
+        const branches = await this.getData('branches') || [];
 
-        // Initialiser la somme des commissions
-        let commissionSum = 0;
+        // Initialiser le tableau de résultats
+        const results = [];
 
-        // Parcourir les avenants pour calculer la somme des commissions d'apporteurs pour l'année spécifiée
+        // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque compagnie
         avenants.forEach(avenant => {
             // Extraire l'année de la date d'effet_police de chaque avenant
-            const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété effet_police existe dans chaque objet avenant
+            const anneeAvenant = avenant.date_debut.substring(0, 4);
+            let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
+
+            // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
+            for (const branch of branches) {
+                if (branch.nom_branche === avenant.nom_branche) {
+                    uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
+                    break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                }
+            }
 
             // Vérifier si l'année de l'avenant correspond à l'année spécifiée
-            if (anneeAvenant === annee.toString() && contrat.uuidBranche === branche) {
-                // Ajouter la commission de cet avenant à la somme totale
-                commissionSum += avenant.commission || 0;
+            if (anneeAvenant === annee.toString()) {
+
+                if (uuidBrancheFound && uuidBrancheFound === branche) {
+                    // Calculer la somme des accessoires et de la prime nette de cet avenant
+                    const sum = (avenant.accessoires || 0) + (avenant.prime_nette || 0);
+
+                    // Ajouter la somme calculée et le nom de la compagnie au tableau des résultats
+                    results.push({
+                        name: avenant.nom_compagnie,
+                        y: sum
+                    });
+                }
+
             }
         });
 
-        console.log(commissionSum)
-
-        // Retourner la somme calculée
-        return commissionSum;
+        // Retourner le tableau contenant les résultats
+        return results;
     }
 
+    static async getAccessoiresPrimeNetteSumWithMonthByBranch(annee, branche) {
+        try {
+            // Obtenir les données des avenants
+            const avenants = await this.getData('avenants') || [];
+            const branches = await this.getData('branches') || [];
+
+            // Initialiser le tableau de résultats
+            const results = [];
+
+            // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque mois de l'année spécifiée
+            avenants.forEach(avenant => {
+                // Extraire l'année de la date d'effet_police de chaque avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4);// Supposons que la propriété effet_police existe dans chaque objet avenant
+                // Extraire le mois de la date d'effet_police de chaque avenant
+                const moisAvenant = avenant.date_debut.substring(5, 7);
+
+                let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
+
+                // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
+                for (const branch of branches) {
+                    if (branch.nom_branche === avenant.nom_branche) {
+                        uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
+                        break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                    }
+                }
+
+
+
+                // Vérifier si l'année de l'avenant correspond à l'année spécifiée
+                if (anneeAvenant === annee.toString()) {
+                    if (uuidBrancheFound && uuidBrancheFound === branche) {
+                        // Trouver l'objet correspondant au mois dans le tableau de résultats
+                        let monthObject = results.find(obj => obj.name === moisAvenant);
+
+                        // Si l'objet n'existe pas, le créer et l'ajouter au tableau des résultats
+                        if (!monthObject) {
+                            monthObject = {
+                                name: moisAvenant,
+                                y: 0
+                            };
+                            results.push(monthObject);
+                        }
+
+                        // Ajouter la somme des accessoires et de la prime nette de cet avenant au total du mois
+                        monthObject.y += (avenant.accessoires || 0) + (avenant.prime_nette || 0);
+                    }
+
+                }
+            });
+
+            // Retourner le tableau contenant les résultats
+            return results;
+        } catch (error) {
+            console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette pour chaque mois de l\'année spécifiée :', error);
+            throw error;
+        }
+    }
+
+    static async getAccessoiresPrimeNetteSumWithAccessoryByBranch(annee, branche) {
+        try {
+            // Obtenir les données des avenants
+            const avenants = await this.getData('avenants') || [];
+            const branches = await this.getData('branches') || [];
+
+            // Initialiser le tableau de résultats
+            const results = [];
+
+            // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque branche de l'année spécifiée
+            avenants.forEach(avenant => {
+                // Extraire l'année de la date d'effet_police de chaque avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4);
+
+                let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
+
+                // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
+                for (const branch of branches) {
+                    if (branch.nom_branche === avenant.nom_branche) {
+                        uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
+                        break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                    }
+                }
+
+                // Vérifier si l'année de l'avenant correspond à l'année spécifiée
+                if (anneeAvenant === annee.toString()) {
+
+                    if (uuidBrancheFound && uuidBrancheFound === branche) {
+                        // Trouver l'objet correspondant à la branche dans le tableau de résultats
+                        let branchObject = results.find(obj => obj.name === avenant.nom_branche);
+
+                        // Si l'objet n'existe pas, le créer et l'ajouter au tableau des résultats
+                        if (!branchObject) {
+                            branchObject = {
+                                name: avenant.nom_branche,
+                                y: 0
+                            };
+                            results.push(branchObject);
+                        }
+
+                        // Ajouter la somme des accessoires et de la prime nette de cet avenant au total de la branche
+                        branchObject.y += (avenant.accessoires || 0) + (avenant.prime_nette || 0);
+                    }
+
+                }
+            });
+
+            // Retourner le tableau contenant les résultats
+            return results;
+        } catch (error) {
+            console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette pour chaque branche de l\'année spécifiée :', error);
+            throw error;
+        }
+    }
+
+    static async getEmissionsByBranch(annee, branche) {
+        try {
+            // Obtenir les données des avenants
+            const avenants = await this.getData('avenants') || [];
+
+            const branches = await this.getData('branches') || [];
+
+            // Initialiser la somme des émissions
+            let totalEmissions = 0;
+
+            // Parcourir les avenants pour calculer la somme des émissions pour l'année spécifiée
+            avenants.forEach(avenant => {
+                // Extraire l'année de la date d'effet_police de chaque avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4);
+
+                let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
+
+                // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
+                for (const branch of branches) {
+                    if (branch.nom_branche === avenant.nom_branche) {
+                        uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
+                        break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                    }
+                }
+
+                // Vérifier si l'année de l'avenant correspond à l'année spécifiée
+                if (anneeAvenant === annee.toString()) {
+                    if (uuidBrancheFound && uuidBrancheFound === branche) {
+                        const sum = (avenant.accessoires || 0) + (avenant.prime_nette || 0) + (avenant.frais_courtier || 0);
+
+                        // Ajouter la somme calculée à la somme totale
+                        totalEmissions += sum;
+                    }
+                    // Calculer la somme des émissions de cet avenant (accessoires, prime nette et frais courtier)
+
+                }
+            });
+
+            // Retourner la somme des émissions calculée pour l'année spécifiée
+            return totalEmissions;
+        } catch (error) {
+            console.error('Erreur lors du calcul de la somme des émissions pour une année spécifique :', error);
+            throw error;
+        }
+    }
 
 
     static async getDataByYearAndBranch(year, branch) {
@@ -1986,6 +2273,11 @@ class AppStorage {
                 // Récupérer le nombre de contrats expirés
                 const expiredContractsCount = await this.getContratsExpireByBranch(year, branch);
                 const commissionApporteurSumBranch = await this.getCommissionApporteurSumByBranch(year, branch);
+                const commissionCompagnieSumBranch = await this.getCommissionCompagnieSumByBranch(year, branch);
+                const compagnies = await this.getAccessoiresPrimeNetteSumWithCompanyNameByBranch(year, branch);
+                const primes = await this.getAccessoiresPrimeNetteSumWithMonthByBranch(year, branch);
+                const accessoires = await this.getAccessoiresPrimeNetteSumWithAccessoryByBranch(year, branch);
+                const emissionssum = await this.getEmissionsByBranch(year, branch);
 
 
                 return {
@@ -1995,11 +2287,11 @@ class AppStorage {
                     sinistresCount: sinistres.length,
                     expiredContractsCount: expiredContractsCount.length,
                     commissionApporteurSum: commissionApporteurSumBranch,
-                    // commissionCompagnieSum: commissionCompagnieSumYear,
-                    // compagnies: compagnies,
-                    // primes: primes,
-                    // accessoires: accessoires,
-                    // countemission: emissionssum
+                    commissionCompagnieSum: commissionCompagnieSumBranch,
+                    compagnies: compagnies,
+                    primes: primes,
+                    accessoires: accessoires,
+                    countemission: emissionssum
                 };
 
             }

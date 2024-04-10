@@ -13,7 +13,7 @@
             <select
               class="form-select mb-3"
               v-model="year"
-              @select="optionSelected"
+              @change="optionSelected"
             >
               <option v-for="data in getYear" :value="data" :key="data">
                 {{ data }}
@@ -268,8 +268,6 @@ export default {
       if(this.branch){
         await this.getData();
       }
-      // L'année sélectionnée est stockée dans la variable 'year'
-      console.log("Année sélectionnée :", this.year);
     },
 
     async getCategory() {

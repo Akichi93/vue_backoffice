@@ -41,55 +41,55 @@ export default {
         const syncPromises = [];
 
         if (branchesToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-branches', branchesToSync, 'branches'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-branches`, branchesToSync, 'branches'));
         }
 
         if (prospectsToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-prospects', prospectsToSync, 'prospects'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-prospects`, prospectsToSync, 'prospects'));
         }
 
         if (clientsToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-clients', clientsToSync, 'clients'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-clients`, clientsToSync, 'clients'));
         }
 
         if (compagniesToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-compagnies', compagniesToSync, 'compagnies'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-compagnies`, compagniesToSync, 'compagnies'));
         }
 
         if (tauxcompagniesToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-tauxcompagnies', tauxcompagniesToSync, 'tauxcompagnies'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-tauxcompagnies`, tauxcompagniesToSync, 'tauxcompagnies'));
         }
 
         if (apporteursToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-apporteurs', apporteursToSync, 'apporteurs'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-apporteurs`, apporteursToSync, 'apporteurs'));
         }
 
         if (tauxapporteursToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-tauxapporteurs', tauxapporteursToSync, 'tauxapporteurs'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-tauxapporteurs`, tauxapporteursToSync, 'tauxapporteurs'));
         }
 
         if (contratsToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-contrats', contratsToSync, 'contrats'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-contrats`, contratsToSync, 'contrats'));
         }
 
         if (avenantsToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-avenants', avenantsToSync, 'avenants'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-avenants`, avenantsToSync, 'avenants'));
         }
 
         if (automobilesToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-automobiles', automobilesToSync, 'automobiles'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-automobiles`, automobilesToSync, 'automobiles'));
         }
 
         if (garantiesToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-garanties', garantiesToSync, 'garanties'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-garanties`, garantiesToSync, 'garanties'));
         }
 
         if (sinistresToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-sinistres', sinistresToSync, 'sinistres'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-sinistres`, sinistresToSync, 'sinistres'));
         }
 
         if (reglementsToSync.length > 0) {
-            syncPromises.push(this.syncData('${base_url}/api/auth/sync-reglements', reglementsToSync, 'reglements'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, reglementsToSync, 'reglements'));
         }
 
         // Attendre que toutes les synchronisations soient terminées
