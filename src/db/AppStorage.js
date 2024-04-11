@@ -1241,13 +1241,21 @@ class AppStorage {
             // Arrondir la somme à deux chiffres après la virgule
             commissionSum = commissionSum.toFixed(2);
 
-            // Retourner la somme calculée
-            return commissionSum;
+            // Formater la somme avec séparateur de milliers et deux chiffres après la virgule
+            const formattedCommissionSum = parseFloat(commissionSum).toLocaleString('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            // Retourner la somme calculée formatée
+            return formattedCommissionSum;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme de commission apporteur :', error);
             throw error;
         }
     }
+
+
 
 
     static async getCommissionApporteurSumByYear(annee) {
@@ -1261,23 +1269,33 @@ class AppStorage {
             // Parcourir les avenants pour calculer la somme des commissions d'apporteurs pour l'année spécifiée
             avenants.forEach(avenant => {
                 // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété effet_police existe dans chaque objet avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété date_debut existe dans chaque objet avenant
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
                 if (anneeAvenant === annee.toString()) {
-                    // Ajouter la commission de cet avenant à la somme totale
-                    commissionSum += avenant.commission || 0;
+                    // Vérifier si la commission est un nombre avant de l'ajouter à la somme
+                    if (!isNaN(avenant.commission)) {
+                        // Ajouter la commission de cet avenant à la somme totale
+                        commissionSum += parseFloat(avenant.commission);
+                    }
                 }
             });
 
+            // Arrondir la somme à deux chiffres après la virgule
+            commissionSum = commissionSum.toFixed(2);
 
-            // Retourner la somme calculée
-            return commissionSum;
+            // Formater la somme avec le séparateur de milliers
+            const formattedCommissionSum = parseFloat(commissionSum).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            // Retourner la somme calculée avec le séparateur de milliers et les deux chiffres après la virgule
+            return formattedCommissionSum;
         } catch (error) {
-            console.error('Erreur lors du calcul de la somme de commission apporteur :', error);
+            console.error('Erreur lors du calcul de la somme de commission apporteur pour l\'année ' + annee + ' :', error);
             throw error;
         }
     }
+
+
 
 
     static async getCommissionCompagnieSum() {
@@ -1288,26 +1306,31 @@ class AppStorage {
             // Initialiser la somme des commissions
             let commissionCourtierSum = 0;
 
-            // Parcourir les avenants pour calculer la somme des commissions d'apporteurs
+            // Parcourir les avenants pour calculer la somme des commissions de courtier
             avenants.forEach(avenant => {
-                // Vérifier si la valeur est un nombre avant de l'ajouter à la somme
+                // Extraire et convertir la commission de courtier en nombre
                 const commission = parseFloat(avenant.commission_courtier);
+
+                // Vérifier si la commission est un nombre valide
                 if (!isNaN(commission)) {
-                    // Ajouter la commission de cet avenant à la somme totale
+                    // Ajouter la commission à la somme totale
                     commissionCourtierSum += commission;
                 }
             });
 
-            // Si la somme est toujours NaN, cela signifie qu'il n'y avait aucune commission valide à ajouter
-            if (isNaN(commissionCourtierSum)) {
+            // Vérifier si la somme calculée est NaN ou vide
+            if (isNaN(commissionCourtierSum) || commissionCourtierSum === 0) {
                 throw new Error('Aucune commission valide à ajouter.');
             }
 
-            // Arrondir la somme à deux chiffres après la virgule
-            commissionCourtierSum = commissionCourtierSum.toFixed(2);
+            // Formater la somme avec un séparateur de milliers et deux chiffres après la virgule
+            const formattedSum = commissionCourtierSum.toLocaleString('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
 
-            // Retourner la somme calculée
-            return commissionCourtierSum;
+            // Retourner la somme calculée formatée
+            return formattedSum;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme de commission courtier :', error);
             throw error;
@@ -1315,34 +1338,39 @@ class AppStorage {
     }
 
 
-
     static async getCommissionCompagnieSumByYear(annee) {
         try {
             // Obtenir les données des avenants
             const avenants = await this.getData('avenants') || [];
 
-            // Initialiser la somme des commissions
+            // Initialiser la somme des commissions de la compagnie pour l'année spécifiée
             let commissionCompagnieSum = 0;
 
             // Parcourir les avenants pour calculer la somme des commissions de la compagnie pour l'année spécifiée
             avenants.forEach(avenant => {
-                // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété effet_police existe dans chaque objet avenant
+                // Extraire l'année de la date de début de chaque avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété date_debut existe dans chaque objet avenant
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
                 if (anneeAvenant === annee.toString()) {
                     // Ajouter la commission de la compagnie de cet avenant à la somme totale
-                    commissionCompagnieSum += avenant.commission_courtier || 0;
+                    const commission = parseFloat(avenant.commission_courtier) || 0;
+                    commissionCompagnieSum += commission;
                 }
             });
 
-            // Retourner la somme calculée
-            return commissionCompagnieSum;
+            // Formater la somme avec un séparateur de milliers si nécessaire
+            const formattedCommissionSum = commissionCompagnieSum.toLocaleString('fr-FR');
+
+            // Retourner la somme calculée formatée
+            return formattedCommissionSum;
         } catch (error) {
-            console.error('Erreur lors du calcul de la somme de commission de la compagnie :', error);
+            console.error('Erreur lors du calcul de la somme de commission de la compagnie pour une année spécifique :', error);
             throw error;
         }
     }
+
+
 
 
     static async getAccessoiresPrimeNetteSumWithCompanyName() {
@@ -1426,43 +1454,73 @@ class AppStorage {
 
     static async getAccessoiresPrimeNetteSumWithMonth() {
         try {
-            // Obtenir les données des avenants
             const avenants = await this.getData('avenants') || [];
-
-            // Initialiser un objet pour stocker les sommes par mois
-            const sumsByMonth = {};
-
-            // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque mois
+    
+            // Initialiser un objet pour stocker les sommes par mois et par année
+            const sumsByMonthAndYear = {};
+    
+            // Parcourir les avenants pour calculer les sommes par mois et par année
             avenants.forEach(avenant => {
-                // Récupérer le nom du mois
                 const month = avenant.mois;
-
+                const year = avenant.annee;
+    
                 // Calculer la somme des accessoires et de la prime nette de cet avenant
                 const sum = parseFloat(avenant.accessoires || 0) + parseFloat(avenant.prime_nette || 0);
-
-                // Ajouter la somme au total du mois correspondant
-                if (sumsByMonth[month]) {
-                    sumsByMonth[month] += sum;
+    
+                // Créer une clé pour l'année si elle n'existe pas encore dans sumsByMonthAndYear
+                if (!sumsByMonthAndYear[year]) {
+                    sumsByMonthAndYear[year] = {};
+                }
+    
+                // Ajouter la somme au total du mois correspondant pour cette année
+                if (sumsByMonthAndYear[year][month]) {
+                    sumsByMonthAndYear[year][month] += sum;
                 } else {
-                    sumsByMonth[month] = sum;
+                    sumsByMonthAndYear[year][month] = sum;
                 }
             });
-
-            // Convertir l'objet en tableau d'objets pour la sortie et arrondir les valeurs à deux chiffres après la virgule
-            const results = Object.keys(sumsByMonth).map(month => {
-                return {
-                    name: month,
-                    y: parseFloat(sumsByMonth[month].toFixed(2)) // Arrondir à deux chiffres après la virgule
-                };
+    
+            // Convertir l'objet en tableau d'objets pour la sortie
+            const results = [];
+    
+            // Parcourir les années et les mois dans sumsByMonthAndYear
+            for (const year in sumsByMonthAndYear) {
+                for (const month in sumsByMonthAndYear[year]) {
+                    const sum = parseFloat(sumsByMonthAndYear[year][month].toFixed(2)); // Arrondir à deux chiffres après la virgule
+                    results.push({
+                        name: `${month} ${year}`,
+                        y: sum
+                    });
+                }
+            }
+    
+            // Trier les résultats par mois et année
+            results.sort((a, b) => {
+                // Extraire le mois et l'année des noms
+                const [monthA, yearA] = a.name.split(' ');
+                const [monthB, yearB] = b.name.split(' ');
+    
+                // Convertir le mois en nombre pour la comparaison
+                const monthNumberA = new Date(Date.parse(`${monthA} 1, 2000`)).getMonth() + 1;
+                const monthNumberB = new Date(Date.parse(`${monthB} 1, 2000`)).getMonth() + 1;
+    
+                // Comparer d'abord par année, puis par mois si les années sont égales
+                if (yearA !== yearB) {
+                    return yearA - yearB;
+                } else {
+                    return monthNumberA - monthNumberB;
+                }
             });
-
-            // Retourner le tableau contenant les résultats
+    
+            // Retourner le tableau contenant les résultats triés
             return results;
         } catch (error) {
-            console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette avec le nom du mois :', error);
+            console.error('Erreur lors du calcul des sommes par mois et par année :', error);
             throw error;
         }
     }
+    
+
 
 
 
@@ -1477,10 +1535,9 @@ class AppStorage {
             // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque mois de l'année spécifiée
             avenants.forEach(avenant => {
                 // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = avenant.date_debut.substring(0, 4);// Supposons que la propriété effet_police existe dans chaque objet avenant
-                // Extraire le mois de la date d'effet_police de chaque avenant
-                const moisAvenant = avenant.date_debut.substring(5, 7);
-                // const moisAvenant = new Date(avenant.effet_police).getMonth() + 1; // Les mois commencent à partir de 0, donc on ajoute 1
+                const anneeAvenant = avenant.date_debut.substring(0, 4);
+                // Extraire le mois de la date d'effet_police de chaque avenant et concaténer avec l'année
+                const moisAvenant = `${avenant.date_debut.substring(5, 7)} ${anneeAvenant}`;
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
                 if (anneeAvenant === annee.toString()) {
@@ -1508,6 +1565,7 @@ class AppStorage {
             throw error;
         }
     }
+
 
 
 
@@ -1607,7 +1665,7 @@ class AppStorage {
             // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette
             avenants.forEach(avenant => {
                 // Ajouter le montant d'accessoires et de prime nette de cet avenant à la somme totale
-                sum += (avenant.accessoires || 0) + (avenant.prime_nette || 0) + (avenant.taxes_totales || 0) + (avenant.frais_courtier || 0);
+                sum += (avenant.accessoire || 0) + (avenant.prime_nette || 0) + (avenant.taxes_totales || 0) + (avenant.frais_courtier || 0);
                 accessoires += (avenant.accessoires || 0) + (avenant.frais_courtier || 0);
             });
 
@@ -1641,27 +1699,44 @@ class AppStorage {
             // Obtenir les données des avenants
             const avenants = await this.getData('avenants') || [];
 
-            // Initialiser la somme des accessoires et de la prime nette
-            let countemission = 0;
+            // Initialiser la somme des émissions
+            let totalEmissions = 0;
 
-            // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette
+            // Parcourir les avenants pour calculer la somme des émissions
             avenants.forEach(avenant => {
-                // Ajouter le montant d'accessoires et de prime nette de cet avenant à la somme totale
-                // Convertir les valeurs en nombre et les ajouter
-                countemission += parseFloat(avenant.accessoires || 0) + parseFloat(avenant.prime_nette || 0) + parseFloat(avenant.frais_courtier || 0);
+                // Extraire les valeurs d'accessoires, prime nette et frais courtier de l'avenant
+                const accessoires = parseFloat(avenant.accessoires) || 0;
+                const primeNette = parseFloat(avenant.prime_nette) || 0;
+                const fraisCourtier = parseFloat(avenant.frais_courtier) || 0;
+
+                // Ajouter les montants à la somme totale des émissions
+                totalEmissions += accessoires + primeNette + fraisCourtier;
             });
 
             // Arrondir la somme à deux chiffres après la virgule
-            countemission = countemission.toFixed(2);
+            const roundedTotalEmissions = totalEmissions.toFixed(2);
 
-            // Retourner la somme calculée
-            return countemission;
+            // Convertir en nombre pour vérifier s'il y a des décimales
+            const numberValue = parseFloat(roundedTotalEmissions);
+
+            // Formater la somme avec un séparateur de milliers et deux chiffres après la virgule
+            const formattedTotalEmissions = numberValue.toLocaleString('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            // Retourner la somme calculée formatée
+            return formattedTotalEmissions;
 
         } catch (error) {
-            console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette avec le nom de la compagnie :', error);
+            console.error('Erreur lors du calcul de la somme des émissions :', error);
             throw error;
         }
     }
+
+
+
+
 
 
     static async getEmissionsByYear(annee) {
@@ -1675,25 +1750,37 @@ class AppStorage {
             // Parcourir les avenants pour calculer la somme des émissions pour l'année spécifiée
             avenants.forEach(avenant => {
                 // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = avenant.date_debut.substring(0, 4); // Supposons que la propriété effet_police existe dans chaque objet avenant
+                const dateDebut = avenant.date_debut; // Supposons que la propriété date_debut existe dans chaque objet avenant
+                const anneeAvenant = new Date(dateDebut).getFullYear(); // Obtenir l'année à partir de la date de début
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
-                if (anneeAvenant === annee.toString()) {
+                if (anneeAvenant === annee) {
                     // Calculer la somme des émissions de cet avenant (accessoires, prime nette et frais courtier)
-                    const sum = (avenant.accessoires || 0) + (avenant.prime_nette || 0) + (avenant.frais_courtier || 0);
+                    const sum = (parseFloat(avenant.accessoires) || 0) + (parseFloat(avenant.prime_nette) || 0) + (parseFloat(avenant.frais_courtier) || 0);
 
                     // Ajouter la somme calculée à la somme totale
                     totalEmissions += sum;
                 }
             });
 
-            // Retourner la somme des émissions calculée pour l'année spécifiée
-            return totalEmissions;
+            // Arrondir la somme à deux chiffres après la virgule
+            totalEmissions = totalEmissions.toFixed(2);
+
+            // Formater la somme avec séparateur de milliers et deux chiffres après la virgule
+            const formattedEmissions = parseFloat(totalEmissions).toLocaleString('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            // Retourner la somme des émissions calculée pour l'année spécifiée, formatée
+            return formattedEmissions;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme des émissions pour une année spécifique :', error);
             throw error;
         }
     }
+
+
 
     //Sinistres
 
@@ -2034,39 +2121,28 @@ class AppStorage {
 
     static async getAccessoiresPrimeNetteSumWithMonthByBranch(annee, branche) {
         try {
-            // Obtenir les données des avenants
             const avenants = await this.getData('avenants') || [];
             const branches = await this.getData('branches') || [];
 
-            // Initialiser le tableau de résultats
             const results = [];
 
-            // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque mois de l'année spécifiée
             avenants.forEach(avenant => {
-                // Extraire l'année de la date d'effet_police de chaque avenant
-                const anneeAvenant = avenant.date_debut.substring(0, 4);// Supposons que la propriété effet_police existe dans chaque objet avenant
-                // Extraire le mois de la date d'effet_police de chaque avenant
-                const moisAvenant = avenant.date_debut.substring(5, 7);
+                const anneeAvenant = avenant.date_debut.substring(0, 4); // Année de l'avenant
+                const moisAvenant = avenant.date_debut.substring(5, 7); // Mois de l'avenant
 
-                let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
+                let uuidBrancheFound = null;
 
-                // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
                 for (const branch of branches) {
                     if (branch.nom_branche === avenant.nom_branche) {
-                        uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
-                        break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                        uuidBrancheFound = branch.uuidBranche;
+                        break;
                     }
                 }
 
-
-
-                // Vérifier si l'année de l'avenant correspond à l'année spécifiée
                 if (anneeAvenant === annee.toString()) {
                     if (uuidBrancheFound && uuidBrancheFound === branche) {
-                        // Trouver l'objet correspondant au mois dans le tableau de résultats
                         let monthObject = results.find(obj => obj.name === moisAvenant);
 
-                        // Si l'objet n'existe pas, le créer et l'ajouter au tableau des résultats
                         if (!monthObject) {
                             monthObject = {
                                 name: moisAvenant,
@@ -2075,53 +2151,53 @@ class AppStorage {
                             results.push(monthObject);
                         }
 
-                        // Ajouter la somme des accessoires et de la prime nette de cet avenant au total du mois
-                        monthObject.y += (avenant.accessoires || 0) + (avenant.prime_nette || 0);
-                    }
+                        // Convertir les valeurs en nombres avant l'addition
+                        const accessoires = parseFloat(avenant.accessoires) || 0;
+                        const primeNette = parseFloat(avenant.prime_nette) || 0;
 
+                        // Ajouter la somme des accessoires et de la prime nette au total du mois
+                        monthObject.y += accessoires + primeNette;
+                    }
                 }
             });
 
-            // Retourner le tableau contenant les résultats
-            return results;
+            // Formater les résultats avec séparateur de milliers
+            const formattedResults = results.map(result => ({
+                name: result.name,
+                y: result.y.toLocaleString() // Ajouter le séparateur de milliers
+            }));
+
+            return formattedResults;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette pour chaque mois de l\'année spécifiée :', error);
             throw error;
         }
     }
 
+
     static async getAccessoiresPrimeNetteSumWithAccessoryByBranch(annee, branche) {
         try {
-            // Obtenir les données des avenants
             const avenants = await this.getData('avenants') || [];
             const branches = await this.getData('branches') || [];
 
-            // Initialiser le tableau de résultats
             const results = [];
 
-            // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque branche de l'année spécifiée
             avenants.forEach(avenant => {
-                // Extraire l'année de la date d'effet_police de chaque avenant
                 const anneeAvenant = avenant.date_debut.substring(0, 4);
 
-                let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
+                let uuidBrancheFound = null;
 
-                // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
                 for (const branch of branches) {
                     if (branch.nom_branche === avenant.nom_branche) {
-                        uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
-                        break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                        uuidBrancheFound = branch.uuidBranche;
+                        break;
                     }
                 }
 
-                // Vérifier si l'année de l'avenant correspond à l'année spécifiée
                 if (anneeAvenant === annee.toString()) {
-
                     if (uuidBrancheFound && uuidBrancheFound === branche) {
-                        // Trouver l'objet correspondant à la branche dans le tableau de résultats
                         let branchObject = results.find(obj => obj.name === avenant.nom_branche);
 
-                        // Si l'objet n'existe pas, le créer et l'ajouter au tableau des résultats
                         if (!branchObject) {
                             branchObject = {
                                 name: avenant.nom_branche,
@@ -2130,66 +2206,74 @@ class AppStorage {
                             results.push(branchObject);
                         }
 
-                        // Ajouter la somme des accessoires et de la prime nette de cet avenant au total de la branche
-                        branchObject.y += (avenant.accessoires || 0) + (avenant.prime_nette || 0);
-                    }
+                        // Convertir les valeurs en nombres avant l'addition
+                        const accessoires = parseFloat(avenant.accessoires) || 0;
+                        const primeNette = parseFloat(avenant.prime_nette) || 0;
 
+                        // Ajouter la somme des accessoires et de la prime nette au total de la branche
+                        branchObject.y += accessoires + primeNette;
+                    }
                 }
             });
 
-            // Retourner le tableau contenant les résultats
-            return results;
+            // Formater les résultats avec séparateur de milliers
+            const formattedResults = results.map(result => ({
+                name: result.name,
+                y: result.y.toLocaleString()  // Ajouter le séparateur de milliers
+            }));
+
+            return formattedResults;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette pour chaque branche de l\'année spécifiée :', error);
             throw error;
         }
     }
 
+
     static async getEmissionsByBranch(annee, branche) {
         try {
-            // Obtenir les données des avenants
             const avenants = await this.getData('avenants') || [];
-
             const branches = await this.getData('branches') || [];
 
-            // Initialiser la somme des émissions
             let totalEmissions = 0;
 
-            // Parcourir les avenants pour calculer la somme des émissions pour l'année spécifiée
             avenants.forEach(avenant => {
-                // Extraire l'année de la date d'effet_police de chaque avenant
                 const anneeAvenant = avenant.date_debut.substring(0, 4);
 
-                let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
+                let uuidBrancheFound = null;
 
-                // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
                 for (const branch of branches) {
                     if (branch.nom_branche === avenant.nom_branche) {
-                        uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
-                        break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                        uuidBrancheFound = branch.uuidBranche;
+                        break;
                     }
                 }
 
-                // Vérifier si l'année de l'avenant correspond à l'année spécifiée
                 if (anneeAvenant === annee.toString()) {
                     if (uuidBrancheFound && uuidBrancheFound === branche) {
-                        const sum = (avenant.accessoires || 0) + (avenant.prime_nette || 0) + (avenant.frais_courtier || 0);
+                        // Convertir les valeurs en nombres avant l'addition
+                        const accessoires = parseFloat(avenant.accessoires) || 0;
+                        const primeNette = parseFloat(avenant.prime_nette) || 0;
+                        const fraisCourtier = parseFloat(avenant.frais_courtier) || 0;
+
+                        const sum = accessoires + primeNette + fraisCourtier;
 
                         // Ajouter la somme calculée à la somme totale
                         totalEmissions += sum;
                     }
-                    // Calculer la somme des émissions de cet avenant (accessoires, prime nette et frais courtier)
-
                 }
             });
 
-            // Retourner la somme des émissions calculée pour l'année spécifiée
-            return totalEmissions;
+            // Formater la somme des émissions avec séparateur de milliers
+            const formattedTotalEmissions = totalEmissions.toLocaleString();
+
+            return formattedTotalEmissions;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme des émissions pour une année spécifique :', error);
             throw error;
         }
     }
+
 
 
     static async getDataByYearAndBranch(year, branch) {

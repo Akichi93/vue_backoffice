@@ -139,8 +139,6 @@ import Header from "../layout/Header.vue";
 import Sidebar from "../layout/Sidebar.vue";
 import { Bar } from "vue-chartjs";
 import { apiUrl } from "../utils/constants/apiUrl";
-// import { createToaster } from "@meforma/vue-toaster";
-// const toaster = createToaster({});
 import {
   Chart as ChartJS,
   Title,
@@ -175,7 +173,7 @@ export default {
       echeance: "",
       countemission: "",
       // compagnies:[],
-      year: null, // Propriété pour stocker l'année sélectionnée
+      year: null, 
       years: [],
       getYear: {},
       branches: {},
@@ -217,55 +215,15 @@ export default {
     this.getCategory();
     this.getTypes();
     this.getData();
-
-    // Vérification initiale de la connexion
-    // this.checkInternetConnectivity();
   },
   name: "dashboard",
 
   components: { Header, Sidebar, Bar },
 
   methods: {
-    // async checkInternetConnectivity() {
-    //   try {
-    //     const response = await fetch(
-    //       "https://fl4ir.loca.lt/api/check-internet-connection"
-    //     );
-    //     const data = await response.json();
 
-    //     this.isConnected = data.connected;
-    //     // Affichage de la notification
-    //     if (this.isConnected) {
-    //       // this.showNotification("Connecté à Internet", "success");
-    //     } else {
-    //       // this.showNotification("Pas de connexion Internet", "error");
-    //     }
-    //   } catch (error) {
-    //     this.isConnected = false;
-    //     // this.showNotification("Pas de connexion Internet", "error");
-    //   }
-    // },
-
-    // showNotification(message, type) {
-    //   // Configuration du toaster
-    //   const toaster = createToaster({
-    //     /* options */
-    //   });
-
-    //   // Affichage de la notification
-    //   if (type === "success") {
-    //     toaster.success(message, {
-    //       position: "top-right",
-    //     });
-    //   } else if (type === "error") {
-    //     toaster.error(message, {
-    //       position: "top-right",
-    //     });
-    //   }
-    // },
-
-   async optionSelected() {
-      if(this.branch){
+    async optionSelected() {
+      if (this.branch) {
         await this.getData();
       }
     },
@@ -274,37 +232,13 @@ export default {
       const groupedData = await AppStorage.getAvenantsGroupedByYear();
       this.getYear = Object.keys(groupedData).map((year) => parseInt(year));
 
-      // console.log(this.getYear)
-      // const token = localStorage.getItem("token");
-
-      // // Configurez les en-têtes de la requête
-      // const headers = {
-      //   Authorization: "Bearer " + token,
-      //   "x-access-token": token,
-      // };
-      // axios.get(apiUrl.year, { headers }).then(
-      //   function (response) {
-      //     this.getYear = response.data;
-      //   }.bind(this)
-      // );
     },
 
     async getTypes() {
       const brancheData = await AppStorage.getBranches();
       this.branches = brancheData;
 
-      // const token = localStorage.getItem("token");
-
-      // // Configurez les en-têtes de la requête
-      // const headers = {
-      //   Authorization: "Bearer " + token,
-      //   "x-access-token": token,
-      // };
-      // axios.get(apiUrl.retrievebranche, { headers }).then(
-      //   function (response) {
-      //     this.branches = response.data;
-      //   }.bind(this)
-      // );
+     
     },
 
     async getData() {
@@ -322,8 +256,6 @@ export default {
       const branch =
         this.branch !== null ? this.branch : "Aucune branche sélectionnée";
 
-
-
       const data = await AppStorage.getDataByYearAndBranch(yearSelected, branch)
         .then((response) => {
           this.contrat = response.contratsCount;
@@ -333,14 +265,6 @@ export default {
           this.comissionapporteur = response.commissionApporteurSum;
           this.echeance = response.expiredContractsCount;
           this.countemission = response.countemission;
-
-          // const nombreFormate = formatNumberDecimalWithThousandsSeparator(
-          //   nombre,
-          //   "fr-FR",
-          //   { style: "decimal" }
-          // );
-
-          // this.countemission = nombreFormate;
 
           const moisNoms = {
             "01": "JANVIER",
@@ -357,16 +281,21 @@ export default {
             12: "Décembre",
           };
 
-          // // Remplacer les nombres de mois par leurs noms correspondants dans les labels
           const labels = response.primes.map((prime) => {
-            const moisNumber = prime.name; // Supposons que le nombre de mois est stocké dans la propriété "name" de l'objet
+            const [month, year] = prime.name.split(" "); // Séparer la chaîne "MM YYYY" en mois et année
 
-            if (moisNoms[moisNumber]) {
-              return moisNoms[moisNumber];
+            if (moisNoms[month] && year) {
+              const monthName = moisNoms[month];
+              return `${monthName} ${year}`;
+            } else {
+              // Gérer le cas où le mois ou l'année est manquant ou non défini
+              console.warn(
+                `Mois ou année manquant pour l'objet prime : ${JSON.stringify(
+                  prime
+                )}`
+              );
+              return ""; // Retourner une chaîne vide ou un libellé alternatif
             }
-
-            // Si le mois n'est pas trouvé dans le tableau, retourne le nombre de mois sans modification
-            return moisNumber;
           });
 
           const data = response.primes.map((prime) => prime.y);

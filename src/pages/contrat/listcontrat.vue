@@ -62,7 +62,7 @@
                     <td v-text="contrat.nom_client"></td>
                     <td v-text="contrat.nom_compagnie"></td>
                     <td v-text="contrat.nom_branche"></td>
-                    <td v-text="formatDate(contrats.effet_police)"></td>
+                    <td v-text="formatDate(contrat.effet_police)"></td>
                     <td v-text="formatDate(contrat.expire_le)"></td>
                     <td class="text-end ico-sec d-flex justify-content-end">
                       <router-link :to="{
