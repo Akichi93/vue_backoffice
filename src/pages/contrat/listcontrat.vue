@@ -89,7 +89,7 @@
               </table>
             </div>
 
-            <deletecontrat v-bind:contrattoedit="contrattoedit"></deletecontrat>
+            <deletecontrat v-bind:contrattoedit="contrattoedit" @delete-contrat="refresh"></deletecontrat>
 
             <!-- <pagination align="center" :data="contrats" :limit="5" :current_page="contrats.current_page"
               :last_page="contrats.last_page" @pagination-change-page="getContrat">
@@ -215,6 +215,13 @@ export default {
         this.getContrat();
       }
     },
+
+    refresh() {
+      // Récupérer les clients depuis IndexedDB après l'ajout d'un nouveau client
+      AppStorage.getContrats().then((result) => {
+        this.contrats = result;
+      });
+    }
   },
 };
 </script>

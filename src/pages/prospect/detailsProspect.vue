@@ -18,7 +18,9 @@
                     <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item">
-                    <router-link to="/prospect">Listes des prospects</router-link>
+                    <router-link to="/prospect"
+                      >Listes des prospects</router-link
+                    >
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Ajout
@@ -32,8 +34,13 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <a href="#" data-bs-toggle="modal" data-bs-target="#add_prospect" class="btn btn-success btn-add-emp"
-                style="width: auto"><i class="fas fa-plus"></i> Ajouter des branches
+              <a
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#add_brancheprospect"
+                class="btn btn-success btn-add-emp"
+                style="width: auto"
+                ><i class="fas fa-plus"></i> Ajouter des branches
               </a>
             </div>
           </div>
@@ -51,13 +58,20 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="prospect in prospects" :key="prospect.id_prosbranche">
+                  <template
+                    v-for="prospect in prospects"
+                    :key="prospect.uuidProspectBranche"
+                  >
                     <tr>
                       <td v-text="prospect.nom_branche"></td>
                       <td v-text="prospect.description"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department" title="Modifier"><i
-                            class="fas fa-pen"></i>
+                        <a
+                          href="#"
+                          data-bs-toggle="modal"
+                          data-bs-target="#edit_department"
+                          title="Modifier"
+                          ><i class="fas fa-pen"></i>
                         </a>
                       </td>
                     </tr>
@@ -69,7 +83,7 @@
         </div>
 
         <addprospectbranche @prospectbranche-add="refresh"></addprospectbranche>
-        <editprospectbranche></editprospectbranche>
+        <!-- <editprospectbranche></editprospectbranche> -->
       </div>
     </div>
   </div>
@@ -80,7 +94,7 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import editprospectbranche from "../prospect/editprospectbranche.vue";
 import addprospectbranche from "../prospect/addprospectbranche.vue";
-import AppStorage from '../../db/AppStorage';
+import AppStorage from "../../db/AppStorage";
 export default {
   name: "detailsprospect",
   components: {
@@ -100,7 +114,6 @@ export default {
     this.fetchNameProspect();
   },
   methods: {
-
     async fetchNameProspect() {
       const uuidProspect = this.$route.params.uuidProspect;
 
@@ -111,39 +124,24 @@ export default {
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
       }
-
     },
 
-    async fetchData(){
-
+    async fetchData() {
+      const uuidProspect = this.$route.params.uuidProspect;
+      AppStorage.getBrancheProspectsByuuidProspect(uuidProspect).then((result) => {
+        this.prospects = result;
+      });
     },
 
-    // fetchData() {
-    //   var that = this;
-    //   axios
-    //     .all([
-    //       axios.get("/api/auth/getBrancheProspect?prospect=" + this.$route.params.id_prospect),
-    //       // axios.get("/api/auth/getNameProspect?prospect=" + this.$route.params.id_prospect),
-    //     ])
-    //     .then(
-    //       axios.spread(function (prospects) {
-    //         that.prospects = prospects.data;
-    //         // that.names = names.data;
-    //       })
-    //     );
-    // },
 
-    
-    getProspectBranche(id) {
 
+    refresh() {
+      const uuidProspect = this.$route.params.uuidProspect;
+      AppStorage.getBrancheProspectsByuuidProspect(uuidProspect).then((result) => {
+        this.prospects = result;
+      });
     },
-
-    refresh(prospects) {
-      this.prospects = prospects.data
-    }
   },
-
-
 };
 </script>
 

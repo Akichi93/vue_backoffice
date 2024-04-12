@@ -48,31 +48,31 @@ export default {
   },
   methods: {
     async ChangeEtat() {
-      const response = await fetch(
-        "/api/check-internet-connection"
-      );
+      // const response = await fetch(
+      //   "/api/check-internet-connection"
+      // );
 
-      const data = await response.json();
+      // const data = await response.json();
 
-      this.isConnected = data.connected;
-      if (this.isConnected) {
+      // this.isConnected = data.connected;
+      // if (this.isConnected) {
 
-        const entrepriseId = AppStorage.getEntreprise();
+      //   const entrepriseId = AppStorage.getEntreprise();
 
-        axios
-          .patch("/api/auth/etatProspect/" + this.prospectoedit.id_prospect, {
-            etat: this.etat,
-            id_entreprise: entrepriseId
-          })
-          .then((response) => {
-            this.$emit('prospect-change', response)
-            if (response.status === 200) {
-              toaster.success(`Etat changé`, {
-                position: "top-right",
-              });
-            }
-          });
-      } else {
+      //   axios
+      //     .patch("/api/auth/etatProspect/" + this.prospectoedit.id_prospect, {
+      //       etat: this.etat,
+      //       id_entreprise: entrepriseId
+      //     })
+      //     .then((response) => {
+      //       this.$emit('prospect-change', response)
+      //       if (response.status === 200) {
+      //         toaster.success(`Etat changé`, {
+      //           position: "top-right",
+      //         });
+      //       }
+      //     });
+      // } else {
         // UUID du prospect que vous souhaitez mettre à jour
         const uuidProspectToUpdate = this.prospectoedit.uuidProspect;
 
@@ -86,11 +86,11 @@ export default {
           nouveauSyncState
         );
 
-        toaster.success(`Etat changé(Hors ligne)`, {
+        toaster.success(`Etat changé`, {
           position: "top-right",
         });
 
-      }
+      // }
     },
   },
 };

@@ -118,6 +118,7 @@
       <div class="row">
         <div class="col-md-6">
           <Bar :data="chartData" />
+          
         </div>
         <div class="col-md-6">
           <Bar :data="chartDonnees" />
@@ -133,8 +134,6 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import { formatNumberDecimalWithThousandsSeparator } from "../utils/helpers/thousandSeparator";
 import Header from "../layout/Header.vue";
 import Sidebar from "../layout/Sidebar.vue";
 import { Bar } from "vue-chartjs";

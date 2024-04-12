@@ -71,7 +71,9 @@ class AppStorage {
             // Gestion des conflits : fusionner les données existantes avec les nouvelles données
             if (Array.isArray(existingData) && Array.isArray(data)) {
                 const mergedData = existingData.concat(data);
+                // dataEncrypted = LocalService.encrypte(mergedData)
                 await store.put(mergedData, key);
+                // await store.put(dataEncrypted, key);
                 console.log(`Données fusionnées à apiData dans IndexedDB avec succès`);
             } else {
                 console.error('Les données existantes ou les nouvelles données ne sont pas au format de tableau.');
@@ -423,6 +425,15 @@ class AppStorage {
         return this.getData('brancheprospects') || [];
     }
 
+    static async getBrancheProspectsByuuidProspect(uuidBrancheProspect) {
+        const prospects = await this.getData('brancheprospects') || [];
+
+        // Filtrer les prospects en fonction de uuidBrancheProspect
+        const filteredProspects = prospects.filter(prospect => prospect.uuidBrancheProspect === uuidBrancheProspect);
+
+        return filteredProspects;
+    }
+
     static async getDifferenceOfBranches() {
         const branches = await this.getBranches();
         const brancheprospects = await this.getData('brancheprospects') || [];
@@ -446,8 +457,35 @@ class AppStorage {
 
 
     // Contrats
-    static async storeBrancheProspects(contrats) {
+    static async storeContrats(contrats) {
         await this.storeData('contrats', contrats);
+    }
+
+    static async deleteContrats(uuidContrat, newSupprime, newSyncState) {
+        // Obtenez la liste des prospects
+        const allContrats = await this.getData('contrats') || [];
+
+        // Recherche du prospect par son UUID
+        const contratIndex = allContrats.findIndex(contrat => contrat.uuidContrat === uuidContrat);
+
+        console.log(contratIndex)
+
+        if (contratIndex !== -1) {
+            // Mettre à jour l'état du prospect
+            allContrats[contratIndex].supprimer_contrat = newSupprime;
+
+            // Mettre à jour l'état de synchronisation
+            allContrats[contratIndex].sync = newSyncState;
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('contrats', allContrats);
+
+            console.log(allContrats)
+
+            return allContrats;
+        } else {
+            throw new Error('Avenant non trouvé');
+        }
     }
 
     static async searchContratsByName(name) {
@@ -594,11 +632,7 @@ class AppStorage {
         return sommeCommissions;
     }
 
-
-
     static async getAvenantByUuid(uuidAvenant) {
-
-
         const allAvenants = await this.getData('avenants') || [];
         return allAvenants.find(avenant => avenant.uuidAvenant === uuidAvenant);
     }
@@ -609,9 +643,7 @@ class AppStorage {
         const allAvenants = await this.getData('avenants') || [];
 
         // Recherche du prospect par son UUID
-        const avenantIndex = allAvenants.findIndex(prospect => prospect.uuidAvenant === uuidAvenant);
-
-        console.log(avenantIndex)
+        const avenantIndex = allAvenants.findIndex(avenant => avenant.uuidAvenant === uuidAvenant);
 
         if (avenantIndex !== -1) {
             // Mettre à jour l'état du prospect
@@ -636,7 +668,7 @@ class AppStorage {
         const allAvenants = await this.getData('avenants') || [];
 
         // Recherche du prospect par son UUID
-        const avenantIndex = allAvenants.findIndex(prospect => prospect.uuidAvenant === uuidAvenant);
+        const avenantIndex = allAvenants.findIndex(avenant => avenant.uuidAvenant === uuidAvenant);
 
         if (avenantIndex !== -1) {
             // Mettre à jour l'état du prospect
@@ -676,6 +708,31 @@ class AppStorage {
             await this.updateDataInIndexedDB('avenants', allAvenants);
 
             console.log(allAvenants)
+
+            return allAvenants;
+        } else {
+            throw new Error('Avenant non trouvé');
+        }
+    }
+
+    static async deleteAvenants(uuidContrat, newDelete, newSyncState) {
+        // Obtenez la liste des prospects
+        const allAvenants = await this.getData('avenants') || [];
+
+        // Recherche du prospect par son UUID
+        const avenantIndex = allAvenants.findIndex(avenant => avenant.uuidContrat === uuidContrat);
+
+        console.log(avenantIndex)
+
+        if (avenantIndex !== -1) {
+            // Mettre à jour l'état de l'avenant
+            allAvenants[avenantIndex].supprimer_avenant = newDelete;
+
+            // Mettre à jour l'état de synchronisation
+            allAvenants[avenantIndex].sync = newSyncState;
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('avenants', allAvenants);
 
             return allAvenants;
         } else {
@@ -1301,34 +1358,35 @@ class AppStorage {
     static async getCommissionCompagnieSum() {
         try {
             // Obtenir les données des avenants
-            const avenants = await this.getData('avenants') || [];
-
+            const avenants = await this.getData('avenants');
+    
+            // Vérifier si des avenants ont été récupérés
+            if (!avenants || avenants.length === 0) {
+                console.warn('Aucun avenant trouvé. La somme de commission courtier est donc 0.');
+                return '0,00'; // Retourner une valeur par défaut ou vide
+            }
+    
             // Initialiser la somme des commissions
             let commissionCourtierSum = 0;
-
+    
             // Parcourir les avenants pour calculer la somme des commissions de courtier
             avenants.forEach(avenant => {
                 // Extraire et convertir la commission de courtier en nombre
                 const commission = parseFloat(avenant.commission_courtier);
-
+    
                 // Vérifier si la commission est un nombre valide
                 if (!isNaN(commission)) {
                     // Ajouter la commission à la somme totale
                     commissionCourtierSum += commission;
                 }
             });
-
-            // Vérifier si la somme calculée est NaN ou vide
-            if (isNaN(commissionCourtierSum) || commissionCourtierSum === 0) {
-                throw new Error('Aucune commission valide à ajouter.');
-            }
-
+    
             // Formater la somme avec un séparateur de milliers et deux chiffres après la virgule
             const formattedSum = commissionCourtierSum.toLocaleString('fr-FR', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
-
+    
             // Retourner la somme calculée formatée
             return formattedSum;
         } catch (error) {
@@ -1336,7 +1394,7 @@ class AppStorage {
             throw error;
         }
     }
-
+    
 
     static async getCommissionCompagnieSumByYear(annee) {
         try {
@@ -1421,8 +1479,8 @@ class AppStorage {
             // Obtenir les données des avenants
             const avenants = await this.getData('avenants') || [];
 
-            // Initialiser le tableau de résultats
-            const results = [];
+            // Initialiser un objet pour stocker les sommes par nom_compagnie
+            const companySums = {};
 
             // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque compagnie
             avenants.forEach(avenant => {
@@ -1431,18 +1489,36 @@ class AppStorage {
 
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée
                 if (anneeAvenant === annee.toString()) {
-                    // Calculer la somme des accessoires et de la prime nette de cet avenant
-                    const sum = (avenant.accessoires || 0) + (avenant.prime_nette || 0);
+                    // Convertir les valeurs d'accessoires et de prime nette en nombres décimaux
+                    const accessoires = parseFloat(avenant.accessoires || 0);
+                    const primeNette = parseFloat(avenant.prime_nette || 0);
 
-                    // Ajouter la somme calculée et le nom de la compagnie au tableau des résultats
-                    results.push({
-                        name: avenant.nom_compagnie,
-                        y: sum
-                    });
+                    // Calculer la somme des accessoires et de la prime nette de cet avenant
+                    const sum = accessoires + primeNette;
+
+                    // Récupérer le nom de la compagnie
+                    const companyName = avenant.nom_compagnie;
+
+                    // Ajouter la somme calculée à la compagnie correspondante dans l'objet companySums
+                    if (!companySums[companyName]) {
+                        companySums[companyName] = 0;
+                    }
+                    companySums[companyName] += sum;
                 }
             });
 
-            // Retourner le tableau contenant les résultats
+            // Convertir l'objet companySums en un tableau de résultats
+            const results = [];
+
+            for (const companyName in companySums) {
+                const sum = companySums[companyName];
+                results.push({
+                    name: companyName,
+                    y: sum
+                });
+            }
+
+            // Retourner le tableau contenant les résultats regroupés par nom_compagnie
             return results;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette avec le nom de la compagnie pour une année spécifique :', error);
@@ -1452,26 +1528,28 @@ class AppStorage {
 
 
 
+
+
     static async getAccessoiresPrimeNetteSumWithMonth() {
         try {
             const avenants = await this.getData('avenants') || [];
-    
+
             // Initialiser un objet pour stocker les sommes par mois et par année
             const sumsByMonthAndYear = {};
-    
+
             // Parcourir les avenants pour calculer les sommes par mois et par année
             avenants.forEach(avenant => {
                 const month = avenant.mois;
                 const year = avenant.annee;
-    
+
                 // Calculer la somme des accessoires et de la prime nette de cet avenant
                 const sum = parseFloat(avenant.accessoires || 0) + parseFloat(avenant.prime_nette || 0);
-    
+
                 // Créer une clé pour l'année si elle n'existe pas encore dans sumsByMonthAndYear
                 if (!sumsByMonthAndYear[year]) {
                     sumsByMonthAndYear[year] = {};
                 }
-    
+
                 // Ajouter la somme au total du mois correspondant pour cette année
                 if (sumsByMonthAndYear[year][month]) {
                     sumsByMonthAndYear[year][month] += sum;
@@ -1479,10 +1557,10 @@ class AppStorage {
                     sumsByMonthAndYear[year][month] = sum;
                 }
             });
-    
+
             // Convertir l'objet en tableau d'objets pour la sortie
             const results = [];
-    
+
             // Parcourir les années et les mois dans sumsByMonthAndYear
             for (const year in sumsByMonthAndYear) {
                 for (const month in sumsByMonthAndYear[year]) {
@@ -1493,17 +1571,17 @@ class AppStorage {
                     });
                 }
             }
-    
+
             // Trier les résultats par mois et année
             results.sort((a, b) => {
                 // Extraire le mois et l'année des noms
                 const [monthA, yearA] = a.name.split(' ');
                 const [monthB, yearB] = b.name.split(' ');
-    
+
                 // Convertir le mois en nombre pour la comparaison
                 const monthNumberA = new Date(Date.parse(`${monthA} 1, 2000`)).getMonth() + 1;
                 const monthNumberB = new Date(Date.parse(`${monthB} 1, 2000`)).getMonth() + 1;
-    
+
                 // Comparer d'abord par année, puis par mois si les années sont égales
                 if (yearA !== yearB) {
                     return yearA - yearB;
@@ -1511,7 +1589,7 @@ class AppStorage {
                     return monthNumberA - monthNumberB;
                 }
             });
-    
+
             // Retourner le tableau contenant les résultats triés
             return results;
         } catch (error) {
@@ -1519,10 +1597,6 @@ class AppStorage {
             throw error;
         }
     }
-    
-
-
-
 
     static async getAccessoiresPrimeNetteSumWithMonthByYear(annee) {
         try {
@@ -1554,20 +1628,37 @@ class AppStorage {
                     }
 
                     // Ajouter la somme des accessoires et de la prime nette de cet avenant au total du mois
-                    monthObject.y += (avenant.accessoires || 0) + (avenant.prime_nette || 0);
+                    const accessoires = parseFloat(avenant.accessoires || 0);
+                    const primeNette = parseFloat(avenant.prime_nette || 0);
+                    monthObject.y += accessoires + primeNette;
                 }
             });
 
-            // Retourner le tableau contenant les résultats
+            // Trier les résultats par mois (en ordre croissant)
+            results.sort((a, b) => {
+                // Extraire le mois et l'année des noms et convertir en nombre
+                const [monthA, yearA] = a.name.split(' ');
+                const [monthB, yearB] = b.name.split(' ');
+                const monthNumberA = parseInt(monthA);
+                const monthNumberB = parseInt(monthB);
+
+                // Comparer par numéro de mois
+                if (monthNumberA < monthNumberB) {
+                    return -1;
+                } else if (monthNumberA > monthNumberB) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+
+            // Retourner le tableau contenant les résultats triés par mois
             return results;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette pour chaque mois de l\'année spécifiée :', error);
             throw error;
         }
     }
-
-
-
 
     static async getAccessoiresPrimeNetteSumWithAccessory() {
         try {
@@ -1639,7 +1730,9 @@ class AppStorage {
                     }
 
                     // Ajouter la somme des accessoires et de la prime nette de cet avenant au total de la branche
-                    branchObject.y += (avenant.accessoires || 0) + (avenant.prime_nette || 0);
+                    const accessoires = parseFloat(avenant.accessoires || 0);
+                    const primeNette = parseFloat(avenant.prime_nette || 0);
+                    branchObject.y += accessoires + primeNette;
                 }
             });
 
@@ -1650,6 +1743,7 @@ class AppStorage {
             throw error;
         }
     }
+
 
 
 
@@ -1733,10 +1827,6 @@ class AppStorage {
             throw error;
         }
     }
-
-
-
-
 
 
     static async getEmissionsByYear(annee) {
@@ -1837,7 +1927,7 @@ class AppStorage {
     }
 
     //Reglements
-    static async storeRegelements(reglements) {
+    static async storeReglements(reglements) {
         await this.storeData('reglements', reglements);
     }
 
@@ -1872,8 +1962,6 @@ class AppStorage {
 
 
 
-
-
     // statistiques
 
     static async getAvenantsGroupedByYear() {
@@ -1895,7 +1983,7 @@ class AppStorage {
     static async getContratsByYear(annee) {
 
         // Récupérer tous les contrats
-        const contrats = await this.getData('contrats') || [];
+        const contrats = await this.getContrats();
 
         // Filtrer les contrats pour obtenir ceux de l'année spécifiée
         const contratsDeAnnee = contrats.filter(contrat => {
@@ -1944,8 +2032,6 @@ class AppStorage {
             return anneeEffet === annee.toString() && contrat.uuidBranche === branche;
         });
 
-
-
         return contratsFiltres;
     }
 
@@ -1965,26 +2051,7 @@ class AppStorage {
         return contratsFiltres;
     }
 
-    // Fonction pour récupérer l'UUID de la branche à partir du nom de la branche
-    // static async getUuidBrancheNameByNomBranche(nomBranche) {
-    //     try {
-    //         // Charger les données des branches
-    //         const branches = await this.getData('branches') || [];
 
-    //         // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
-    //         for (const branch of branches) {
-    //             if (branch.nom_branche === nomBranche) {
-    //                 return branch.uuidBranche; // Retourner l'UUID de la branche trouvée
-    //             }
-    //         }
-
-    //         // Si aucun UUID n'est trouvé pour le nom de branche spécifié, retourner null ou une valeur par défaut
-    //         return null; // Ou retourner une valeur par défaut comme undefined, selon votre cas d'utilisation
-    //     } catch (error) {
-    //         console.error('Erreur lors de la recherche de l\'UUID de la branche :', error);
-    //         throw error;
-    //     }
-    // }
 
 
     static async getCommissionApporteurSumByBranch(annee, branche) {
@@ -1993,8 +2060,6 @@ class AppStorage {
             const avenants = await this.getData('avenants') || [];
             const branches = await this.getData('branches') || [];
 
-            // console.log(branche)
-
             // Initialiser la somme des commissions
             let commissionSum = 0;
 
@@ -2002,6 +2067,7 @@ class AppStorage {
             avenants.forEach(avenant => {
                 // Extraire l'année de la date de début de chaque avenant
                 const anneeAvenant = avenant.date_debut.substring(0, 4);
+
                 let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
 
                 // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
@@ -2012,20 +2078,24 @@ class AppStorage {
                     }
                 }
 
-
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée et que la branche correspond
-                if (anneeAvenant === annee.toString()) {
+                if (anneeAvenant === annee.toString() && uuidBrancheFound && uuidBrancheFound === branche) {
+                    // Convertir la commission d'apporteur en nombre décimal
+                    const commission = parseFloat(avenant.commission || 0);
 
-
-                    if (uuidBrancheFound && uuidBrancheFound === branche) {
-                        // Ajouter la commission de cet avenant à la somme totale
-                        commissionSum += avenant.commission || 0;
-                    }
+                    // Ajouter la commission de cet avenant à la somme totale
+                    commissionSum += commission;
                 }
             });
-            // console.log(commissionSum)
-            // Retourner la somme calculée
-            return commissionSum;
+
+            // Formater la somme calculée avec séparateur de milliers et deux chiffres après la virgule
+            const formattedCommissionSum = commissionSum.toLocaleString('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            // Retourner la somme calculée formatée
+            return formattedCommissionSum;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme des commissions :', error);
             throw error;
@@ -2038,8 +2108,6 @@ class AppStorage {
             const avenants = await this.getData('avenants') || [];
             const branches = await this.getData('branches') || [];
 
-            // console.log(branche)
-
             // Initialiser la somme des commissions
             let commissionSum = 0;
 
@@ -2057,53 +2125,63 @@ class AppStorage {
                     }
                 }
 
-
                 // Vérifier si l'année de l'avenant correspond à l'année spécifiée et que la branche correspond
-                if (anneeAvenant === annee.toString()) {
+                if (anneeAvenant === annee.toString() && uuidBrancheFound && uuidBrancheFound === branche) {
+                    // Convertir la commission d'apporteur en nombre décimal
+                    const commission = parseFloat(avenant.commission_courtier || 0);
 
-
-                    if (uuidBrancheFound && uuidBrancheFound === branche) {
-                        // Ajouter la commission de cet avenant à la somme totale
-                        commissionSum += avenant.commission_courtier || 0;
-                    }
+                    // Ajouter la commission de cet avenant à la somme totale
+                    commissionSum += commission;
                 }
             });
-            // console.log(commissionSum)
-            // Retourner la somme calculée
-            return commissionSum;
+
+            // Formater la somme calculée avec séparateur de milliers et deux chiffres après la virgule
+            const formattedCommissionSum = commissionSum.toLocaleString('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            // Retourner la somme calculée formatée
+            return formattedCommissionSum;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme des commissions :', error);
             throw error;
         }
     }
 
+
+
+
     static async getAccessoiresPrimeNetteSumWithCompanyNameByBranch(annee, branche) {
-        const avenants = await this.getData('avenants') || [];
-        const branches = await this.getData('branches') || [];
+        try {
+            const avenants = await this.getData('avenants') || [];
+            const branches = await this.getData('branches') || [];
 
-        // Initialiser le tableau de résultats
-        const results = [];
+            // Initialiser le tableau de résultats
+            const results = [];
 
-        // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque compagnie
-        avenants.forEach(avenant => {
-            // Extraire l'année de la date d'effet_police de chaque avenant
-            const anneeAvenant = avenant.date_debut.substring(0, 4);
-            let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
+            // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette pour chaque compagnie
+            avenants.forEach(avenant => {
+                // Extraire l'année de la date d'effet_police de chaque avenant
+                const anneeAvenant = avenant.date_debut.substring(0, 4);
+                let uuidBrancheFound = null; // Initialiser la variable pour stocker l'UUID trouvé
 
-            // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
-            for (const branch of branches) {
-                if (branch.nom_branche === avenant.nom_branche) {
-                    uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
-                    break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                // Parcourir les branches pour trouver l'UUID correspondant au nom de la branche spécifié
+                for (const branch of branches) {
+                    if (branch.nom_branche === avenant.nom_branche) {
+                        uuidBrancheFound = branch.uuidBranche; // Stocker l'UUID de la branche trouvée
+                        break; // Sortir de la boucle dès qu'une correspondance est trouvée
+                    }
                 }
-            }
 
-            // Vérifier si l'année de l'avenant correspond à l'année spécifiée
-            if (anneeAvenant === annee.toString()) {
+                // Vérifier si l'année de l'avenant correspond à l'année spécifiée et que la branche correspond
+                if (anneeAvenant === annee.toString() && uuidBrancheFound && uuidBrancheFound === branche) {
+                    // Convertir les valeurs d'accessoires et de prime nette en nombres décimaux
+                    const accessoires = parseFloat(avenant.accessoires || 0);
+                    const primeNette = parseFloat(avenant.prime_nette || 0);
 
-                if (uuidBrancheFound && uuidBrancheFound === branche) {
                     // Calculer la somme des accessoires et de la prime nette de cet avenant
-                    const sum = (avenant.accessoires || 0) + (avenant.prime_nette || 0);
+                    const sum = accessoires + primeNette;
 
                     // Ajouter la somme calculée et le nom de la compagnie au tableau des résultats
                     results.push({
@@ -2111,13 +2189,16 @@ class AppStorage {
                         y: sum
                     });
                 }
+            });
 
-            }
-        });
-
-        // Retourner le tableau contenant les résultats
-        return results;
+            // Retourner le tableau contenant les résultats
+            return results;
+        } catch (error) {
+            console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette pour chaque compagnie dans une branche spécifique :', error);
+            throw error;
+        }
     }
+
 
     static async getAccessoiresPrimeNetteSumWithMonthByBranch(annee, branche) {
         try {
@@ -2128,7 +2209,8 @@ class AppStorage {
 
             avenants.forEach(avenant => {
                 const anneeAvenant = avenant.date_debut.substring(0, 4); // Année de l'avenant
-                const moisAvenant = avenant.date_debut.substring(5, 7); // Mois de l'avenant
+                // const moisAvenant = avenant.date_debut.substring(5, 7); // Mois de l'avenant
+                const moisAvenant = `${avenant.date_debut.substring(5, 7)} ${anneeAvenant}`;
 
                 let uuidBrancheFound = null;
 
@@ -2164,7 +2246,7 @@ class AppStorage {
             // Formater les résultats avec séparateur de milliers
             const formattedResults = results.map(result => ({
                 name: result.name,
-                y: result.y.toLocaleString() // Ajouter le séparateur de milliers
+                y: result.y // Ajouter le séparateur de milliers
             }));
 
             return formattedResults;
@@ -2219,8 +2301,10 @@ class AppStorage {
             // Formater les résultats avec séparateur de milliers
             const formattedResults = results.map(result => ({
                 name: result.name,
-                y: result.y.toLocaleString()  // Ajouter le séparateur de milliers
+                y: result.y  // Ajouter le séparateur de milliers
             }));
+
+
 
             return formattedResults;
         } catch (error) {
@@ -2279,7 +2363,7 @@ class AppStorage {
     static async getDataByYearAndBranch(year, branch) {
         if (branch == 'Aucune branche sélectionnée') {
             // Si year est null, compter les prospects, les clients et les sinistres
-            const contrats = await this.getData('contrats') || [];
+            const contrats = await this.getContrats();
             const prospects = await this.getData('prospects') || [];
             const clients = await this.getData('clients') || [];
             const sinistres = await this.getData('sinistres') || [];

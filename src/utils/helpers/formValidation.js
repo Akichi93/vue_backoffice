@@ -262,12 +262,28 @@ export function validateSinistreForm(form) {
 
   if (!form.reference_compagnie) {
     errors.reference_compagnie = 'La référence de la compagnie est requise.';
-  } 
+  }
 
   if (!form.commentaire) {
     errors.commentaire = 'Le commentaire est requis.';
   } else if (form.commentaire.length < 10) {
     errors.commentaire = 'Le commentaire doit avoir au moins 10 caractères.';
+  }
+
+  return errors;
+}
+
+export function validateBrancheProspectForm(form) {
+  const errors = {};
+
+  if (!form.branche_id) {
+    errors.branche_id = 'Veuillez selectionnez une branche.';
+  }
+
+  if (!form.description) {
+    errors.description = 'La description est requis.';
+  } else if (form.description.length < 10) {
+    errors.description = 'La description doit avoir au moins 10 caractères.';
   }
 
   return errors;
