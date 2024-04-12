@@ -42,8 +42,9 @@ export const useProspectFileStore = defineStore('prospectfile', {
       };
 
       try {
+        const base_url = import.meta.env.VITE_API_BASE_URL;
         // Make the API request
-        await axios.post('/api/auth/importprospect', formData, {
+        await axios.post(`${base_url}/api/auth/importprospect`, formData, {
           headers,
           onUploadProgress: (progressEvent) => {
             if (progressEvent.lengthComputable) {

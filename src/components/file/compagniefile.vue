@@ -6,7 +6,7 @@
                     <div class="card-body">
                         <h3 class="card-title">
                             Compagnies
-                            <a href="BDcompagnie.xlsx" download class="edit-icon"><i class="fas fa-download"
+                            <a href="/src/assets/BDcompagnie.xlsx" download class="edit-icon"><i class="fas fa-download"
                                     title="Télécharger le model"></i>
                             </a>
                         </h3>

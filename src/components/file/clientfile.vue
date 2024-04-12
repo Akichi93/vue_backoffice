@@ -7,7 +7,7 @@
                     <div class="card-body">
                         <h3 class="card-title">
                             Clients
-                            <a href="BDclient.xlsx" download class="edit-icon">
+                            <a href="/src/assets/BDclient.xlsx" download class="edit-icon">
                                 <i class="fas fa-download" title="Télécharger le modèle"></i>
                             </a>
                         </h3>

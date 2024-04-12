@@ -201,29 +201,138 @@ export default {
   },
   methods: {
     async logout() {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL;
+      try {
+        const isConnected = await this.checkInternetConnection();
+        if (!isConnected) {
+          console.log(
+            "Veuillez vous connecter à Internet pour effectuer cette action."
+          );
+          return;
+        }
 
-      // Then use it in your fetch request
-      const response = await axios.get(`${apiUrl}/api/check-internet-connection`);
+        const dbName = "fl4ir";
+        const objectStoreName = "apiData";
 
-      // const data = await response.json();
-      const isConnected = response.data.connected;
+        // Vérifier si la base de données IndexedDB existe
+        const dbExists = await this.checkIndexedDB(dbName);
+        if (!dbExists) {
+          console.log("IndexedDB n'existe pas ou n'est pas pris en charge.");
+          this.performLogoutCleanup();
+          return;
+        }
 
-      if (isConnected) {
+        // Vérifier si le magasin d'objets existe dans IndexedDB
+        const objectStoreExists = await this.checkObjectStore(
+          dbName,
+          objectStoreName
+        );
+        if (!objectStoreExists) {
+          console.log(`Le magasin d'objets ${objectStoreName} n'existe pas.`);
+          this.performLogoutCleanup();
+          return;
+        }
+
         console.log("Déconnexion en cours...");
-        await syncservice.checkAndSyncData();
-
-        AppStorage.clear();
-        AppStorage.deleteIndexedDB();
+        await this.logoutUser();
+        this.refreshPage();
         this.$router.push({ name: "welcome" });
-      } else {
-        console.log("Veuillez vous connectez à internet");
+      } catch (error) {
+        console.error("Erreur lors de la déconnexion :", error);
       }
-    
-      
-      {
-    
-}
+    },
+
+    async checkInternetConnection() {
+      try {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+        const response = await axios.get(
+          `${apiUrl}/api/check-internet-connection`
+        );
+        return response.data.connected;
+      } catch (error) {
+        console.error(
+          "Erreur lors de la vérification de la connexion Internet :",
+          error
+        );
+        return false;
+      }
+    },
+
+    async checkIndexedDB(dbName) {
+      return new Promise((resolve) => {
+        const request = window.indexedDB.open(dbName);
+        request.onsuccess = () => {
+          request.result.close();
+          resolve(true);
+        };
+        request.onerror = () => {
+          resolve(false);
+        };
+      });
+    },
+
+    async checkObjectStore(dbName, objectStoreName) {
+      return new Promise((resolve) => {
+        const request = window.indexedDB.open(dbName);
+
+        request.onerror = () => {
+          console.error(
+            `Erreur lors de l'ouverture de la base de données ${dbName}`
+          );
+          resolve(false);
+        };
+
+        request.onsuccess = (event) => {
+          const db = event.target.result;
+
+          // Vérifiez si le magasin d'objets existe
+          if (db.objectStoreNames.contains(objectStoreName)) {
+            // Le magasin d'objets existe, retournez true
+            resolve(true);
+          } else {
+            // Le magasin d'objets n'existe pas, supprimez tous les magasins d'objets de la base de données
+            const version = db.version + 1; // Incrémentez la version de la base de données pour déclencher une mise à niveau
+
+            db.close(); // Fermez la connexion à la base de données avant la mise à niveau
+
+            const upgradeRequest = window.indexedDB.open(dbName, version);
+
+            upgradeRequest.onupgradeneeded = (event) => {
+              const upgradeDb = event.target.result;
+
+              // Supprimez tous les magasins d'objets existants
+              for (const storeName of upgradeDb.objectStoreNames) {
+                upgradeDb.deleteObjectStore(storeName);
+              }
+            };
+
+            upgradeRequest.onsuccess = () => {
+              upgradeRequest.result.close(); // Fermez la nouvelle connexion à la base de données
+              resolve(false); // Le magasin d'objets n'existe toujours pas après la suppression
+            };
+
+            upgradeRequest.onerror = () => {
+              console.error(
+                `Erreur lors de la suppression des magasins d'objets de la base de données ${dbName}`
+              );
+              resolve(false);
+            };
+          }
+        };
+      });
+    },
+
+    async logoutUser() {
+      // Implémentez votre logique de déconnexion ici
+      AppStorage.clear(); // Par exemple, supprimer les informations utilisateur
+    },
+
+    refreshPage() {
+      window.location.reload(true);
+    },
+
+    performLogoutCleanup() {
+      localStorage.clear(); // Nettoyage supplémentaire en cas d'échec de la déconnexion
+      this.refreshPage();
     },
   },
 

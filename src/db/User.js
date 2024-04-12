@@ -2,6 +2,7 @@ import axios from 'axios';
 import AppStorage from './AppStorage';
 import Token from './Token';
 import router from '../routers';
+import { deleteDB, openDB } from 'idb';
 
 class User {
     static async responseAfterLogin(res) {
@@ -38,6 +39,7 @@ class User {
 
         const accessToken = AppStorage.getToken();
 
+        await User.deleteAllIndexedDBs();
 
         let successfulRequests = 0; // Variable pour compter les requêtes réussies
 
@@ -53,10 +55,8 @@ class User {
         // Si toutes les données ont été insérées avec succès, redirigez l'utilisateur vers le tableau de bord
         if (successfulRequests === apiCalls.length) {
             // Redirection vers le tableau de bord
-            this.redirectToDashboard();
+            User.redirectToDashboard();
         }
-
-
     }
 
     static redirectToDashboard() {
@@ -68,7 +68,6 @@ class User {
         const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
         try {
-
             const response = await axios.get(`${apiUrl}/api/auth/${endpoint}`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
             });
@@ -79,6 +78,28 @@ class User {
         }
     }
 
+    static async deleteIndexedDBByName(dbName) {
+        try {
+            // Supprimer la base de données spécifiée par son nom
+            await deleteDB(dbName);
+            console.log(`Base de données ${dbName} supprimée avec succès`);
+        } catch (error) {
+            console.error(`Erreur lors de la suppression de la base de données ${dbName} :`, error);
+        }
+    }
+
+    static async deleteAllIndexedDBs() {
+        const dbNames = await window.indexedDB.databases();
+
+        if (dbNames && dbNames.length > 0) {
+            console.log('Suppression de toutes les bases de données IndexedDB :');
+            for (const { name } of dbNames) {
+                await User.deleteIndexedDBByName(name);
+            }
+        } else {
+            console.log('Aucune base de données IndexedDB trouvée.');
+        }
+    }
 
     static hasToken() {
         return AppStorage.getToken() !== null;

@@ -4,7 +4,7 @@
             <div class="col-md-12 d-flex">
                 <div class="card profile-box flex-fill">
                     <div class="card-body">
-                        <h3 class="card-title">Sinistres<a href="BDsinistre.xlsx" download="" class="edit-icon"><i
+                        <h3 class="card-title">Sinistres<a href="/src/assets/BDsinistre.xlsx" download="" class="edit-icon"><i
                                     class="fas fa-download" title="Télécharger le model"></i> </a>
                         </h3>
 
