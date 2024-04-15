@@ -10,11 +10,21 @@
           <div class="modal-btn delete-action">
             <div class="row">
               <div class="col-6">
-                <a href="javascript:void(0);" class="btn btn-primary continue-btn" data-bs-dismiss="modal"
-                  @click.prevent="compagnieDelete">supprimer</a>
+                <a
+                  href="javascript:void(0);"
+                  class="btn btn-primary continue-btn"
+                  data-bs-dismiss="modal"
+                  @click.prevent="compagnieDelete"
+                  >supprimer</a
+                >
               </div>
               <div class="col-6">
-                <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary cancel-btn">Annuler</a>
+                <a
+                  href="javascript:void(0);"
+                  data-bs-dismiss="modal"
+                  class="btn btn-primary cancel-btn"
+                  >Annuler</a
+                >
               </div>
             </div>
           </div>
@@ -34,24 +44,13 @@ export default {
   name: "deleteCompagnie",
   methods: {
     compagnieDelete() {
-      const token = localStorage.getItem("token");
+      const uuidCompagnieToUpdate = this.compagnietoedit.uuidCompagnie;
 
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
-      axios
-        .patch("/api/auth/deleteCompagnie/" + this.compagnietoedit.id_compagnie, { headers })
-        .then((response) => {
-          this.$emit("compagnie-delete", response);
-          toaster.success(`Compagnie supprimé avec succès`, {
-            position: "top-right",
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      // Nouvel état de la compagnie
+      const newDelete = 1;
+
+      const newSyncState = 0;
+    
     },
   },
 };

@@ -41,6 +41,8 @@ const apiUrl = {
     retrievebranche: createApiUrl('retrievebranche'),
     getgarantie: createApiUrl('getgaranties'),
     getautomobile: createApiUrl('getautomobiles'),
+    getcategorie: createApiUrl('getcategories'),
+    postcategorie: createApiUrl('postcategories'),
 };
 
 // Export des fonctions et données

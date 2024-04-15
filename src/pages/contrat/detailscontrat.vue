@@ -19,8 +19,9 @@
                     <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item">
-                    <router-link to="/listcontrat">Liste des contrats</router-link>
-
+                    <router-link to="/listcontrat"
+                      >Liste des contrats</router-link
+                    >
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Contrats
@@ -36,24 +37,46 @@
             <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
               <ul class="nav nav-tabs nav-tabs-bottom pt-3 pb-2">
                 <li class="nav-item">
-                  <a href="#emp_profile" data-bs-toggle="tab" class="nav-link active">Information générale</a>
+                  <a
+                    href="#emp_profile"
+                    data-bs-toggle="tab"
+                    class="nav-link active"
+                    >Information générale</a
+                  >
                 </li>
                 <li class="nav-item">
-                  <a href="#emp_projects" data-bs-toggle="tab" class="nav-link">Primes et commisons</a>
+                  <a href="#emp_projects" data-bs-toggle="tab" class="nav-link"
+                    >Primes et commisons</a
+                  >
                 </li>
                 <li class="nav-item">
-                  <a href="#bank_statutory" data-bs-toggle="tab" class="nav-link">Avenants</a>
+                  <a
+                    href="#bank_statutory"
+                    data-bs-toggle="tab"
+                    class="nav-link"
+                    >Avenants</a
+                  >
                 </li>
-                <li v-if="infos.nom_branche == 'AUTOMOBILE' ||
-                  infos.nom_branche == 'MOTO'
-                  " class="nav-item">
-                  <a href="#vehicule_info" data-bs-toggle="tab" class="nav-link">Listes des véhicules</a>
+                <li
+                  v-if="
+                    infos.nom_branche == 'AUTOMOBILE' ||
+                    infos.nom_branche == 'MOTO'
+                  "
+                  class="nav-item"
+                >
+                  <a href="#vehicule_info" data-bs-toggle="tab" class="nav-link"
+                    >Listes des véhicules</a
+                  >
                 </li>
                 <li v-if="count > 0" class="nav-item">
-                  <a href="#sinistre_info" data-bs-toggle="tab" class="nav-link">Sinistres</a>
+                  <a href="#sinistre_info" data-bs-toggle="tab" class="nav-link"
+                    >Sinistres</a
+                  >
                 </li>
                 <li class="nav-item">
-                  <a href="#file_info" data-bs-toggle="tab" class="nav-link">Fichier</a>
+                  <a href="#file_info" data-bs-toggle="tab" class="nav-link"
+                    >Fichier</a
+                  >
                 </li>
               </ul>
             </div>
@@ -89,7 +112,10 @@
                       </li>
                       <li>
                         <div class="title">Date d'émission</div>
-                        <div class="text" v-text="infos.souscrit_le"></div>
+                        <div
+                          class="text"
+                          v-text="formatDate(infos.souscrit_le)"
+                        ></div>
                       </li>
                       <li>
                         <div class="title">A</div>
@@ -97,7 +123,10 @@
                       </li>
                       <li>
                         <div class="title">Expire le</div>
-                        <div class="text" v-text="infos.expire_le"></div>
+                        <div
+                          class="text"
+                          v-text="formatDate(infos.expire_le)"
+                        ></div>
                       </li>
                     </ul>
                   </div>
@@ -123,11 +152,17 @@
                       </li>
                       <li>
                         <div class="title">Frais courtier</div>
-                        <div class="text" v-text="sommes.sommeFraisCourtier"></div>
+                        <div
+                          class="text"
+                          v-text="sommes.sommeFraisCourtier"
+                        ></div>
                       </li>
                       <li>
                         <div class="title">Taxes totales</div>
-                        <div class="text" v-text="sommes.sommeTaxesTotales"></div>
+                        <div
+                          class="text"
+                          v-text="sommes.sommeTaxesTotales"
+                        ></div>
                       </li>
                       <li>
                         <div class="title">Prime TTC</div>
@@ -144,7 +179,9 @@
                     <ul class="personal-info">
                       <li>
                         <div class="title">Commission courtier:</div>
-                        <div class="text">{{ sommes.sommeCommissionCourtier }}</div>
+                        <div class="text">
+                          {{ sommes.sommeCommissionCourtier }}
+                        </div>
                       </li>
                       <li>
                         <div class="title">Gestion</div>
@@ -185,16 +222,19 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <template v-for="avenant in avenants" :key="avenant.uuidAvenant">
+                    <template
+                      v-for="avenant in avenants"
+                      :key="avenant.uuidAvenant"
+                    >
                       <tr>
                         <td>{{ avenant.annee }}</td>
                         <td>{{ avenant.mois }}</td>
                         <td>{{ avenant.type }}</td>
-                        <td>{{ avenant.prime_ttc }}</td>
+                        <td>{{ formatMontant(avenant.prime_ttc) }}</td>
 
-                        <td>{{ avenant.date_emission }}</td>
-                        <td>{{ avenant.date_debut }}</td>
-                        <td>{{ avenant.date_fin }}</td>
+                        <td>{{ formatDate(avenant.date_emission) }}</td>
+                        <td>{{ formatDate(avenant.date_debut) }}</td>
+                        <td>{{ formatDate(avenant.date_fin) }}</td>
                       </tr>
                     </template>
                   </tbody>
@@ -208,14 +248,22 @@
               <div class="col-md-8"></div>
               <div class="col-md-4">
                 <div class="add-emp-section">
-                  <a href="#" data-bs-toggle="modal" data-bs-target="#add_flotte" class="btn btn-success btn-add-emp"
-                    style="width: auto"><i class="fas fa-plus"></i> Ajouter une flotte
+                  <a
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#add_flotte"
+                    class="btn btn-success btn-add-emp"
+                    style="width: auto"
+                    ><i class="fas fa-plus"></i> Ajouter une flotte
                   </a>
-                  <a href="#" data-bs-toggle="modal" data-bs-target="#add_auto" class="btn btn-success btn-add-emp"
-                    style="width: auto"><i class="fas fa-plus"></i> Ajouter un véhicule
+                  <a
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#add_auto"
+                    class="btn btn-success btn-add-emp"
+                    style="width: auto"
+                    ><i class="fas fa-plus"></i> Ajouter un véhicule
                   </a>
-
-
                 </div>
               </div>
             </div>
@@ -240,7 +288,6 @@
                       </tr>
                     </thead>
                     <tbody>
-
                       <template v-for="(auto, i) in autos" :key="i">
                         <tr>
                           <td>{{ auto.numero_immatriculation }}</td>
@@ -253,9 +300,23 @@
                           <td>{{ auto.carosserie }}</td>
                           <td>{{ auto.categorie }}</td>
                           <td>{{ auto.genre }}</td>
-                          <td class="text-end ico-sec d-flex justify-content-end">
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#add_garantie"
-                              title="Ajouter garantie"><i class="fas fa-plus"></i>
+                          <td
+                            class="text-end ico-sec d-flex justify-content-end"
+                          >
+                            <a
+                              href="#"
+                              data-bs-toggle="modal"
+                              data-bs-target="#add_garantie"
+                              title="Ajouter garantie"
+                              ><i class="fas fa-plus"></i>
+                            </a>
+
+                             <a
+                              href="#"
+                              data-bs-toggle="modal"
+                              data-bs-target="#add_garantie"
+                              title="Ajouter garantie"
+                              ><i class="fas fa-pen"></i>
                             </a>
                           </td>
                         </tr>
@@ -282,8 +343,10 @@
                     </tr>
                   </thead>
                   <tbody>
-
-                    <template v-for="sinistre in sinistres" :key="sinistre.id_sinistre">
+                    <template
+                      v-for="sinistre in sinistres"
+                      :key="sinistre.id_sinistre"
+                    >
                       <tr>
                         <td>
                           {{ sinistre.date_survenance }}
@@ -304,10 +367,22 @@
             <div class="project-task">
               <ul class="nav nav-tabs nav-tabs-top nav-justified mb-0">
                 <li class="nav-item">
-                  <a class="nav-link active" href="#all_tasks" data-bs-toggle="tab" aria-expanded="true">Contrats</a>
+                  <a
+                    class="nav-link active"
+                    href="#all_tasks"
+                    data-bs-toggle="tab"
+                    aria-expanded="true"
+                    >Contrats</a
+                  >
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#pending_tasks" data-bs-toggle="tab" aria-expanded="false">Sinistres</a>
+                  <a
+                    class="nav-link"
+                    href="#pending_tasks"
+                    data-bs-toggle="tab"
+                    aria-expanded="false"
+                    >Sinistres</a
+                  >
                 </li>
               </ul>
               <div class="tab-content">
@@ -316,19 +391,30 @@
                     <div class="card-body">
                       <h5 class="card-title m-b-20">Contrats</h5>
                       <ul class="files-list">
-
-                        <template v-for="file in filecontrats" :key="file.id_contrat">
+                        <template
+                          v-for="file in filecontrats"
+                          :key="file.id_contrat"
+                        >
                           <li>
                             <div class="files-cont">
                               <div class="file-type">
-                                <span class="files-icon"><i class="far fa-file-pdf"></i></span>
+                                <span class="files-icon"
+                                  ><i class="far fa-file-pdf"></i
+                                ></span>
                               </div>
                               <div class="files-info">
                                 <span class="file-name text-ellipsis">
                                   {{ file.titre }}
                                 </span>
-                                <span class="file-author"><a :href="'/images/piece_avenant/' + file.nom_file
-                  " download>{{ file.nom_file }}</a></span>
+                                <span class="file-author"
+                                  ><a
+                                    :href="
+                                      '/images/piece_avenant/' + file.nom_file
+                                    "
+                                    download
+                                    >{{ file.nom_file }}</a
+                                  ></span
+                                >
                               </div>
                             </div>
                           </li>
@@ -342,20 +428,31 @@
                     <div class="card-body">
                       <h5 class="card-title m-b-20">Sinistres</h5>
                       <ul class="files-list">
-
-                        <template v-for="file in filesinistres" :key="file.id_contrat">
+                        <template
+                          v-for="file in filesinistres"
+                          :key="file.id_contrat"
+                        >
                           <li>
                             <div class="files-cont">
                               <div class="file-type">
-                                <span class="files-icon"><i class="far fa-file-pdf"></i></span>
+                                <span class="files-icon"
+                                  ><i class="far fa-file-pdf"></i
+                                ></span>
                               </div>
                               <div class="files-info">
                                 <span class="file-name text-ellipsis">
                                   {{ file.titre }}
                                 </span>
-                                <span class="file-author"><a :href="'/images/piece_sinistres/' +
-                  file.nom_fichier
-                  " download>{{ file.nom_fichier }}</a></span>
+                                <span class="file-author"
+                                  ><a
+                                    :href="
+                                      '/images/piece_sinistres/' +
+                                      file.nom_fichier
+                                    "
+                                    download
+                                    >{{ file.nom_fichier }}</a
+                                  ></span
+                                >
                               </div>
                             </div>
                           </li>
@@ -368,13 +465,9 @@
             </div>
           </div>
 
-
           <addautomobile @automobile-add="refresh"></addautomobile>
           <!-- <flotte></flotte> -->
           <!-- <addgarantie></addgarantie> -->
-
-
-
         </div>
       </div>
     </div>
@@ -388,13 +481,15 @@ import addautomobile from "./addAutomobile.vue";
 import flotte from "./flotte.vue";
 import addgarantie from "./addGarantie.vue";
 import AppStorage from "../../db/AppStorage.js";
+import { formatDate, formatDateTime } from "../../utils/helpers/dateFormat";
+import { formatNumberWithThousandsSeparator } from "../../utils/helpers/thousandSeparator";
 export default {
   components: {
     Header,
     Sidebar,
     addautomobile,
     addgarantie,
-    flotte
+    flotte,
   },
   data() {
     return {
@@ -419,11 +514,14 @@ export default {
     this.calculateSomme();
     this.fetchDataContrat();
     this.fetchDataAvenant();
-
   },
 
   methods: {
-
+    formatMontant(montant) {
+      return formatNumberWithThousandsSeparator(montant);
+    },
+    formatDate,
+    formatDateTime,
     async fetchDataContrat() {
       const uuidContrat = this.$route.params.uuidContrat;
 
@@ -451,30 +549,25 @@ export default {
 
       const avenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
 
-      // console.log(avenants)
-
       this.avenants = avenants;
-
-
     },
 
     async fetchDataAutomobile() {
       try {
         const uuidContrat = this.$route.params.uuidContrat;
 
-        const automobiles = await AppStorage.getAutomobileByUuidContrat(uuidContrat);
-
-        console.log(automobiles)
+        const automobiles = await AppStorage.getAutomobileByUuidContrat(
+          uuidContrat
+        );
 
         this.autos = automobiles;
-
       } catch (error) {
-        console.error("Erreur lors de la récupération des automobiles :", error);
+        console.error(
+          "Erreur lors de la récupération des automobiles :",
+          error
+        );
       }
     },
-
-
-
 
     // fetchData() {
     //   var that = this;
@@ -511,8 +604,6 @@ export default {
     //       })
     //     );
     // },
-
-
 
     // storeAutomobile() {
     //   axios
@@ -604,9 +695,12 @@ export default {
     //     });
     // },
 
-    refresh(automobiles) {
-      this.automobiles = automobiles.data;
-    }
+    refresh() {
+      const uuidContrat = this.$route.params.uuidContrat;
+      AppStorage.getAutomobileByUuidContrat(uuidContrat).then((result) => {
+        this.autos = result;
+      });
+    },
   },
 };
 </script>

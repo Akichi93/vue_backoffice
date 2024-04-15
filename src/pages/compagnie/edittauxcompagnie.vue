@@ -52,7 +52,7 @@ export default {
                 await AppStorage.updateTauxCompagnieByUuid(uuidTauxCompagnieUpdate, newTaux, newSyncState);
 
                 // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-                const updatedTauxCompagnies = await AppStorage.getTauxCompagnies();
+                const updatedTauxCompagnies = await AppStorage.getTauxCompagniesByIdCompagnie(uuidTauxCompagnieUpdate);
 
                 // Émettre un événement avec les prospects mis à jour
                 this.$emit("tauxcompagnie-updated", updatedTauxCompagnies);

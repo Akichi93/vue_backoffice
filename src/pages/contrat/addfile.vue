@@ -1,90 +1,126 @@
 <template>
-    <div id="add_file" class="modal custom-modal fade" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ajouter pièce</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <b-form @submit="submit" @keydown="form.onKeydown($event)">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input v-model="avenantoedit.id_avenant" type="hidden" :modelValue="avenantoedit.id_avenant"
-                                    name="name" />
-                                <HasError :form="form" field="name" class="form-control" />
-
-                                <b-form-group id="titre" label="Titre de la pièce" label-for="titre" description="">
-                                    <b-form-input id="titre" v-model="form.titre" type="text"
-                                        placeholder="Titre de la pièce" required>
-                                    </b-form-input>
-                                </b-form-group>
-
-                                <b-form-group id="piece" label="Pièce" label-for="piece" description="">
-                                    <input type="file" name="file" @change="handleFile" class="form-control"
-                                        accept="image/*,.pdf" />
-                                    <HasError :form="form" field="file" />
-                                </b-form-group>
-                            </div>
-                        </div>
-
-                        <b-form-group class="mt-3">
-                            <b-button type="submit" variant="primary" class="m-3">Ajouter</b-button>
-                            <b-button type="reset" variant="danger" class="ml-3">Annuler</b-button>
-                        </b-form-group>
-                    </b-form>
-                </div>
-            </div>
+  <div id="add_file" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter pièce</h5>
+          <button
+            type="button"
+            class="close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          >
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <div class="modal-body">
+          <form @submit="submit" @keydown="form.onKeydown($event)">
+            <div class="row">
+              <div class="col-md-12">
+                <input
+                  v-model="avenantoedit.id_avenant"
+                  type="hidden"
+                  name="id_avenant"
+                />
+
+                <!-- Titre de la pièce -->
+                <div class="form-group">
+                  <label for="titre">Titre de la pièce</label>
+                  <input
+                    id="titre"
+                    v-model="form.titre"
+                    type="text"
+                    class="form-control"
+                    placeholder="Titre de la pièce"
+                    required
+                  />
+                  <!-- Ajoutez ici un élément pour afficher les erreurs liées au titre si nécessaire -->
+                </div>
+
+                <!-- Pièce (fichier) -->
+                <div class="form-group">
+                  <label for="piece">Pièce</label>
+                  <input
+                    type="file"
+                    id="piece"
+                    name="file"
+                    class="form-control-file"
+                    accept="image/*,.pdf"
+                    @change="handleFile"
+                  />
+                  <!-- Ajoutez ici un élément pour afficher les erreurs liées au fichier si nécessaire -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Boutons Ajouter et Annuler -->
+            <div class="form-group mt-3">
+              <button type="submit" class="btn btn-primary m-3">Ajouter</button>
+              <button type="reset" class="btn btn-danger ml-3">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-import Form from "vform";
 import { HasError } from "vform/src/components/bootstrap5";
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({
   /* options */
 });
 export default {
-    components: {
-        HasError,
+  components: {
+    HasError,
+  },
+  props: ["avenantoedit"],
+  data() {
+    return {
+      avenantoedit: {
+        id_avenant: null, // Initialisez l'ID de l'avenant ici
+      },
+      form: {
+        titre: "", // Initialisez le titre du formulaire ici
+        file: null, // Initialisez le fichier à null
+      },
+    };
+  },
+  methods: {
+    handleFileChange(event) {
+      this.form.file = event.target.files[0]; // Mettez à jour le fichier dans le formulaire lorsque l'utilisateur sélectionne un fichier
     },
-    props: ["avenantoedit"],
-    data() {
-        return {
-            form: Form.make({
-                id_avenant: "",
-                titre: "",
-                file: null,
-            }),
-        };
+    async submitForm() {
+      const formData = new FormData(); // Créez un objet FormData
+
+      formData.append("id_avenant", this.avenantoedit.id_avenant);
+      formData.append("titre", this.form.titre);
+      formData.append("file", this.form.file); // Ajoutez le fichier au FormData
+
+      try {
+        // Effectuez une requête POST vers votre endpoint de backend avec le FormData
+        const response = await fetch("URL_DE_VOTRE_ENDPOINT", {
+          method: "POST",
+          body: formData,
+        });
+
+        // Traitez la réponse du backend si nécessaire
+        const responseData = await response.json();
+        console.log("Réponse du serveur :", responseData);
+
+        // Réinitialisez le formulaire après avoir réussi l'envoi
+        this.resetForm();
+      } catch (error) {
+        console.error("Erreur lors de l'envoi du formulaire :", error);
+        // Gérez les erreurs d'envoi du formulaire
+      }
     },
-    methods: {
-        handleFile(event) {
-            // We'll grab just the first file...
-            // You can also do some client side validation here.
-            const file = event.target.files[0];
-
-            // Set the file object onto the form...
-            this.form.file = file;
-            this.form.id_avenant = this.avenantoedit.id_avenant
-            // this.form.id_sinistre = file
-        },
-
-        async submit() {
-            const response = await this.form.post("/api/auth/postFileAvenant", {}).then((res) => {
-                if (res.status === 200) {
-                    toaster.success(`Fichier avenant ajouté avec succès`, {
-                        position: "top-right",
-                    });
-
-                    this.form.reset();
-                }
-            });
-        },
-    }
-}
+    resetForm() {
+      // Réinitialisez les valeurs du formulaire après soumission réussie
+      this.form.titre = "";
+      this.form.file = null;
+    },
+  },
+};
 </script>

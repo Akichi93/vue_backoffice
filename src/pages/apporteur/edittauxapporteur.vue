@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Modifier taux</h5>
+          <h5 class="modal-title">Modifier taux <em>{{ tauxtoedit.nom_branche }}</em></h5>
           <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <i class="fas fa-times"></i>
           </button>
@@ -12,7 +12,7 @@
 
           <form>
             <div class="form-group">
-              <label>Taux</label>
+              <label>Taux </label>
               <input class="form-control" type="text" v-model="tauxtoedit.taux">
             </div>
             <div class="submit-section">
@@ -50,7 +50,7 @@ export default {
         await AppStorage.updateTauxApporteurByUuid(uuidTauxApporteurUpdate, newTaux, newSyncState);
 
         // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-        const updatedTauxApporteurs = await AppStorage.getTauxApporteurs();
+        const updatedTauxApporteurs = await AppStorage.getTauxApporteursByIdApporteur(uuidTauxApporteurUpdate);
 
         // Émettre un événement avec les prospects mis à jour
         this.$emit("tauxapporteur-update", updatedTauxApporteurs);

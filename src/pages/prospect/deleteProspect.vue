@@ -57,9 +57,9 @@ export default {
       const updatedProspects = await AppStorage.getProspects();
 
       // Émettre un événement avec les prospects mis à jour
-      // this.$emit("avenant-solder", updatedAvenants);
+      this.$emit("prospect-deleted", updatedProspects);
 
-      toaster.success(`Prospect soldé`, {
+      toaster.success(`Prospect supprimé`, {
         position: "top-right",
       });
       // const entrepriseId = localStorage.getItem("entreprise");

@@ -252,7 +252,12 @@ class AppStorage {
 
 
     static async getProspects() {
-        return this.getData('prospects') || [];
+        // return this.getData('prospects') || [];
+        const allProspects = await this.getData('prospects') || [];
+
+        const prospects = allProspects.filter(prospect => prospect.supprimer_prospect == 0);
+
+        return prospects;
     }
 
     static async getProspectByUuid(ProspectUuid) {
@@ -760,23 +765,25 @@ class AppStorage {
 
         // Proceed with filtering and calculations
         const avenantsFiltres = avenantsData.filter(avenant => avenant.uuidContrat === uuidContrat);
-        const sommePrimeNette = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.prime_nette), 0);
-        const sommeAccessoires = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.accessoires), 0);
-        const sommePrimeTTC = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.prime_ttc), 0);
-        const sommeFraisCourtier = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.frais_courtier), 0);
-        const sommeTaxesTotales = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.taxes_totales), 0);
-        const sommeCommissionCourtier = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.commission_courtier), 0);
-        const sommeCommission = avenantsFiltres.reduce((acc, avenant) => acc + parseFloat(avenant.commission), 0);
+        const sumWithFloatParse = (acc, avenant, property) => acc + parseFloat(avenant[property] || 0);
 
-        // Return an object containing all the calculated sums
+        const sommePrimeNette = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "prime_nette"), 0).toLocaleString();
+        const sommeAccessoires = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "accessoires"), 0).toLocaleString();
+        const sommePrimeTTC = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "prime_ttc"), 0).toLocaleString();
+        const sommeFraisCourtier = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "frais_courtier"), 0).toLocaleString();
+        const sommeTaxesTotales = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "taxes_totales"), 0).toLocaleString();
+        const sommeCommissionCourtier = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "commission_courtier"), 0).toFixed(2).toLocaleString();
+        const sommeCommission = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "commission"), 0).toFixed(2).toLocaleString();
+
+        // Return an object containing all the calculated sums formatted with thousand separators
         return {
             sommePrimeNette,
             sommeAccessoires,
             sommePrimeTTC,
             sommeFraisCourtier,
             sommeTaxesTotales,
-            sommeCommissionCourtier: sommeCommissionCourtier.toFixed(2),
-            sommeCommission: sommeCommission.toFixed(2)
+            sommeCommissionCourtier,
+            sommeCommission
         };
     }
 
@@ -807,7 +814,7 @@ class AppStorage {
     }
 
     static async getAutomobileByUuidContrat(uuidContrat) {
-        const allAutomobiles = await this.getData('automobiles') || [];
+        const allAutomobiles = await this.getAutomobiles();
 
         const details = allAutomobiles.filter(automobile => automobile.uuidContrat === uuidContrat);
 
@@ -1002,6 +1009,12 @@ class AppStorage {
         return this.getData('tauxcompagnies') || [];
     }
 
+    static async searchTauxCompagnieByNomBranche(name,uuidCompagnie) {
+        const allTaux = await this.getTauxCompagniesByIdCompagnie(uuidCompagnie);
+        const filteredTaux = allTaux.filter(tauxcompagnie => tauxcompagnie.nom_branche.toLowerCase().includes(name.toLowerCase()));
+        return filteredTaux;
+    }
+
     static async getTauxParIdBrancheEtCompagnie(uuidBranche, uuidCompagnie) {
         const tauxCompagnies = await this.getTauxCompagnies();
 
@@ -1026,19 +1039,29 @@ class AppStorage {
 
 
     static async getTauxCompagniesByIdCompagnie(uuidCompagnie) {
-        // Convertir l'ID de compagnie en entier
-        // uuidCompagnie = +uuidCompagnie; 
-
         const allTauxCompagnies = await this.fetchDataFromIndexedDB('tauxcompagnies') || [];
-
+    
         const tauxCompagniesByIdCompagnie = allTauxCompagnies.filter(tauxcompagnie => {
-
-
             return tauxcompagnie.uuidCompagnie === uuidCompagnie;
         });
-
+    
+        // Trier les résultats par ordre alphabétique de la propriété 'nom_branche'
+        tauxCompagniesByIdCompagnie.sort((a, b) => {
+            const nomBrancheA = (a.nom_branche || '').toLowerCase();  
+            const nomBrancheB = (b.nom_branche || '').toLowerCase();  
+    
+            if (nomBrancheA < nomBrancheB) {
+                return -1;
+            }
+            if (nomBrancheA > nomBrancheB) {
+                return 1;
+            }
+            return 0;
+        });
+    
         return tauxCompagniesByIdCompagnie;
     }
+    
 
     static async getTauxCompagnieById(uuidTauxCompagnie) {
         const allTauxCompagnies = await this.getData('tauxcompagnies') || [];
@@ -1100,19 +1123,39 @@ class AppStorage {
         return this.getData('tauxapporteurs') || [];
     }
 
+    
+
     static async getTauxApporteursByIdApporteur(uuidApporteur) {
-        // Convertir l'ID de compagnie en entier
-        // uuidCompagnie = +uuidCompagnie; 
-
         const allTauxApporteurs = await this.fetchDataFromIndexedDB('tauxapporteurs') || [];
-
+    
         const tauxApporteursByIdApporteur = allTauxApporteurs.filter(tauxApporteur => {
-
             return tauxApporteur.uuidApporteur === uuidApporteur;
         });
-
+    
+        // Trier les résultats par ordre alphabétique de la propriété 'nom_branche'
+        tauxApporteursByIdApporteur.sort((a, b) => {
+            // Assurez-vous que 'nom_branche' est défini pour les deux objets 'a' et 'b'
+            const nomBrancheA = (a.nom_branche || '').toLowerCase();  
+            const nomBrancheB = (b.nom_branche || '').toLowerCase();  
+    
+            if (nomBrancheA < nomBrancheB) {
+                return -1;
+            }
+            if (nomBrancheA > nomBrancheB) {
+                return 1;
+            }
+            return 0;
+        });
+    
         return tauxApporteursByIdApporteur;
     }
+
+    static async searchTauxApporteurByNomBranche(name,uuidApporteur) {
+        const allTaux = await this.getTauxApporteursByIdApporteur(uuidApporteur);
+        const filteredTaux = allTaux.filter(tauxapporteur => tauxapporteur.nom_branche.toLowerCase().includes(name.toLowerCase()));
+        return filteredTaux;
+    }
+    
 
     static async getTauxParIdBrancheEtApporteur(uuidBranche, uuidApporteur) {
         const tauxapporteurs = await this.getTauxApporteurs();
@@ -1359,34 +1402,34 @@ class AppStorage {
         try {
             // Obtenir les données des avenants
             const avenants = await this.getData('avenants');
-    
+
             // Vérifier si des avenants ont été récupérés
             if (!avenants || avenants.length === 0) {
                 console.warn('Aucun avenant trouvé. La somme de commission courtier est donc 0.');
                 return '0,00'; // Retourner une valeur par défaut ou vide
             }
-    
+
             // Initialiser la somme des commissions
             let commissionCourtierSum = 0;
-    
+
             // Parcourir les avenants pour calculer la somme des commissions de courtier
             avenants.forEach(avenant => {
                 // Extraire et convertir la commission de courtier en nombre
                 const commission = parseFloat(avenant.commission_courtier);
-    
+
                 // Vérifier si la commission est un nombre valide
                 if (!isNaN(commission)) {
                     // Ajouter la commission à la somme totale
                     commissionCourtierSum += commission;
                 }
             });
-    
+
             // Formater la somme avec un séparateur de milliers et deux chiffres après la virgule
             const formattedSum = commissionCourtierSum.toLocaleString('fr-FR', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
-    
+
             // Retourner la somme calculée formatée
             return formattedSum;
         } catch (error) {
@@ -1394,7 +1437,7 @@ class AppStorage {
             throw error;
         }
     }
-    
+
 
     static async getCommissionCompagnieSumByYear(annee) {
         try {
@@ -1746,46 +1789,83 @@ class AppStorage {
 
 
 
-
-    static async getFactures() {
+    static async getFactures(uuidAvenant) {
         try {
-            // Obtenir les données des avenants
-            const avenants = await this.getData('avenants') || [];
-
-            // Initialiser la somme des accessoires et de la prime nette
-            let sum = 0;
-            let accessoires = 0;
-
-            // Parcourir les avenants pour calculer la somme des accessoires et de la prime nette
-            avenants.forEach(avenant => {
-                // Ajouter le montant d'accessoires et de prime nette de cet avenant à la somme totale
-                sum += (avenant.accessoire || 0) + (avenant.prime_nette || 0) + (avenant.taxes_totales || 0) + (avenant.frais_courtier || 0);
-                accessoires += (avenant.accessoires || 0) + (avenant.frais_courtier || 0);
-            });
-
-            // Retourner la somme calculée et le nom de la compagnie
+            // Obtenir les données de l'avenant spécifié par uuidAvenant
+            const avenant = await this.getAvenantByUuid(uuidAvenant);
+    
+            if (!avenant) {
+                throw new Error('Avenant introuvable pour l\'UUID spécifié.');
+            }
+    
+            // Obtenir les données des compagnies d'assurance
+            const compagnies = await this.getCompagnies();
+    
+            // Obtenir les données des clients
+            const clients = await this.getClients();
+    
+            // Obtenir les données des branches
+            const branches = await this.getBranches();
+    
+            // Obtenir les données des contrats
+            const contrats = await this.getContrats();
+    
+            // Créer des dictionnaires pour une recherche efficace par UUID
+            const compagniesMap = new Map(compagnies.map(compagnie => [compagnie.uuidCompagnie, compagnie]));
+            const clientsMap = new Map(clients.map(client => [client.uuidClient, client]));
+            const branchesMap = new Map(branches.map(branche => [branche.uuidBranche, branche]));
+            const contratsMap = new Map(contrats.map(contrat => [contrat.uuidContrat, contrat]));
+    
+            // Calculer les totaux des accessoires et de la prime nette
+            const sum = (
+                parseFloat(avenant.accessoire) || 0 +
+                parseFloat(avenant.prime_nette) || 0 +
+                parseFloat(avenant.taxes_totales) || 0 +
+                parseFloat(avenant.frais_courtier) || 0
+            );
+    
+            const accessoires = (
+                parseFloat(avenant.accessoires) || 0 +
+                parseFloat(avenant.frais_courtier) || 0
+            );
+    
+            // Retrouver les détails associés à l'avenant
+            const associatedCompagnie = compagniesMap.get(avenant.uuidCompagnie) || {};
+            const associatedClient = clientsMap.get(avenant.uuidClient) || {};
+            const associatedBranche = branchesMap.get(avenant.uuidBranche) || {};
+            const associatedContrat = contratsMap.get(avenant.uuidContrat) || {};
+    
+            // Fonction de formatage avec séparateur de milliers
+            function formatNumberWithSeparator(number) {
+                return number.toLocaleString('fr-FR'); // Utilisez 'fr-FR' pour le format français avec le séparateur de milliers
+            }
+    
+            // Retourner les détails combinés avec les totaux calculés
             return {
-                type: avenants.length > 0 ? avenants[0].type : null,
-                nom_client: avenants.length > 0 ? avenants[0].nom_client : null,
-                adresse_client: avenants.length > 0 ? avenants[0].adresse_client : null,
-                postal_client: avenants.length > 0 ? avenants[0].postal_client : null,
-                numero_client: avenants.length > 0 ? avenants[0].numero_client : null,
-                numero_police: avenants.length > 0 ? avenants[0].numero_police : null,
-                nom_branche: avenants.length > 0 ? avenants[0].nom_branche : null,
-                prime_nette: avenants.length > 0 ? avenants[0].prime_nette : null,
-                taxes_totales: avenants.length > 0 ? avenants[0].taxes_totales : null,
-                accessoires: accessoires,
-                date_debut: avenants.length > 0 ? avenants[0].date_debut : null,
-                date_fin: avenants.length > 0 ? avenants[0].date_fin : null,
-                code_avenant: avenants.length > 0 ? avenants[0].code_avenant : null,
-                payer: sum
-
+                type: avenant.type || null,
+                nom_client: associatedClient.nom_client || null,
+                nom_compagnie: associatedCompagnie.nom_compagnie || null,
+                adresse_client: associatedClient.adresse_client || null,
+                postal_client: associatedClient.postal_client || null,
+                numero_client: associatedClient.numero_client || null,
+                numero_police: associatedContrat.numero_police || null,
+                nom_branche: associatedBranche.nom_branche || null,
+                prime_nette: formatNumberWithSeparator(parseFloat(avenant.prime_nette) || 0),
+                taxes_totales: formatNumberWithSeparator(parseFloat(avenant.taxes_totales) || 0),
+                accessoires: formatNumberWithSeparator(accessoires),
+                date_debut: avenant.date_debut || null,
+                date_fin: avenant.date_fin || null,
+                code_avenant: avenant.code_avenant || null,
+                payer: formatNumberWithSeparator(sum)
             };
         } catch (error) {
-            console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette avec le nom de la compagnie :', error);
+            console.error('Erreur lors de la récupération des détails de l\'avenant :', error);
             throw error;
         }
     }
+    
+    
+
 
 
     static async getEmissions() {
@@ -2364,7 +2444,7 @@ class AppStorage {
         if (branch == 'Aucune branche sélectionnée') {
             // Si year est null, compter les prospects, les clients et les sinistres
             const contrats = await this.getContrats();
-            const prospects = await this.getData('prospects') || [];
+            const prospects = await this.getProspects();
             const clients = await this.getData('clients') || [];
             const sinistres = await this.getData('sinistres') || [];
 

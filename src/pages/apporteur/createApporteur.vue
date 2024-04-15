@@ -189,261 +189,19 @@ export default {
   },
 
   methods: {
-    // async storeApporteur() {
-    //   const response = await fetch(
-    //     "/api/check-internet-connection"
-    //   );
-
-    //   const data = await response.json();
-
-    //   this.isConnected = data.connected;
-    //   if (this.isConnected) {
-    //     const { v4: uuidv4 } = require('uuid');
-    //     const uuid = uuidv4();
-
-    //     const token = AppStorage.getToken();
-    //     const userId = AppStorage.getId();
-    //     const entrepriseId = AppStorage.getEntreprise();
-
-    //     // Configurez les en-têtes de la requête
-    //     let test = JSON.parse(JSON.stringify(this.branches));
-    //     let donnees = [];
-
-    //     for (let i = 0; i < Object.keys(test).length; i++) {
-    //       donnees.push(test[i]["value"]);
-    //     }
-
-    //     let testing = JSON.parse(JSON.stringify(this.branches));
-    //     let datas = [];
-
-    //     for (let i = 0; i < Object.keys(testing).length; i++) {
-    //       datas.push(testing[i]["uuidBranche"]);
-    //     }
-
-    //     // Obtenir la date du jour au format YYYYMMDD
-    //     let today = new Date();
-    //     let year = today.getFullYear();
-    //     let month = (today.getMonth() + 1).toString().padStart(2, '0');
-    //     let day = today.getDate().toString().padStart(2, '0');
-
-    //     let dateDuJour = year + month + day;
-
-    //     // Supposons que $nom est votre variable contenant le nom du client
-    //     let nom = this.nom_apporteur;
-
-    //     // Prendre les deux premiers caractères du nom
-    //     let deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
-
-    //     // Générer le numéro de client en ajoutant "CL-" à la date du jour
-    //     let codeApporteur = "AP-" + deuxPremiersCaracteres + dateDuJour;
-
-    //     try {
-    //       const response = await this.axiosService.post(apiUrl.postapporteur, {
-    //         code_apporteur: codeApporteur,
-    //         nom_apporteur: this.nom_apporteur,
-    //         contact_apporteur: this.contact_apporteur,
-    //         email_apporteur: this.email_apporteur,
-    //         adresse_apporteur: this.adresse_apporteur,
-    //         code_postal: this.code_postal,
-    //         accidents: donnees,
-    //         ids: datas,
-    //         id_entreprise: entrepriseId,
-    //         id: userId,
-    //         uuidApporteur: uuid,
-    //       });
-
-    //       const updatedApporteurs = await this.fetchApporteurs();
-
-    //       if (response.status === 200) {
-    //         toaster.success(`Compagnie ajouté avec succès`, {
-    //           position: "top-right",
-    //         });
-    //       }
-
-    //       // Mettre à jour IndexedDB avec les apporteurs récupérés après comparaison
-    //       AppStorage.getApporteurs().then((existingApporteurs) => {
-    //         if (existingApporteurs && updatedApporteurs) {
-    //           // Comparaison des nouvelles compagnies avec ceux déjà existants
-    //           const newApporteurs = updatedApporteurs.filter((apporteur) => {
-    //             return !existingApporteurs.some((existingApporteur) => existingApporteur.id_apporteur === apporteur.id_apporteur);
-    //           });
-
-    //           // Insérer uniquement les nouvelles compagnies dans IndexedDB
-    //           if (newApporteurs.length > 0) {
-    //             AppStorage.storeDataInIndexedDB('apporteurs', newApporteurs);
-    //           }
-    //         }
-    //       });
-
-    //       // Mettre à jour IndexedDB avec les taux compagnies récupérés 
-
-    //       const newApporteurId = response.data.id_apporteur;
-
-    //       const ratesEndpoint = `/api/auth/getTauxApporteur/${newApporteurId}`;
-
-    //       const ratesResponse = await axios.get(ratesEndpoint);
-
-    //       const rates = ratesResponse.data;
-
-    //       AppStorage.storeDataInIndexedDB('tauxapporteurs', rates);
-
-    //       this.$router.push("/listapporteur");
-
-    //     } catch (error) {
-    //       console.error("Erreur lors de l'ajout de la compagnie sur le serveur", error);
-    //     }
-
-    //   } else {
-    //     const { v4: uuidv4 } = require('uuid');
-    //     const uuid = uuidv4();
-
-    //     const userId = parseInt(AppStorage.getId(), 10);
-    //     const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
-
-    //     let test = JSON.parse(JSON.stringify(this.branches));
-    //     let donnees = [];
-
-    //     for (let i = 0; i < Object.keys(test).length; i++) {
-    //       donnees.push(test[i]["value"]);
-    //     }
-
-    //     let testing = JSON.parse(JSON.stringify(this.branches));
-    //     let datas = [];
-
-    //     for (let i = 0; i < Object.keys(testing).length; i++) {
-    //       datas.push(testing[i]["uuiBranche"]);
-    //     }
-
-    //     // Obtenir la date du jour au format YYYYMMDD
-    //     let today = new Date();
-    //     let year = today.getFullYear();
-    //     let month = (today.getMonth() + 1).toString().padStart(2, '0');
-    //     let day = today.getDate().toString().padStart(2, '0');
-
-    //     let dateDuJour = year + month + day;
-
-    //     // Supposons que $nom est votre variable contenant le nom du client
-    //     let nom = this.nom_apporteur;
-
-    //     // Prendre les deux premiers caractères du nom
-    //     let deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
-
-    //     // Générer le numéro de client en ajoutant "CL-" à la date du jour
-    //     let codeApporteur = "AP-" + deuxPremiersCaracteres + dateDuJour;
-
-    //     // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
-    //     const newApporteurData = [{
-    //       nom_apporteur: this.nom_apporteur,
-    //       contact_apporteur: this.contact_apporteur,
-    //       email_apporteur: this.email_apporteur,
-    //       adresse_apporteur: this.adresse_apporteur,
-    //       code_postal: this.code_postal,
-    //       accidents: donnees,
-    //       ids: datas,
-    //       sync: 0,
-    //       id_entreprise: entrepriseId,
-    //       id: userId,
-    //       uuidApporteur: uuid,
-    //       code_apporteur: codeApporteur,
-    //     }];
-
-    //     // Ajouter la nouvelle donnée dans IndexedDB
-    //     await AppStorage.storeDataInIndexedDB("apporteurs", newApporteurData);
-
-    //     const branchesMap = await AppStorage.getBranches();
-    //     for (let i = 0; i < datas.length; i++) {
-
-    //       const nom_branche = branchesMap[datas[i]];
-
-    //       let newTauxApporteur = [{
-    //         uuidApporteur: uuid,
-    //         sync: 0,
-    //         taux: donnees[i],
-    //         nom_branche: nom_branche,
-    //         uuidBranche: datas[i],
-    //       }];
-
-    //       await AppStorage.storeDataInIndexedDB("tauxapporteurs", newTauxApporteur);
-    //     }
-
-    //     toaster.info(`Apporteur ajouté localement (hors ligne)`, {
-    //       position: "top-right",
-    //     });
-
-    //     this.$router.push("/listapporteur");
-    //   }
-
-    // },
-
-
-
     // fetchApporteurs
 
     async storeApporteur() {
       try {
-        // const isConnected = await this.checkInternetConnection();
-
-        // if (isConnected) {
-        //   await this.storeApporteurOnline();
-        // } else {
+       
         await this.storeApporteurOffline();
-        // }
+      
       } catch (error) {
         console.error("Error storing apporteur:", error);
       }
     },
 
-    // async checkInternetConnection() {
-    //   const response = await fetch("/api/check-internet-connection");
-    //   const data = await response.json();
-    //   return data.connected;
-    // },
-
-    // async storeApporteurOnline() {
-
-
-
-
-    //   const uuid = uuidv4();
-    //   const userId = AppStorage.getId();
-    //   const entrepriseId = AppStorage.getEntreprise();
-
-    //   let codeApporteur = this.generateCodeApporteur();
-
-    //   const postData = {
-    //     code_apporteur: codeApporteur,
-    //     nom_apporteur: this.nom_apporteur,
-    //     contact_apporteur: this.contact_apporteur,
-    //     email_apporteur: this.email_apporteur,
-    //     adresse_apporteur: this.adresse_apporteur,
-    //     code_postal: this.code_postal,
-    //     accidents: this.extractValues(this.branches),
-    //     ids: this.extractUuidBranches(this.branches),
-    //     id_entreprise: entrepriseId,
-    //     id: userId,
-    //     uuidApporteur: uuid,
-    //   };
-
-    //   const response = await AxiosService.post(apiUrl.postapporteur, postData);
-
-    //   const updatedApporteurs = await this.fetchApporteurs();
-
-    //   if (response.status === 200) {
-    //     toaster.success(`Compagnie ajouté avec succès`, {
-    //       position: "top-right",
-    //     });
-    //   }
-
-    //   this.updateIndexedDB(updatedApporteurs);
-
-    //   const newApporteurId = response.data.id_apporteur;
-    //   const rates = await this.getTauxApporteur(newApporteurId);
-
-    //   AppStorage.storeDataInIndexedDB('tauxapporteurs', rates);
-
-    //   this.$router.push("/listapporteur");
-    // },
-
+   
     async storeApporteurOffline() {
       this.errors = validateApporteurForm(this.form);
 
@@ -535,25 +293,7 @@ export default {
       return branches.map(branch => branch["uuidBranche"]);
     },
 
-    // updateIndexedDB(updatedApporteurs) {
-    //   AppStorage.getApporteurs().then((existingApporteurs) => {
-    //     if (existingApporteurs && updatedApporteurs) {
-    //       const newApporteurs = updatedApporteurs.filter((apporteur) => {
-    //         return !existingApporteurs.some((existingApporteur) => existingApporteur.id_apporteur === apporteur.id_apporteur);
-    //       });
-
-    //       if (newApporteurs.length > 0) {
-    //         AppStorage.storeDataInIndexedDB('apporteurs', newApporteurs);
-    //       }
-    //     }
-    //   });
-    // },
-
-    // async getTauxApporteur(newApporteurId) {
-    //   const ratesEndpoint = `/api/auth/getTauxApporteur/${newApporteurId}`;
-    //   const ratesResponse = await axios.get(ratesEndpoint);
-    //   return ratesResponse.data;
-    // },
+   
 
     getFormattedDate() {
       const today = new Date();
@@ -564,20 +304,7 @@ export default {
     },
 
 
-    // async fetchApporteurs() {
-
-    //   try {
-    //     const response = await AxiosService.get(apiUrl.getapporteur);
-
-    //     // Vous pouvez traiter les données comme vous le souhaitez
-    //     const apporteurs = response.data;
-
-    //     // Retourner les apporteurs pour une utilisation éventuelle
-    //     return apporteurs;
-    //   } catch (error) {
-    //     console.error("Erreur lors de la récupération des clients sur le serveur", error);
-    //   }
-    // },
+   
 
     async getAdresse() {
       AppStorage.getLocalisations().then((result) => {

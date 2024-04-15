@@ -170,6 +170,11 @@
 import AppStorage from "../db/AppStorage.js";
 import syncservice from "../services/syncService.js";
 import axios from "axios";
+import { createToaster } from "@meforma/vue-toaster";
+// import $ from "jquery";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   data() {
     return {
@@ -204,9 +209,12 @@ export default {
       try {
         const isConnected = await this.checkInternetConnection();
         if (!isConnected) {
-          console.log(
-            "Veuillez vous connecter à Internet pour effectuer cette action."
-          );
+          toaster.error(`Veuillez vous connecter à Internet pour effectuer cette action.`, {
+            position: "top-right",
+          });
+          // console.log(
+          //   "Veuillez vous connecter à Internet pour effectuer cette action."
+          // );
           return;
         }
 
@@ -231,8 +239,11 @@ export default {
           this.performLogoutCleanup();
           return;
         }
-
-        console.log("Déconnexion en cours...");
+        toaster.info(`Deconnexion en cours...`, {
+            position: "top-right",
+          });
+        // console.log("Déconnexion en cours...");
+        await syncservice.checkAndSyncData();
         await this.logoutUser();
         this.refreshPage();
         this.$router.push({ name: "welcome" });

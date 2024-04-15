@@ -269,4 +269,119 @@ export default {
         }
     },
 
+    async getGraveCategoriesData() {
+        const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+
+            const response = await axios.get(apiUrl.getcategorie, { headers });
+            
+            // if (!response.ok) {
+            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
+            // }
+            const newData = response.data;
+            await AppStorage.updateSyncIndexedDB("categories", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des automobiles:', error);
+            throw error;
+        }
+    },
+
+    async getGraveMarquesData() {
+        const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+
+            const response = await axios.get(apiUrl.getmarque, { headers });
+            
+            // if (!response.ok) {
+            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
+            // }
+            const newData = response.data;
+            await AppStorage.updateSyncIndexedDB("marques", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des automobiles:', error);
+            throw error;
+        }
+    },
+
+    async getGraveGenresData() {
+        const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+
+            const response = await axios.get(apiUrl.getgenre, { headers });
+            
+            // if (!response.ok) {
+            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
+            // }
+            const newData = response.data;
+            await AppStorage.updateSyncIndexedDB("genres", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des genres:', error);
+            throw error;
+        }
+    },
+
+    async getGraveCouleursData() {
+        const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+
+            const response = await axios.get(apiUrl.getcouleur, { headers });
+            
+            // if (!response.ok) {
+            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
+            // }
+            const newData = response.data;
+            await AppStorage.updateSyncIndexedDB("couleurs", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des couleurs:', error);
+            throw error;
+        }
+    },
+
+    async getGraveEnergiesData() {
+        const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+
+            const response = await axios.get(apiUrl.getenergie, { headers });
+            
+            // if (!response.ok) {
+            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
+            // }
+            const newData = response.data;
+            await AppStorage.updateSyncIndexedDB("energies", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des couleurs:', error);
+            throw error;
+        }
+    },
+
 };

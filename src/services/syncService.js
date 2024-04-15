@@ -24,10 +24,16 @@ export default {
         const sinistresToSync = await this.getSinistresToSync();
         const reglementsToSync = await this.getReglementsToSync();
 
+        const categoriesToSync = await this.getCategoriesToSync();
+        const marquesToSync = await this.getMarquesToSync();
+        const genresToSync = await this.getGenresToSync();
+        const couleursToSync = await this.getCouleursToSync();
+        const energiesToSync = await this.getEnergiesToSync();
+
         let syncMessageDisplayed = false; // Ajouter un drapeau pour suivre si le message a été affiché
 
         // Vérifier s'il y a des données à synchroniser
-        const anyDataToSync = branchesToSync.length > 0 || prospectsToSync.length > 0 || clientsToSync.length > 0 || compagniesToSync.length > 0 || tauxcompagniesToSync.length > 0 || apporteursToSync.length > 0 || tauxapporteursToSync.length > 0 || contratsToSync.length > 0 || avenantsToSync.length > 0 || automobilesToSync.length > 0 || garantiesToSync.length > 0 || sinistresToSync.length > 0 || reglementsToSync.length > 0;
+        const anyDataToSync = branchesToSync.length > 0 || prospectsToSync.length > 0 || clientsToSync.length > 0 || compagniesToSync.length > 0 || tauxcompagniesToSync.length > 0 || apporteursToSync.length > 0 || tauxapporteursToSync.length > 0 || contratsToSync.length > 0 || avenantsToSync.length > 0 || automobilesToSync.length > 0 || garantiesToSync.length > 0 || sinistresToSync.length > 0 || reglementsToSync.length > 0 || categoriesToSync.length > 0 || marquesToSync.length > 0 || genresToSync.length > 0 || couleursToSync.length > 0 || energiesToSync.length > 0;
 
         // Si des données doivent être synchronisées et que le message n'a pas été affiché, informer l'utilisateur que la synchronisation commence
         if (anyDataToSync && !syncMessageDisplayed) {
@@ -90,6 +96,26 @@ export default {
 
         if (reglementsToSync.length > 0) {
             syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, reglementsToSync, 'reglements'));
+        }
+
+        if (categoriesToSync.length > 0) {
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, categoriesToSync, 'categories'));
+        }
+
+        if (marquesToSync.length > 0) {
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, marquesToSync, 'marques'));
+        }
+
+        if (genresToSync.length > 0) {
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, genresToSync, 'genres'));
+        }
+
+        if (couleursToSync.length > 0) {
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, couleursToSync, 'couleurs'));
+        }
+
+        if (energiesToSync.length > 0) {
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, energiesToSync, 'energies'));
         }
 
         // Attendre que toutes les synchronisations soient terminées
@@ -168,6 +194,27 @@ export default {
                     const garantiesData = await DataAPI.getGraveGarantiesData(); // Utilisation du nouveau fichier
                     // console.log('Données graves des  garanties synchronisés :', garantiesData);
                     break;
+                case 'categories':
+                    const categoriesData = await DataAPI.getGraveCategoriesData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des  garanties synchronisés :', garantiesData);
+                    break;
+                case 'marques':
+                    const marquesData = await DataAPI.getGraveMarquesData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des  garanties synchronisés :', garantiesData);
+                    break;
+
+                case 'genres':
+                    const genresData = await DataAPI.getGraveGarantiesData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des  garanties synchronisés :', garantiesData);
+                    break;
+                case 'couleurs':
+                    const couleursData = await DataAPI.getGraveGarantiesData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des  garanties synchronisés :', garantiesData);
+                    break;
+                case 'energies':
+                    const energiesData = await DataAPI.getGraveGarantiesData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des  garanties synchronisés :', garantiesData);
+                    break;
             }
         }
     },
@@ -235,6 +282,31 @@ export default {
     async getReglementsToSync() {
         const queue = await AppStorage.getReglements();
         return queue.filter(reglement => reglement.sync === 0);
+    },
+
+    async getCategoriesToSync() {
+        const queue = await AppStorage.getCategories();
+        return queue.filter(categorie => categorie.sync === 0);
+    },
+
+    async getMarquesToSync() {
+        const queue = await AppStorage.getMarques();
+        return queue.filter(marque => marque.sync === 0);
+    },
+
+    async getGenresToSync() {
+        const queue = await AppStorage.getGenres();
+        return queue.filter(genre => genre.sync === 0);
+    },
+
+    async getCouleursToSync() {
+        const queue = await AppStorage.getCouleurs();
+        return queue.filter(couleur => couleur.sync === 0);
+    },
+
+    async getEnergiesToSync() {
+        const queue = await AppStorage.getEnergies();
+        return queue.filter(energie => energie.sync === 0);
     },
 
     async syncData(endpoint, dataToSync, dataType) {
