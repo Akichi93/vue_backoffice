@@ -245,7 +245,7 @@ export default {
         // console.log("Déconnexion en cours...");
         await syncservice.checkAndSyncData();
         await this.logoutUser();
-        this.refreshPage();
+        // this.refreshPage();
         this.$router.push({ name: "welcome" });
       } catch (error) {
         console.error("Erreur lors de la déconnexion :", error);

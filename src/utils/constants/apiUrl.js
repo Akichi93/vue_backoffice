@@ -43,6 +43,10 @@ const apiUrl = {
     getautomobile: createApiUrl('getautomobiles'),
     getcategorie: createApiUrl('getcategories'),
     postcategorie: createApiUrl('postcategories'),
+    getsinistre: createApiUrl('getsinistres'),
+    postsinistre: createApiUrl('postsinistres'),
+    getreglement: createApiUrl('getreglements'),
+    postreglement: createApiUrl('postreglements'),
 };
 
 // Export des fonctions et données

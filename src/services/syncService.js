@@ -2,6 +2,7 @@
 import AppStorage from '../db/AppStorage.js';
 import DataAPI from '../db/DataAPI.js';
 import { createToaster } from "@meforma/vue-toaster";
+import axios from "axios";
 const toaster = createToaster({
     /* options */
 });
@@ -99,23 +100,23 @@ export default {
         }
 
         if (categoriesToSync.length > 0) {
-            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, categoriesToSync, 'categories'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-categories`, categoriesToSync, 'categories'));
         }
 
         if (marquesToSync.length > 0) {
-            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, marquesToSync, 'marques'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-marques`, marquesToSync, 'marques'));
         }
 
         if (genresToSync.length > 0) {
-            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, genresToSync, 'genres'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-genres`, genresToSync, 'genres'));
         }
 
         if (couleursToSync.length > 0) {
-            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, couleursToSync, 'couleurs'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-couleurs`, couleursToSync, 'couleurs'));
         }
 
         if (energiesToSync.length > 0) {
-            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-reglements`, energiesToSync, 'energies'));
+            syncPromises.push(this.syncData(`${base_url}/api/auth/sync-energies`, energiesToSync, 'energies'));
         }
 
         // Attendre que toutes les synchronisations soient terminées
@@ -180,7 +181,7 @@ export default {
                     break;
                 case 'contrats':
                     const contratsData = await DataAPI.getGraveContratsData();
-                    console.log('Données graves des contrats synchronisés :', contratsData);
+                    // console.log('Données graves des contrats synchronisés :', contratsData);
                     break;
                 case 'avenants':
                     const avenantsData = await DataAPI.getGraveAvenantsData(); // Utilisation du nouveau fichier
@@ -194,6 +195,14 @@ export default {
                     const garantiesData = await DataAPI.getGraveGarantiesData(); // Utilisation du nouveau fichier
                     // console.log('Données graves des  garanties synchronisés :', garantiesData);
                     break;
+                case 'sinistres':
+                    const sinistresData = await DataAPI.getGraveSinistresData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des  garanties synchronisés :', garantiesData);
+                    break;
+                case 'reglements':
+                    const reglementsData = await DataAPI.getGraveReglementsData(); // Utilisation du nouveau fichier
+                    // console.log('Données graves des  garanties synchronisés :', garantiesData);
+                    break;
                 case 'categories':
                     const categoriesData = await DataAPI.getGraveCategoriesData(); // Utilisation du nouveau fichier
                     // console.log('Données graves des  garanties synchronisés :', garantiesData);
@@ -204,15 +213,15 @@ export default {
                     break;
 
                 case 'genres':
-                    const genresData = await DataAPI.getGraveGarantiesData(); // Utilisation du nouveau fichier
+                    const genresData = await DataAPI.getGraveGenresData(); // Utilisation du nouveau fichier
                     // console.log('Données graves des  garanties synchronisés :', garantiesData);
                     break;
                 case 'couleurs':
-                    const couleursData = await DataAPI.getGraveGarantiesData(); // Utilisation du nouveau fichier
+                    const couleursData = await DataAPI.getGraveCouleursData(); // Utilisation du nouveau fichier
                     // console.log('Données graves des  garanties synchronisés :', garantiesData);
                     break;
                 case 'energies':
-                    const energiesData = await DataAPI.getGraveGarantiesData(); // Utilisation du nouveau fichier
+                    const energiesData = await DataAPI.getGraveEnergiesData(); // Utilisation du nouveau fichier
                     // console.log('Données graves des  garanties synchronisés :', garantiesData);
                     break;
             }
@@ -313,22 +322,22 @@ export default {
         const token = AppStorage.getToken();
 
         try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
+            const response = await axios.post(endpoint, dataToSync, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
+                    'Authorization': `Bearer ${token}`,
                     'x-access-token': token
-                },
-                body: JSON.stringify(dataToSync),
+                }
             });
 
-            if (response.ok) {
+            if (response.status === 200) {
+
                 if (!this.syncedTables.includes(dataType)) {
                     this.syncedTables.push(dataType);
                 }
+
             } else {
-                console.error(`La synchronisation des ${dataType} a échoué.`);
+                console.error(`La synchronisation des ${dataType} a échoué.`,);
             }
         } catch (error) {
             console.error(`Erreur lors de la synchronisation des ${dataType} :`, error);

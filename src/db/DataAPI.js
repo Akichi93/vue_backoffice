@@ -224,28 +224,6 @@ export default {
         }
     },
 
-    async getGraveGarantiesData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
-        try {
-            const response = await axios.get(apiUrl.getgarantie, { headers });
-
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des garanties.');
-            // }
-            const newData = await response.json();
-            await AppStorage.updateSyncIndexedDB("garanties", newData);
-        } catch (error) {
-            console.error('Erreur lors de la récupération des données graves des garanties:', error);
-            throw error;
-        }
-    },
-
     async getGraveAutomobilesData() {
         const token = AppStorage.getToken();
 
@@ -269,6 +247,74 @@ export default {
         }
     },
 
+    async getGraveGarantiesData() {
+        const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+            const response = await axios.get(apiUrl.getgarantie, { headers });
+
+            // if (!response.ok) {
+            //     throw new Error('Erreur lors de la récupération des données graves des garanties.');
+            // }
+            const newData = await response.json();
+            await AppStorage.updateSyncIndexedDB("garanties", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des garanties:', error);
+            throw error;
+        }
+    },
+
+    async getGraveSinistresData() {
+        const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+            const response = await axios.get(apiUrl.getsinistre, { headers });
+
+            // if (!response.ok) {
+            //     throw new Error('Erreur lors de la récupération des données graves des garanties.');
+            // }
+            const newData = await response.json();
+            await AppStorage.updateSyncIndexedDB("sinistres", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des sinistres:', error);
+            throw error;
+        }
+    },
+
+    async getGraveReglementsData() {
+        const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+            const response = await axios.get(apiUrl.getreglement, { headers });
+
+            // if (!response.ok) {
+            //     throw new Error('Erreur lors de la récupération des données graves des garanties.');
+            // }
+            const newData = await response.json();
+            await AppStorage.updateSyncIndexedDB("reglements", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des reglements:', error);
+            throw error;
+        }
+    },
+
+    
+
     async getGraveCategoriesData() {
         const token = AppStorage.getToken();
 
@@ -287,7 +333,7 @@ export default {
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("categories", newData);
         } catch (error) {
-            console.error('Erreur lors de la récupération des données graves des automobiles:', error);
+            console.error('Erreur lors de la récupération des données graves des categories:', error);
             throw error;
         }
     },
@@ -310,7 +356,7 @@ export default {
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("marques", newData);
         } catch (error) {
-            console.error('Erreur lors de la récupération des données graves des automobiles:', error);
+            console.error('Erreur lors de la récupération des données graves des marques:', error);
             throw error;
         }
     },
@@ -379,7 +425,7 @@ export default {
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("energies", newData);
         } catch (error) {
-            console.error('Erreur lors de la récupération des données graves des couleurs:', error);
+            console.error('Erreur lors de la récupération des données graves des energies:', error);
             throw error;
         }
     },
