@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Fichier</h5>
+          <h5 class="modal-title">Fichiers</h5>
           <button
             type="button"
             class="close"
@@ -14,21 +14,14 @@
           </button>
         </div>
         <div class="modal-body">
-          {{ files }}
-
-          <!-- <ul class="chat-user-list">
-            <li v-for="file in filetoedit" :key="file.id_fileavenant">
+          <ul class="file-list">
+            <li v-for="file in files" :key="file.id_fileavenant">
               <div class="media d-flex">
-                <div
-                  class="media-body align-self-center text-nowrap flex-grow-1"
-                >
-                  <div class="user-name">Nom du fichier: {{ file.titre }}</div>
-                  <span class="designation">
+                <div class="media-body align-self-center text-nowrap flex-grow-1">
+                  <div class="file-title">Nom du fichier: {{ file.titre }}</div>
+                  <span class="file-details">
                     Fichier:
-                    <a
-                      :href="`/images/piece_avenant/${file.nom_file}`"
-                      download
-                    >
+                    <a :href="`/images/piece_avenant/${file.nom_file}`" download>
                       {{ file.nom_file }}
                     </a>
                   </span>
@@ -43,7 +36,7 @@
                 ></iframe>
               </div>
             </li>
-          </ul> -->
+          </ul>
         </div>
       </div>
     </div>
@@ -57,20 +50,18 @@ export default {
   props: ["avenantoedit"],
   data() {
     return {
-      files: "", // Initialize filetoedit as an empty array
+      files: [] // Initialize files as an empty array
     };
   },
-  created() {
-    this.fetchFile();
+  mounted() {
+    this.fetchFiles();
   },
-
   methods: {
-    fetchFile() {
-      // const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    fetchFiles() {
       const uuid = this.avenantoedit.uuidAvenant;
-      axios  
-        // .get(`${apiUrl}/api/auth/fileavenants/${uuid}`)
-        .get(" https://fl4ir.loca.lt/api/auth/fileavenants/" + uuid)
+      alert(uuid)
+      axios
+        .get(`https://fl4ir.loca.lt/api/auth/fileavenants/${uuid}`)
         .then((response) => {
           this.files = response.data;
         })
@@ -78,7 +69,26 @@ export default {
           console.error("Error fetching files:", error);
           // Handle error (e.g., display error message)
         });
-    },
-  },
+    }
+  }
 };
 </script>
+
+<style scoped>
+/* Ajoutez des styles CSS personnalisés ici */
+.file-list {
+  list-style: none;
+  padding: 0;
+}
+.file-list li {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 20px;
+}
+.file-title {
+  font-weight: bold;
+}
+.file-details {
+  font-style: italic;
+}
+</style>

@@ -123,7 +123,7 @@ export default {
 
         // Réinitialiser les champs du formulaire après l'envoi réussi
         this.titre = "";
-        this.imageFile = null;
+        this.file = null;
 
         // Fermer le modal après l'envoi réussi
         // Par exemple, si vous utilisez Bootstrap, vous pouvez appeler une fonction pour fermer le modal ici
