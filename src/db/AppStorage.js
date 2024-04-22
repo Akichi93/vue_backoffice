@@ -104,6 +104,8 @@ class AppStorage {
         await tx.complete;
     }
 
+   
+
     static async updateSyncIndexedDB(key, newData) {
         try {
             const db = await openDB(this.dbName, 1);
@@ -1009,7 +1011,7 @@ class AppStorage {
         return this.getData('tauxcompagnies') || [];
     }
 
-    static async searchTauxCompagnieByNomBranche(name,uuidCompagnie) {
+    static async searchTauxCompagnieByNomBranche(name, uuidCompagnie) {
         const allTaux = await this.getTauxCompagniesByIdCompagnie(uuidCompagnie);
         const filteredTaux = allTaux.filter(tauxcompagnie => tauxcompagnie.nom_branche.toLowerCase().includes(name.toLowerCase()));
         return filteredTaux;
@@ -1040,16 +1042,16 @@ class AppStorage {
 
     static async getTauxCompagniesByIdCompagnie(uuidCompagnie) {
         const allTauxCompagnies = await this.fetchDataFromIndexedDB('tauxcompagnies') || [];
-    
+
         const tauxCompagniesByIdCompagnie = allTauxCompagnies.filter(tauxcompagnie => {
             return tauxcompagnie.uuidCompagnie === uuidCompagnie;
         });
-    
+
         // Trier les résultats par ordre alphabétique de la propriété 'nom_branche'
         tauxCompagniesByIdCompagnie.sort((a, b) => {
-            const nomBrancheA = (a.nom_branche || '').toLowerCase();  
-            const nomBrancheB = (b.nom_branche || '').toLowerCase();  
-    
+            const nomBrancheA = (a.nom_branche || '').toLowerCase();
+            const nomBrancheB = (b.nom_branche || '').toLowerCase();
+
             if (nomBrancheA < nomBrancheB) {
                 return -1;
             }
@@ -1058,10 +1060,10 @@ class AppStorage {
             }
             return 0;
         });
-    
+
         return tauxCompagniesByIdCompagnie;
     }
-    
+
 
     static async getTauxCompagnieById(uuidTauxCompagnie) {
         const allTauxCompagnies = await this.getData('tauxcompagnies') || [];
@@ -1123,21 +1125,21 @@ class AppStorage {
         return this.getData('tauxapporteurs') || [];
     }
 
-    
+
 
     static async getTauxApporteursByIdApporteur(uuidApporteur) {
         const allTauxApporteurs = await this.fetchDataFromIndexedDB('tauxapporteurs') || [];
-    
+
         const tauxApporteursByIdApporteur = allTauxApporteurs.filter(tauxApporteur => {
             return tauxApporteur.uuidApporteur === uuidApporteur;
         });
-    
+
         // Trier les résultats par ordre alphabétique de la propriété 'nom_branche'
         tauxApporteursByIdApporteur.sort((a, b) => {
             // Assurez-vous que 'nom_branche' est défini pour les deux objets 'a' et 'b'
-            const nomBrancheA = (a.nom_branche || '').toLowerCase();  
-            const nomBrancheB = (b.nom_branche || '').toLowerCase();  
-    
+            const nomBrancheA = (a.nom_branche || '').toLowerCase();
+            const nomBrancheB = (b.nom_branche || '').toLowerCase();
+
             if (nomBrancheA < nomBrancheB) {
                 return -1;
             }
@@ -1146,16 +1148,16 @@ class AppStorage {
             }
             return 0;
         });
-    
+
         return tauxApporteursByIdApporteur;
     }
 
-    static async searchTauxApporteurByNomBranche(name,uuidApporteur) {
+    static async searchTauxApporteurByNomBranche(name, uuidApporteur) {
         const allTaux = await this.getTauxApporteursByIdApporteur(uuidApporteur);
         const filteredTaux = allTaux.filter(tauxapporteur => tauxapporteur.nom_branche.toLowerCase().includes(name.toLowerCase()));
         return filteredTaux;
     }
-    
+
 
     static async getTauxParIdBrancheEtApporteur(uuidBranche, uuidApporteur) {
         const tauxapporteurs = await this.getTauxApporteurs();
@@ -1216,6 +1218,16 @@ class AppStorage {
         } else {
             throw new Error('Taux apporteur non trouvé');
         }
+    }
+
+    // File Avenants
+
+    static async storeFileAvenants(fileavenants) {
+        await this.storeData('fileavenants', fileavenants);
+    }
+
+    static async getFileAvenants() {
+        return this.getData('fileavenants') || [];
     }
 
 
@@ -1793,29 +1805,29 @@ class AppStorage {
         try {
             // Obtenir les données de l'avenant spécifié par uuidAvenant
             const avenant = await this.getAvenantByUuid(uuidAvenant);
-    
+
             if (!avenant) {
                 throw new Error('Avenant introuvable pour l\'UUID spécifié.');
             }
-    
+
             // Obtenir les données des compagnies d'assurance
             const compagnies = await this.getCompagnies();
-    
+
             // Obtenir les données des clients
             const clients = await this.getClients();
-    
+
             // Obtenir les données des branches
             const branches = await this.getBranches();
-    
+
             // Obtenir les données des contrats
             const contrats = await this.getContrats();
-    
+
             // Créer des dictionnaires pour une recherche efficace par UUID
             const compagniesMap = new Map(compagnies.map(compagnie => [compagnie.uuidCompagnie, compagnie]));
             const clientsMap = new Map(clients.map(client => [client.uuidClient, client]));
             const branchesMap = new Map(branches.map(branche => [branche.uuidBranche, branche]));
             const contratsMap = new Map(contrats.map(contrat => [contrat.uuidContrat, contrat]));
-    
+
             // Calculer les totaux des accessoires et de la prime nette
             const sum = (
                 parseFloat(avenant.accessoire) || 0 +
@@ -1823,23 +1835,23 @@ class AppStorage {
                 parseFloat(avenant.taxes_totales) || 0 +
                 parseFloat(avenant.frais_courtier) || 0
             );
-    
+
             const accessoires = (
                 parseFloat(avenant.accessoires) || 0 +
                 parseFloat(avenant.frais_courtier) || 0
             );
-    
+
             // Retrouver les détails associés à l'avenant
             const associatedCompagnie = compagniesMap.get(avenant.uuidCompagnie) || {};
             const associatedClient = clientsMap.get(avenant.uuidClient) || {};
             const associatedBranche = branchesMap.get(avenant.uuidBranche) || {};
             const associatedContrat = contratsMap.get(avenant.uuidContrat) || {};
-    
+
             // Fonction de formatage avec séparateur de milliers
             function formatNumberWithSeparator(number) {
                 return number.toLocaleString('fr-FR'); // Utilisez 'fr-FR' pour le format français avec le séparateur de milliers
             }
-    
+
             // Retourner les détails combinés avec les totaux calculés
             return {
                 type: avenant.type || null,
@@ -1863,8 +1875,8 @@ class AppStorage {
             throw error;
         }
     }
-    
-    
+
+
 
 
 

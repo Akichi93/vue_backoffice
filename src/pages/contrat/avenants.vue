@@ -98,7 +98,7 @@
                           data-bs-target="#add_file" title="Ajouter fichier"><i class="fas fa-plus"></i>
                         </a>
 
-                        <a href="#" @click="fetchFile(avenant.uuidAvenant)" data-bs-toggle="modal"
+                        <a href="#" @click="editAvenant(avenant.uuidAvenant)" data-bs-toggle="modal"
                           data-bs-target="#assign_leader" title="Voir fichier"><i class="fas fa-file"></i>
                         </a>
 
@@ -128,13 +128,13 @@
             </div>
 
             <addavenant @avenant-add="refresh"></addavenant>
-            <!-- <editavenant v-bind:avenantoedit="avenantoedit"></editavenant> -->
+            <editavenant v-bind:avenantoedit="avenantoedit"></editavenant>
             <soldercontrat v-bind:avenantoedit="avenantoedit" @avenant-solder="refresh"></soldercontrat>
             <reversercontrat v-bind:avenantoedit="avenantoedit" @avenant-reverser="refresh"></reversercontrat>
             <deleteavenant v-bind:avenantoedit="avenantoedit" @avenant-delete="refresh"></deleteavenant>
             <viewfacture v-bind:facturetoedit="facturetoedit"></viewfacture>
             <addfile v-bind:avenantoedit="avenantoedit"></addfile>
-            <viewfile v-bind:filetoedit="filetoedit"></viewfile>
+            <viewfile v-bind:avenantoedit="avenantoedit"></viewfile>
 
           </div>
         </div>
@@ -232,15 +232,15 @@ export default {
       //   .catch((error) => console.log(error));
     },
 
-    fetchFile(id_avenant) {
-      axios
-        .get("/api/auth/getFileAvenant/" + id_avenant)
-        .then((response) => {
-          this.filetoedit = response.data;
-        })
-        // .then((response) => console.log(response.data))
-        .catch((error) => console.log(error));
-    },
+    // fetchFile(id_avenant) {
+    //   axios
+    //     .get("/api/auth/getFileAvenant/" + id_avenant)
+    //     .then((response) => {
+    //       this.filetoedit = response.data;
+    //     })
+    //     // .then((response) => console.log(response.data))
+    //     .catch((error) => console.log(error));
+    // },
 
     // fetchTask() {
     //   var that = this;

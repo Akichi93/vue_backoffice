@@ -466,7 +466,7 @@
           </div>
 
           <addautomobile @automobile-add="refresh"></addautomobile>
-          <!-- <flotte></flotte> -->
+          <addflotte></addflotte>
           <!-- <addgarantie></addgarantie> -->
         </div>
       </div>
@@ -478,7 +478,7 @@
 import Sidebar from "../../layout/Sidebar.vue";
 import Header from "../../layout/Header.vue";
 import addautomobile from "./addAutomobile.vue";
-import flotte from "./flotte.vue";
+import addflotte from "./addFlotte.vue";
 import addgarantie from "./addGarantie.vue";
 import AppStorage from "../../db/AppStorage.js";
 import { formatDate, formatDateTime } from "../../utils/helpers/dateFormat";
@@ -489,7 +489,7 @@ export default {
     Sidebar,
     addautomobile,
     addgarantie,
-    flotte,
+    addflotte,
   },
   data() {
     return {

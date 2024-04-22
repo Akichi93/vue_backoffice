@@ -47,6 +47,7 @@ const apiUrl = {
     postsinistre: createApiUrl('postsinistres'),
     getreglement: createApiUrl('getreglements'),
     postreglement: createApiUrl('postreglements'),
+    postfileavenant: createApiUrl('postfileavenants'),
 };
 
 // Export des fonctions et données

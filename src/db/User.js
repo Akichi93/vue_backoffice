@@ -35,6 +35,7 @@ class User {
 
             { endpoint: 'gettauxcompagnies', storageKey: 'tauxcompagnies' },
             { endpoint: 'gettauxapporteurs', storageKey: 'tauxapporteurs' },
+            { endpoint: 'getfileavenants', storageKey: 'fileavenants' },
         ];
 
         const accessToken = AppStorage.getToken();
