@@ -351,7 +351,7 @@ export default {
 
     fetchFile(uuidAvenant) {
       axios
-        .get(`https://fl4ir.loca.lt/api/auth/fileavenants/${uuidAvenant}`)
+        .get(`https://app.fl4ir.com/api/auth/fileavenants/${uuidAvenant}`)
         .then((response) => {
           this.files = response.data;
         })
