@@ -1520,6 +1520,7 @@ class AppStorage {
             });
 
             // Retourner le tableau contenant les résultats
+            
             return results;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette avec le nom de la compagnie :', error);

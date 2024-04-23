@@ -239,9 +239,9 @@ export default {
           this.performLogoutCleanup();
           return;
         }
-        toaster.info(`Deconnexion en cours...`, {
-            position: "top-right",
-          });
+        // toaster.info(`Deconnexion en cours...`, {
+        //     position: "top-right",
+        //   });
         // console.log("Déconnexion en cours...");
         await syncservice.checkAndSyncData();
         await this.logoutUser();

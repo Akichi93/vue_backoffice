@@ -176,7 +176,7 @@
                                     </div>
                                     <div>
                                       <iframe
-                                        :src="`https://app.fl4ir.com/images/piece_avenant/${file.nom_file}`"
+                                        :src="`https://fl4ir.loca.lt/images/piece_avenant/${file.nom_file}`"
                                         type=""
                                         width="750"
                                         height="500"

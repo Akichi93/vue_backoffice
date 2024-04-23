@@ -49,6 +49,7 @@
             <!-- Boutons Ajouter et Annuler -->
             <div class="form-group mt-3">
               <button
+                data-bs-dismiss="modal"
                 type="button"
                 class="btn btn-primary m-3"
                 @click="submitForm"

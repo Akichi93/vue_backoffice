@@ -18,8 +18,7 @@
             <div class="row align-items-center">
               <div class="col-auto float-end ms-auto">
                 <div class="btn-group btn-group-sm">
-                  <button class="btn btn-white">CSV</button>
-                  <button class="btn btn-white" @click="downloadPDF()">
+                  <button class="btn btn-white" @click="exportToPDF()">
                     PDF
                   </button>
                   <button class="btn btn-white" @click="print">
@@ -178,16 +177,64 @@
   </div>
 </template>
 <script>
+import html2pdf from "html2pdf.js";
 export default {
   props: ["facturetoedit"],
   methods: {
     formatMontant(montant) {
       return formatNumberWithThousandsSeparator(montant);
     },
+    exportToPDF() {
+      const element = document.getElementById("printMe"); // Récupérer l'élément à convertir en PDF
+
+      // Configuration des options pour html2pdf
+      const options = {
+        margin: [10, 10, 10, 10], // Marges en pixels (haut, droite, bas, gauche)
+        filename: "facture.pdf", // Nom du fichier PDF à télécharger
+        image: { type: "jpeg", quality: 0.98 }, // Format d'image et qualité (optionnel)
+        // jsPDF: { unit: "px", format: "a4", orientation: "portrait" }, // Taille de la page PDF (A4 en mode portrait)
+        html2canvas: { scale: 2 }, // Facteur d'échelle pour améliorer la résolution (optionnel)
+      };
+
+      // Convertir et télécharger en PDF avec les options configurées
+      html2pdf()
+        .set(options)
+        .from(element)
+        .then(() => {
+          // Appliquer des styles spécifiques au PDF généré
+          const pdf = document.querySelector(".html2pdf__page");
+          if (pdf) {
+            pdf.style.fontSize = "10px"; // Définir la taille de police pour le PDF
+            // Vous pouvez également appliquer d'autres styles CSS nécessaires ici
+          }
+        })
+        .save();
+    },
     print() {
       // Pass the element id here
+
       this.$htmlToPaper("printMe");
     },
   },
 };
 </script>
+<style scoped>
+@media print {
+  /* Masquer certains éléments lors de l'impression */
+  .modal-header {
+    display: none; /* Masquer l'en-tête de la modale */
+  }
+  .btn-group {
+    display: none; /* Masquer les boutons d'actions */
+  }
+  .bottom-page {
+    display: none; /* Masquer la signature en bas de page */
+  }
+  .invoice {
+    padding: 20px; /* Ajouter un espace de marge intérieur à l'impression */
+  }
+  .invoice img.logo {
+    max-width: 100px; /* Définir la largeur maximale de l'image */
+  }
+}
+</style>
