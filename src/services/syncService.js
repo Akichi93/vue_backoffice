@@ -10,8 +10,9 @@ const toaster = createToaster({
 
 const base_url = import.meta.env.VITE_API_BASE_URL;
 
-export default {
+const SyncService = {
     syncedTables: [],
+    syncSuccessDisplayed: false,
 
     async checkAndSyncData() {
         toaster.info('Début de la synchronisation des données...', { position: 'top-right' });
@@ -46,14 +47,11 @@ export default {
             }
         }
 
-        let syncSuccessDisplayed = false;
-
         // Après la synchronisation, afficher un message de succès si des tables ont été synchronisées
-        if (!syncSuccessDisplayed) {
-            syncSuccessDisplayed = true;
-            
+        if (!this.syncSuccessDisplayed) {
             await this.retrieveGraveData(); // Récupération des données graves après synchronisation
             toaster.success('Synchronisation effectuée avec succès', { position: 'top-right' });
+            this.syncSuccessDisplayed = true;
         } else {
             console.log('Aucune donnée à synchroniser.');
         }
@@ -65,7 +63,7 @@ export default {
         // Appeler la méthode appropriée de AppStorage en fonction du dataType
         switch (dataType) {
             case 'branches':
-                queue = await AppStorage.getBranches();
+                queue = await AppStorage.getBranchesToSync();
                 break;
             case 'prospects':
                 queue = await AppStorage.getProspects();
@@ -74,22 +72,22 @@ export default {
                 queue = await AppStorage.getClients();
                 break;
             case 'compagnies':
-                queue = await AppStorage.getCompagnies();
+                queue = await AppStorage.getCompagniesToSync();
                 break;
             case 'tauxcompagnies':
                 queue = await AppStorage.getTauxCompagnies();
                 break;
             case 'apporteurs':
-                queue = await AppStorage.getApporteurs();
+                queue = await AppStorage.getApporteursToSync();
                 break;
             case 'tauxapporteurs':
                 queue = await AppStorage.getTauxApporteurs();
                 break;
             case 'contrats':
-                queue = await AppStorage.getContrats();
+                queue = await AppStorage.getContratsToSync();
                 break;
             case 'avenants':
-                queue = await AppStorage.getAvenants();
+                queue = await AppStorage.getAvenantsToSync();
                 break;
             case 'automobiles':
                 queue = await AppStorage.getAutomobiles();
@@ -153,62 +151,71 @@ export default {
     async retrieveGraveData() {
         // Exemple de récupération des données graves après synchronisation
         for (const table of this.syncedTables) {
-            switch (table) {
-                case 'branches':
-                    const branchesData = await DataAPI.getGraveBranchesData();
-                    break;
-                case 'prospects':
-                    const prospectsData = await DataAPI.getGraveProspectsData();
-                    break;
-                case 'clients':
-                    const clientsData = await DataAPI.getGraveClientsData();
-                    break;
-                case 'compagnies':
-                    const compagniesData = await DataAPI.getGraveCompagniesData();
-                    break;
-                case 'tauxcompagnies':
-                    const tauxcompagniesData = await DataAPI.getGraveTauxCompagniesData();
-                    break;
-                case 'apporteurs':
-                    const apporteursData = await DataAPI.getGraveApporteursData();
-                    break;
-                case 'tauxapporteurs':
-                    const tauxapporteursData = await DataAPI.getGraveTauxApporteursData();
-                    break;
-                case 'contrats':
-                    const contratsData = await DataAPI.getGraveContratsData();
-                    break;
-                case 'avenants':
-                    const avenantsData = await DataAPI.getGraveAvenantsData();
-                    break;
-                case 'automobiles':
-                    const automobilesData = await DataAPI.getGraveAutomobilesData();
-                    break;
-                case 'garanties':
-                    const garantiesData = await DataAPI.getGraveGarantiesData();
-                    break;
-                case 'sinistres':
-                    const sinistresData = await DataAPI.getGraveSinistresData();
-                    break;
-                case 'reglements':
-                    const reglementsData = await DataAPI.getGraveReglementsData();
-                    break;
-                case 'categories':
-                    const categoriesData = await DataAPI.getGraveCategoriesData();
-                    break;
-                case 'marques':
-                    const marquesData = await DataAPI.getGraveMarquesData();
-                    break;
-                case 'genres':
-                    const genresData = await DataAPI.getGraveGenresData();
-                    break;
-                case 'couleurs':
-                    const couleursData = await DataAPI.getGraveCouleursData();
-                    break;
-                case 'energies':
-                    const energiesData = await DataAPI.getGraveEnergiesData();
-                    break;
+            try {
+                switch (table) {
+                    case 'branches':
+                        await DataAPI.getGraveBranchesData();
+                        break;
+                    case 'prospects':
+                        await DataAPI.getGraveProspectsData();
+                        break;
+                    case 'clients':
+                        await DataAPI.getGraveClientsData();
+                        break;
+                    case 'compagnies':
+                        await DataAPI.getGraveCompagniesData();
+                        break;
+                    case 'tauxcompagnies':
+                        await DataAPI.getGraveTauxCompagniesData();
+                        break;
+                    case 'apporteurs':
+                        await DataAPI.getGraveApporteursData();
+                        break;
+                    case 'tauxapporteurs':
+                        await DataAPI.getGraveTauxApporteursData();
+                        break;
+                    case 'contrats':
+                        await DataAPI.getGraveContratsData();
+                        break;
+                    case 'avenants':
+                        await DataAPI.getGraveAvenantsData();
+                        break;
+                    case 'automobiles':
+                        await DataAPI.getGraveAutomobilesData();
+                        break;
+                    case 'garanties':
+                        await DataAPI.getGraveGarantiesData();
+                        break;
+                    case 'sinistres':
+                        await DataAPI.getGraveSinistresData();
+                        break;
+                    case 'reglements':
+                        await DataAPI.getGraveReglementsData();
+                        break;
+                    case 'categories':
+                        await DataAPI.getGraveCategoriesData();
+                        break;
+                    case 'marques':
+                        await DataAPI.getGraveMarquesData();
+                        break;
+                    case 'genres':
+                        await DataAPI.getGraveGenresData();
+                        break;
+                    case 'couleurs':
+                        await DataAPI.getGraveCouleursData();
+                        break;
+                    case 'energies':
+                        await DataAPI.getGraveEnergiesData();
+                        break;
+                    default:
+                        console.warn(`La méthode de récupération des données graves pour ${table} n'est pas définie.`);
+                        break;
+                }
+            } catch (error) {
+                console.error(`Erreur lors de la récupération des données graves de ${table} :`, error);
             }
         }
     },
 };
+
+export default SyncService;

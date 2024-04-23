@@ -165,6 +165,13 @@
                         ></div>
                       </li>
                       <li>
+                        <div class="title">FGA</div>
+                        <div
+                          class="text"
+                          v-text="sommes.sommeFGA"
+                        ></div>
+                      </li>
+                      <li>
                         <div class="title">Prime TTC</div>
                         <div class="text" v-text="sommes.sommePrimeTTC"></div>
                       </li>

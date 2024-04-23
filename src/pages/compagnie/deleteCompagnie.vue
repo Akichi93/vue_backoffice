@@ -14,7 +14,7 @@
                   href="javascript:void(0);"
                   class="btn btn-primary continue-btn"
                   data-bs-dismiss="modal"
-                  @click.prevent="compagnieDelete"
+                  @click.prevent="deleteCompagnie"
                   >supprimer</a
                 >
               </div>
@@ -34,6 +34,7 @@
   </div>
 </template>
 <script>
+import AppStorage from "../../db/AppStorage";
 import { createToaster } from "@meforma/vue-toaster";
 // import $ from "jquery";
 const toaster = createToaster({
@@ -43,13 +44,29 @@ export default {
   props: ["compagnietoedit"],
   name: "deleteCompagnie",
   methods: {
-    compagnieDelete() {
-      const uuidCompagnieToUpdate = this.compagnietoedit.uuidCompagnie;
+    async deleteCompagnie() {
+      const uuidCompagnie = this.compagnietoedit.uuidCompagnie;
 
-      // Nouvel état de la compagnie
-      const newDelete = 1;
+      // Nouvel état du contrat
+      const newSupprime = 1;
 
       const newSyncState = 0;
+
+      const contratMisAJour = await AppStorage.deleteCompagnies(
+        uuidCompagnie,
+        newSupprime,
+        newSyncState
+      );
+
+      // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des contrats
+      const updatedCompagnies = await AppStorage.getCompagnies();
+
+      // Émettre un événement avec les contrats mis à jour
+      this.$emit("compagnie-delete", updatedCompagnies);
+
+      toaster.success(`Compagnie supprimé`, {
+        position: "top-right",
+      });
     
     },
   },

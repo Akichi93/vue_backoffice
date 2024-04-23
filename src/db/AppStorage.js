@@ -104,7 +104,7 @@ class AppStorage {
         await tx.complete;
     }
 
-   
+
 
     static async updateSyncIndexedDB(key, newData) {
         try {
@@ -505,6 +505,10 @@ class AppStorage {
         return filteredContrats;
     }
 
+    static async getContratsToSync() {
+        return this.getData('contrats') || [];
+    }
+
 
     static async getContrats() {
         // return this.getData('contrats') || [];
@@ -540,10 +544,34 @@ class AppStorage {
     }
 
 
+    // static async getContratByUuid(uuidContrat) {
+    //     const allContrats = await this.getData('contrats') || [];
+    //     return allContrats.find(contrat => contrat.uuidContrat === uuidContrat);
+    // }
+
     static async getContratByUuid(uuidContrat) {
         const allContrats = await this.getData('contrats') || [];
-        return allContrats.find(contrat => contrat.uuidContrat === uuidContrat);
+        const allCompagnies = await this.getData('compagnies') || [];
+    
+        const contrat = allContrats.find(contrat => contrat.uuidContrat === uuidContrat);
+    
+        if (contrat) {
+            // Trouver la compagnie correspondante dans les données fictives
+            const compagnie = allCompagnies.find(compagnie => compagnie.uuidCompagnie === contrat.uuidCompagnie);
+    
+            // Si la compagnie est trouvée, l'ajouter aux informations du contrat
+            if (compagnie) {
+                contrat.compagnie = {
+                    nom: compagnie.nom_compagnie,
+                    // adresse: compagnie.adresse,
+                    // Ajoutez d'autres propriétés de compagnie nécessaires
+                };
+            }
+        }
+    
+        return contrat;
     }
+    
 
 
 
@@ -604,8 +632,14 @@ class AppStorage {
         await this.storeData('avenants', avenants);
     }
 
-    static async getAvenants() {
+    static async getAvenantsToSync() {
         return this.getData('avenants') || [];
+    }
+
+    static async getAvenants() {
+        const allAvenants = await this.getData('avenants') || [];
+        const avenants = allAvenants.filter(avenant => avenant.supprimer_avenant == 0);
+        return avenants;
     }
 
     static async getAvenantsByUUIDApporteur(uuidApporteur) {
@@ -773,6 +807,8 @@ class AppStorage {
         const sommeAccessoires = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "accessoires"), 0).toLocaleString();
         const sommePrimeTTC = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "prime_ttc"), 0).toLocaleString();
         const sommeFraisCourtier = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "frais_courtier"), 0).toLocaleString();
+
+        const sommeFGA = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "cfga"), 0).toLocaleString();
         const sommeTaxesTotales = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "taxes_totales"), 0).toLocaleString();
         const sommeCommissionCourtier = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "commission_courtier"), 0).toFixed(2).toLocaleString();
         const sommeCommission = avenantsFiltres.reduce((acc, avenant) => sumWithFloatParse(acc, avenant, "commission"), 0).toFixed(2).toLocaleString();
@@ -783,6 +819,7 @@ class AppStorage {
             sommeAccessoires,
             sommePrimeTTC,
             sommeFraisCourtier,
+            sommeFGA,
             sommeTaxesTotales,
             sommeCommissionCourtier,
             sommeCommission
@@ -860,7 +897,37 @@ class AppStorage {
     }
 
     static async getCompagnies() {
+        const allCompagnies = await this.getData('compagnies') || [];
+        const compagnies = allCompagnies.filter(compagnie => compagnie.supprimer_compagnie == 0);
+        return compagnies;
+    }
+
+    static async getCompagniesToSync() {
         return this.getData('compagnies') || [];
+    }
+
+    static async deleteCompagnies(uuidCompagnie, newSupprime, newSyncState) {
+        // Obtenez la liste des prospects
+        const allCompagnies = await this.getData('compagnies') || [];
+
+        // Recherche du prospect par son UUID
+        const compagnieIndex = allCompagnies.findIndex(compagnie => compagnie.uuidCompagnie === uuidCompagnie);
+
+
+        if (compagnieIndex !== -1) {
+            // Mettre à jour l'état du prospect
+            allCompagnies[compagnieIndex].supprimer_compagnie = newSupprime;
+
+            // Mettre à jour l'état de synchronisation
+            allCompagnies[compagnieIndex].sync = newSyncState;
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('compagnies', allCompagnies);
+
+            return allCompagnies;
+        } else {
+            throw new Error('Avenant non trouvé');
+        }
     }
 
     static async getAvenantsByUUIDCompagnie(uuidCompagnie) {
@@ -1079,7 +1146,38 @@ class AppStorage {
     }
 
     static async getApporteurs() {
+        const allApporteurs = await this.getData('apporteurs') || [];
+        const apporteurs = allApporteurs.filter(apporteur => apporteur.supprimer_apporteur == 0);
+        return apporteurs;
+    }
+
+    static async getApporteursToSync() {
         return this.getData('apporteurs') || [];
+    }
+
+    static async deleteApporteurs(uuidApporteur, newSupprime, newSyncState) {
+        // Obtenez la liste des prospects
+        const allApporteurs = await this.getData('apporteurs') || [];
+
+        // Recherche du prospect par son UUID
+        const apporteurIndex = allApporteurs.findIndex(apporteur => apporteur.uuidApporteur === uuidApporteur);
+
+
+
+        if (apporteurIndex !== -1) {
+            // Mettre à jour l'état du prospect
+            allApporteurs[apporteurIndex].supprimer_apporteur = newSupprime;
+
+            // Mettre à jour l'état de synchronisation
+            allApporteurs[apporteurIndex].sync = newSyncState;
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('apporteurs', allApporteurs);
+
+            return allApporteurs;
+        } else {
+            throw new Error('Avenant non trouvé');
+        }
     }
 
     static async getApporteurByUuid(uuidApporteur) {
@@ -1243,6 +1341,12 @@ class AppStorage {
     }
 
     static async getBranches() {
+        const allBranches = await this.getData('branches') || [];
+        const branches = allBranches.filter(branche => branche.supprimer_branche == 0);
+        return branches;
+    }
+
+    static async getBranchesToSync() {
         return this.getData('branches') || [];
     }
 
@@ -1331,7 +1435,8 @@ class AppStorage {
     static async getCommissionApporteurSum() {
         try {
             // Obtenir les données des avenants
-            const avenants = await this.getData('avenants') || [];
+            
+            const avenants = await this.getAvenants();
 
             // Initialiser la somme des commissions
             let commissionSum = 0;
@@ -1413,7 +1518,7 @@ class AppStorage {
     static async getCommissionCompagnieSum() {
         try {
             // Obtenir les données des avenants
-            const avenants = await this.getData('avenants');
+            const avenants = await this.getAvenants();
 
             // Vérifier si des avenants ont été récupérés
             if (!avenants || avenants.length === 0) {
@@ -1520,7 +1625,7 @@ class AppStorage {
             });
 
             // Retourner le tableau contenant les résultats
-            
+
             return results;
         } catch (error) {
             console.error('Erreur lors du calcul de la somme des accessoires et de la prime nette avec le nom de la compagnie :', error);
@@ -1588,7 +1693,7 @@ class AppStorage {
 
     static async getAccessoiresPrimeNetteSumWithMonth() {
         try {
-            const avenants = await this.getData('avenants') || [];
+            const avenants = await this.getAvenants();
 
             // Initialiser un objet pour stocker les sommes par mois et par année
             const sumsByMonthAndYear = {};
@@ -1719,7 +1824,7 @@ class AppStorage {
     static async getAccessoiresPrimeNetteSumWithAccessory() {
         try {
             // Obtenir les données des avenants
-            const avenants = await this.getData('avenants') || [];
+            const avenants = await this.getAvenants();
 
             // Initialiser un objet pour stocker les sommes par branche
             const sumsByBranch = {};
@@ -1830,17 +1935,21 @@ class AppStorage {
             const contratsMap = new Map(contrats.map(contrat => [contrat.uuidContrat, contrat]));
 
             // Calculer les totaux des accessoires et de la prime nette
-            const sum = (
-                parseFloat(avenant.accessoire) || 0 +
-                parseFloat(avenant.prime_nette) || 0 +
-                parseFloat(avenant.taxes_totales) || 0 +
-                parseFloat(avenant.frais_courtier) || 0
-            );
 
-            const accessoires = (
-                parseFloat(avenant.accessoires) || 0 +
-                parseFloat(avenant.frais_courtier) || 0
-            );
+            const accessoire = parseFloat(avenant.accessoires) || 0;
+            const prime_nette = parseFloat(avenant.prime_nette) || 0;
+            const taxes_totales = parseFloat(avenant.taxes_totales) || 0;
+            const frais_courtier = parseFloat(avenant.frais_courtier) || 0;
+            const fga = parseFloat(avenant.cfga) || 0;
+            
+            const sum = accessoire + prime_nette + taxes_totales + frais_courtier + fga;
+
+            const accessoires = accessoire + frais_courtier;
+
+            // const accessoires = (
+            //     parseFloat(avenant.accessoires) || 0 +
+            //     parseFloat(avenant.frais_courtier) || 0
+            // );
 
             // Retrouver les détails associés à l'avenant
             const associatedCompagnie = compagniesMap.get(avenant.uuidCompagnie) || {};
@@ -1852,6 +1961,7 @@ class AppStorage {
             function formatNumberWithSeparator(number) {
                 return number.toLocaleString('fr-FR'); // Utilisez 'fr-FR' pour le format français avec le séparateur de milliers
             }
+
 
             // Retourner les détails combinés avec les totaux calculés
             return {
@@ -1865,6 +1975,7 @@ class AppStorage {
                 nom_branche: associatedBranche.nom_branche || null,
                 prime_nette: formatNumberWithSeparator(parseFloat(avenant.prime_nette) || 0),
                 taxes_totales: formatNumberWithSeparator(parseFloat(avenant.taxes_totales) || 0),
+                fga: formatNumberWithSeparator(parseFloat(avenant.cfga) || 0),
                 accessoires: formatNumberWithSeparator(accessoires),
                 date_debut: avenant.date_debut || null,
                 date_fin: avenant.date_fin || null,
@@ -1884,7 +1995,7 @@ class AppStorage {
     static async getEmissions() {
         try {
             // Obtenir les données des avenants
-            const avenants = await this.getData('avenants') || [];
+            const avenants = await this.getAvenants();
 
             // Initialiser la somme des émissions
             let totalEmissions = 0;

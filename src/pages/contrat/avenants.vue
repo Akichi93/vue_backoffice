@@ -10,7 +10,7 @@
             <div class="page-head-box">
               <h3>
                 Emissions - {{ contrats.nom_client }} -
-                {{ contrats.numero_police }} - {{ contrats.nom_branche }}
+                {{ contrats.numero_police }} - {{ contrats.nom_branche }} - {{ contrats.compagnie.nom }}
               </h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -64,17 +64,18 @@
                 <thead>
                   <tr>
                     <th>Type</th>
-                    <th>Compagnie</th>
-                    <th>Numéro police</th>
-                    <th>Branche</th>
-                    <th>Année</th>
-                    <th>Mois</th>
+                    <th>Prime Nette</th>
+                    <th>Accessoires</th>
+                    <th>FGA</th>
                     <th>Prime TTC</th>
                     <th>Com courtier</th>
                     <th>Com apporteur</th>
-                    <th>Date de saisie</th>
+                    <th>Année</th>
                     <th>Date d'effet</th>
-                    <th>Date d'échéance</th>
+                    <th>Date d'échéance</th>    
+                  
+                    <th>Date de saisie</th>
+                   
                     <th>Solder</th>
                     <th>Reverser</th>
                     <th class="text-end">Action</th>
@@ -87,17 +88,21 @@
                   >
                     <tr>
                       <td v-text="avenant.type"></td>
-                      <td>{{ avenant.nom_compagnie }}</td>
-                      <td>{{ avenant.numero_police }}</td>
-                      <td>{{ avenant.nom_branche }}</td>
-                      <td>{{ avenant.annee }}</td>
-                      <td>{{ avenant.mois }}</td>
+                    
+                      <td>{{ avenant.prime_nette }}</td>
+                      <td>{{ avenant.accessoires }}</td>
+                      <td>{{ avenant.cfga }}</td>
                       <td>{{ avenant.prime_ttc }}</td>
                       <td>{{ avenant.commission_courtier }}</td>
                       <td>{{ avenant.commission }}</td>
-                      <td>{{ avenant.date_emission }}</td>
+                      <td>{{ avenant.annee }}</td>
                       <td>{{ avenant.date_debut }}</td>
                       <td>{{ avenant.date_fin }}</td>
+                      <!-- <td>{{ avenant.mois }}</td> -->
+                     
+                     
+                      <td>{{ avenant.date_emission }}</td>
+                     
                       <td v-if="avenant.solder == 0">
                         <span class="badge badge-pill bg-danger">NON</span>
                       </td>

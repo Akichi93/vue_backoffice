@@ -118,6 +118,7 @@
                     <th>Prime nette</th>
                     <th>Accessoires</th>
                     <th>Taxes</th>
+                    <th>FGA</th>
                     <th>A payer</th>
                   </tr>
                 </thead>
@@ -126,6 +127,7 @@
                     <td v-text="facturetoedit.prime_nette"></td>
                     <td v-text="facturetoedit.accessoires"></td>
                     <td v-text="facturetoedit.taxes_totales"></td>
+                    <td v-text="facturetoedit.fga"></td>
                     <td v-text="facturetoedit.payer"></td>
                   </tr>
                 </tbody>

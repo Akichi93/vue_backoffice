@@ -1840,6 +1840,10 @@ export default {
             }
           }
 
+          // const result = await switchMode.storeContrat();
+          // if(result){
+
+          // }
           toaster.success(`Contrat ajouté`, { position: "top-right" });
 
           this.$router.push("/listcontrat");
