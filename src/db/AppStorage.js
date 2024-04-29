@@ -37,6 +37,10 @@ class AppStorage {
         localStorage.setItem('email', email);
     }
 
+    static async storeMode(mode) {
+        localStorage.setItem('mode', mode);
+    }
+
     static async storeData(key, data) {
         // localStorage.setItem(key, JSON.stringify(data));
         await this.storeDataInIndexedDB(key, data);
@@ -159,9 +163,6 @@ class AppStorage {
     }
 
 
-
-
-
     static async fetchDataFromIndexedDB(key) {
         const db = await openDB(this.dbName, 1);
         const tx = db.transaction('apiData', 'readonly');
@@ -248,8 +249,23 @@ class AppStorage {
 
     // Prospects
 
+    // static async storeProspects(prospects) 
+    // {
+
+    //     await this.storeData('prospects', prospects);
+    // }
+
     static async storeProspects(prospects) {
-        await this.storeData('prospects', prospects);
+        for (const prospect of prospects) {
+            const existingProspect = await this.prospectExists(prospect.nom_prospect, prospect.tel_prospect, prospect.id_entreprise);
+            if (!existingProspect) {
+                await this.storeData('prospects', prospect);
+            } else {
+                console.log(`Le prospect ${prospect.nom_prospect} existe déjà.`);
+                // Vous pouvez retourner existingProspect si nécessaire pour l'afficher dans le template
+                return existingProspect;
+            }
+        }
     }
 
 
@@ -260,6 +276,12 @@ class AppStorage {
         const prospects = allProspects.filter(prospect => prospect.supprimer_prospect == 0);
 
         return prospects;
+    }
+
+    static async searchProspectsByName(name) {
+        const allProspects = await this.getProspects();
+        const filteredProspects = allProspects.filter(prospect => prospect.nom_prospect.toLowerCase().includes(name.toLowerCase()));
+        return filteredProspects;
     }
 
     static async getProspectByUuid(ProspectUuid) {
@@ -342,7 +364,32 @@ class AppStorage {
     //     }
     // }
 
+    static async updateProspectEtat(uuidProspect, newState, newSyncState) {
+        // Obtenez la liste des prospects
+        const allProspects = await this.getData('prospects') || [];
 
+
+
+        // Recherche du prospect par son UUID
+        const prospectIndex = allProspects.findIndex(prospect => prospect.uuidProspect === uuidProspect);
+
+        if (prospectIndex !== -1) {
+            // Mettre à jour l'état du prospect
+            allProspects[prospectIndex].etat = newState;
+
+            // Mettre à jour l'état de synchronisation
+            allProspects[prospectIndex].sync = newSyncState;
+
+
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('prospects', allProspects);
+
+            return allProspects;
+        } else {
+            throw new Error('Prospect non trouvé');
+        }
+    }
 
 
     static async updateProspectChange(uuidProspect, newState, newSyncState) {
@@ -356,7 +403,7 @@ class AppStorage {
 
         if (prospectIndex !== -1) {
             // Mettre à jour l'état du prospect
-            allProspects[prospectIndex].etat = newState;
+            allProspects[prospectIndex].statut = newState;
 
             // Mettre à jour l'état de synchronisation
             allProspects[prospectIndex].sync = newSyncState;
@@ -432,14 +479,24 @@ class AppStorage {
         return this.getData('brancheprospects') || [];
     }
 
-    static async getBrancheProspectsByuuidProspect(uuidBrancheProspect) {
-        const prospects = await this.getData('brancheprospects') || [];
-
+    static async getBrancheProspectsByuuidProspect(uuidProspect) {
+        const brancheprospects = await this.getData('brancheprospects') || [];
+        const branches = await this.getData('branche') || [];
+        
         // Filtrer les prospects en fonction de uuidBrancheProspect
-        const filteredProspects = prospects.filter(prospect => prospect.uuidBrancheProspect === uuidBrancheProspect);
-
-        return filteredProspects;
+        const filteredProspects = brancheprospects.filter(prospect => prospect.uuidProspect === uuidProspect);
+    
+        // Joindre les informations de branche à filteredProspects
+        const prospectsWithBranche = filteredProspects.map(prospect => {
+            const branche = branches.find(branch => branch.uuidBranche === prospect.uuidBranche);
+            return { ...prospect, branche };
+        });
+    
+        console.log(prospectsWithBranche);
+    
+        return prospectsWithBranche;
     }
+    
 
     static async getDifferenceOfBranches() {
         const branches = await this.getBranches();
@@ -552,13 +609,13 @@ class AppStorage {
     static async getContratByUuid(uuidContrat) {
         const allContrats = await this.getData('contrats') || [];
         const allCompagnies = await this.getData('compagnies') || [];
-    
+
         const contrat = allContrats.find(contrat => contrat.uuidContrat === uuidContrat);
-    
+
         if (contrat) {
             // Trouver la compagnie correspondante dans les données fictives
             const compagnie = allCompagnies.find(compagnie => compagnie.uuidCompagnie === contrat.uuidCompagnie);
-    
+
             // Si la compagnie est trouvée, l'ajouter aux informations du contrat
             if (compagnie) {
                 contrat.compagnie = {
@@ -568,10 +625,10 @@ class AppStorage {
                 };
             }
         }
-    
+
         return contrat;
     }
-    
+
 
 
 
@@ -860,7 +917,7 @@ class AppStorage {
         return details;
     }
 
-    async fetchDataAutomobile() {
+    static async fetchDataAutomobile() {
         try {
             const uuidContrat = this.$route.params.uuidContrat;
 
@@ -1335,10 +1392,13 @@ class AppStorage {
     }
 
     static async searchBranchesByName(name) {
-        const allBranches = await this.getData('branches') || [];
+        const allBranches = await this.getBranches();
         const filteredBranches = allBranches.filter(branche => branche.nom_branche.toLowerCase().includes(name.toLowerCase()));
         return filteredBranches;
     }
+
+
+
 
     static async getBranches() {
         const allBranches = await this.getData('branches') || [];
@@ -1435,7 +1495,7 @@ class AppStorage {
     static async getCommissionApporteurSum() {
         try {
             // Obtenir les données des avenants
-            
+
             const avenants = await this.getAvenants();
 
             // Initialiser la somme des commissions
@@ -1634,7 +1694,6 @@ class AppStorage {
     }
 
 
-
     static async getAccessoiresPrimeNetteSumWithCompanyNameByYear(annee) {
         try {
             // Obtenir les données des avenants
@@ -1686,9 +1745,6 @@ class AppStorage {
             throw error;
         }
     }
-
-
-
 
 
     static async getAccessoiresPrimeNetteSumWithMonth() {
@@ -1941,7 +1997,7 @@ class AppStorage {
             const taxes_totales = parseFloat(avenant.taxes_totales) || 0;
             const frais_courtier = parseFloat(avenant.frais_courtier) || 0;
             const fga = parseFloat(avenant.cfga) || 0;
-            
+
             const sum = accessoire + prime_nette + taxes_totales + frais_courtier + fga;
 
             const accessoires = accessoire + frais_courtier;
@@ -1987,9 +2043,6 @@ class AppStorage {
             throw error;
         }
     }
-
-
-
 
 
     static async getEmissions() {
@@ -2256,8 +2309,6 @@ class AppStorage {
     }
 
 
-
-
     static async getCommissionApporteurSumByBranch(annee, branche) {
         try {
             // Obtenir les données des avenants
@@ -2352,8 +2403,6 @@ class AppStorage {
             throw error;
         }
     }
-
-
 
 
     static async getAccessoiresPrimeNetteSumWithCompanyNameByBranch(annee, branche) {
@@ -2562,8 +2611,6 @@ class AppStorage {
         }
     }
 
-
-
     static async getDataByYearAndBranch(year, branch) {
         if (branch == 'Aucune branche sélectionnée') {
             // Si year est null, compter les prospects, les clients et les sinistres
@@ -2702,7 +2749,7 @@ class AppStorage {
         }
     }
 
-    static async store(token, user, id, entreprise, role, contact, adresse, email) {
+    static async store(token, user, id, entreprise, role, contact, adresse, email, mode) {
         await this.storeToken(token);
         await this.storeUser(user);
         await this.storeId(id);
@@ -2711,6 +2758,7 @@ class AppStorage {
         await this.storeContact(contact);
         await this.storeAdresse(adresse);
         await this.storeEmail(email);
+        await this.storeMode(mode);
     }
 
     static async clear() {
@@ -2719,6 +2767,7 @@ class AppStorage {
         localStorage.removeItem('id');
         localStorage.removeItem('entreprise');
         localStorage.removeItem('role');
+        localStorage.removeItem('mode');
 
         await this.clearData('clients');
     }
@@ -2753,6 +2802,10 @@ class AppStorage {
 
     static getEmail() {
         return localStorage.getItem('email');
+    }
+
+    static getMode() {
+        return localStorage.getItem('mode');
     }
 
     static async clearClients() {

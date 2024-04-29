@@ -137,32 +137,9 @@ export default {
   methods: {
 
     async getCompagnies() {
-
-      // const response = await fetch(
-      //   "/api/check-internet-connection"
-      // );
-      // const data = await response.json();
-
-      // this.isConnected = data.connected;
-      // if (this.isConnected) {
-      //   // Verifier Si les données IndexedDB et synchroniser ce qui n'a pas été synchro 
-      //   getCompagniesExport().then((result) => {
-      //     // Mettre à jour IndexedDB avec les compagnies récupérés
-      //     AppStorage.storeDataInIndexedDB("compagnies", result.data);
-
-      //     //Insertion des données
-      //     AppStorage.getCompagnies().then((result) => {
-      //       this.compagnies = result;
-      //     });
-
-
-      //   });
-      // } else {
       AppStorage.getCompagnies().then((result) => {
         this.compagnies = result;
       });
-      // }
-
     },
 
     async editCompagnie(uuidCompagnie) {

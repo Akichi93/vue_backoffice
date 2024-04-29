@@ -9,5 +9,3 @@ export function formatNumberDecimalWithThousandsSeparator(number, locale = 'fr-F
     // Formate le nombre avec un séparateur de milliers et supprime les décimales .00 si elles existent
     return number.toLocaleString(locale, { maximumFractionDigits: 2, ...options }).replace(/\.00$/, '').replace(/\./g, ' ');
 }
-
-

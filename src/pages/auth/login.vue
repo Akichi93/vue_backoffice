@@ -68,6 +68,7 @@ export default {
         login() {
             axios.post(apiUrl.authentification, this.form)
                 .then(res => {
+                    //Metre la logique de vérification du mode
                     User.responseAfterLogin(res)
                     this.$router.push({ name: 'localstorage' })
                 })

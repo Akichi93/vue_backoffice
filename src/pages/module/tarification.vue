@@ -48,10 +48,10 @@
                 <div class="card-header">
                   <div class="text-center w-100 p-3">
                     <h2>
-                      <router-link to="/listsinistre">Code tarifaire</router-link>
+                      <router-link to="/listecode">Code tarifaire accident </router-link>
                     </h2>
                     <h2 class="bl-text mb-1">
-                      Ce module permet de déclarer les sinistres
+                      Ce module permet d'enregistrer les tarification des accidents individuels
                     </h2>
                   </div>
                 </div>
@@ -63,7 +63,7 @@
                 <div class="card-header">
                   <div class="text-center w-100 p-3">
                     <h2>
-                      <router-link to="/listrelance">Garantie</router-link>
+                      <router-link to="/listeaccident">Accident individuel</router-link>
                     </h2>
                     <h2 class="bl-text mb-1">
                       Ce module permet la relance des clients

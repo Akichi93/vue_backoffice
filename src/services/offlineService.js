@@ -1,212 +1,198 @@
+import { v4 as uuidv4 } from 'uuid';
+import AppStorage from "../db/AppStorage.js";
 class OfflineService {
-    async storeContrat(form, uuid, entrepriseId) {
 
-        const clientName = await AppStorage.getClientNameByUUID(this.form.client_id);
-        const clientCode = await AppStorage.getClientCodeByUUID(this.form.client_id);
-        const compagnieName = await AppStorage.getCompagnieNameByUUID(this.form.compagnie_id);
-        const apporteurName = await AppStorage.getApporteurNameByUUID(this.form.apporteur_id);
 
-        const newContratData = [
-            {
-                id: userId,
-                uuidContrat: uuid,
-                id_entreprise: entrepriseId,
-                uuidBranche: this.form.branche_id.uuidBranche,
-                nom_branche: this.form.branche_id.nom_branche,
-                uuidClient: this.form.client_id,
-                nom_client: clientName,
-                numero_client: clientCode,
-                nom_compagnie: compagnieName,
-                nom_apporteur: apporteurName,
-                uuidCompagnie: this.form.compagnie_id,
-                uuidApporteur: this.form.apporteur_id,
-                numero_police: this.form.numero_police,
-                effet_police: this.form.effet_police,
-                heure_police: this.form.heure_police,
-                expire_le: this.form.expire_le,
-                souscrit_le: this.form.souscrit_le,
-                reconduction: this.form.reconduction,
-                prime_nette: this.form.primes_nette,
-                accessoires: this.form.accessoires,
-                frais_courtier: this.form.frais_courtier,
-                cfga: this.cfga,
-                taxes_totales: this.form.taxes_totales,
-                commission_courtier: this.calulateCommissionCompagnie,
-                commission_apporteur: this.calulateCommissionApporteur,
-                gestion: this.gestion,
-                primes_ttc:
-                    this.form.primes_nette +
-                    this.form.frais_courtier +
-                    this.form.accessoires +
-                    this.cfga +
-                    this.form.taxes_totales,
-                sync: 0,
-                solde: 0,
-                reverse: 0,
-                supprimer_contrat: 0,
-            },
-        ];
+    async storeBranche(nomBranche, entrepriseId) {
+        const uuid = uuidv4();
 
-        // Enregistré les contrats dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("contrats", newContratData);
+        // Créer l'objet de la nouvelle branche
+        const newBrancheData = [{
+            uuidBranche: uuid,
+            nom_branche: nomBranche,
+            id_entreprise: entrepriseId,
+            sync: 0,
+        }];
 
-        // Enregistré les avenants dans IndexedDB
-        let type = "Terme";
+        try {
+            // Ajouter la nouvelle branche dans IndexedDB
+            await AppStorage.storeDataInIndexedDB("branches", newBrancheData);
+            return { success: true, uuid };
+        } catch (error) {
+            console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
 
-        const [annee, mois, day] = this.form.souscrit_le.split("-");
+    }
 
-        let codeAvenant = this.generateCodevenant();
+    async storeProspect(formData, userId, entrepriseId) {
+        const uuid = uuidv4();
 
-        let totalPrimeTtc =
-            this.form.primes_nette +
-            this.form.frais_courtier +
-            this.form.accessoires +
-            this.cfga +
-            this.form.taxes_totales;
+        const newProspectData = [{
+            civilite: formData.civilite,
+            nom_prospect: formData.nom_prospect,
+            postal_prospect: formData.postal_prospect,
+            adresse_prospect: formData.adresse_prospect,
+            tel_prospect: formData.tel_prospect,
+            profession_prospect: formData.profession_prospect,
+            email_prospect: formData.email_prospect,
+            fax_prospect: formData.fax_prospect,
+            etat: 0, // Il semble que vous ayez un état durci à 0, adaptez-le selon vos besoins
+            statut: formData.etat,
+            id_entreprise: entrepriseId,
+            id: userId,
+            uuidProspect: uuid,
+            sync: 0,
+            supprimer_prospect: 0,
+        }];
 
-        const calculateCommission = () => {
-            return (
-                this.form.primes_nette *
-                this.taux.taux *
-                0.01 *
-                this.tauxcomp.tauxcomp *
-                0.01
-            );
-        };
-
-        const calculateCommissionCourtier = () => {
-            return this.form.primes_nette * this.tauxcomp.tauxcomp * 0.01;
-        };
-
-        const uuidAvenant = uuidv4();
-
-        const newAvenantsData = [
-            {
-                id: userId,
-                uuidContrat: uuid,
-                annee: annee,
-                mois: mois,
-                type: "Terme",
-                nom_client: clientName,
-                nom_branche: this.form.branche_id.nom_branche,
-                // nom_compagnie: compagnieName,
-                // numero_police: this.form.numero_police,
-                prime_ttc: totalPrimeTtc,
-                retrocession: 0,
-                commission: calculateCommission(),
-                commission_courtier: calculateCommissionCourtier(),
-                prise_charge: 0,
-                ristourne: 0,
-                prime_nette: this.form.primes_nette,
-                date_emission: this.form.souscrit_le,
-                date_debut: this.form.effet_police,
-                date_fin: this.form.expire_le,
-                accessoires: this.form.accessoires,
-                frais_courtier: this.form.frais_courtier,
-                cfga: this.cfga,
-                taxes_totales: this.form.taxes_totales,
-                code_avenant: codeAvenant,
-                uuidAvenant: uuidAvenant,
-                uuidApporteur: this.form.apporteur_id,
-                uuidCompagnie: this.form.compagnie_id,
-                uuidClient: this.form.client_id,
-                sync: 0,
-                solder: 0,
-                reverser: 0,
-                payer_apporteur: 0,
-                payer_courtier: 0,
-                supprimer_avenant: 0,
-                id_entreprise: entrepriseId,
-            },
-        ];
-
-        // Enregistré les avenants dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("avenants", newAvenantsData);
-
-        if (
-            this.form.branche_id.nom_branche == "AUTOMOBILE" ||
-            this.form.branche_id.nom_branche == "MOTO" ||
-            this.form.branche_id.nom_branche == "MOTO" ||
-            this.form.branche_id.nom_branche == "AUTOMOBILE HORS TPV" ||
-            this.form.branche_id.nom_branche == "AUTOMOBILE TPV"
-        ) {
-            const uuidAutomobile = uuidv4();
-
-            const newAutomobileData = [
-                {
-                    uuidAutomobile: uuidAutomobile,
-                    uuidContrat: uuid,
-                    numero_immatriculation: this.form.numero_immatriculation,
-                    date_circulation: this.date_circulation,
-                    identification_proprietaire: this.identification_proprietaire,
-                    adresse_proprietaire: this.adresse_proprietaire,
-                    zone: this.zone,
-                    categorie: this.categorie_id,
-                    marque: this.marque_id,
-                    genre: this.genre_id,
-                    type: this.type,
-                    carosserie: this.carosserie,
-                    couleur: this.couleur_id,
-                    energie: this.energie_id,
-                    place: this.place,
-                    puissance: this.puissance,
-                    charge: this.charge,
-                    valeur_neuf: this.valeur_neuf,
-                    valeur_venale: this.valeur_venale,
-                    categorie_socio_pro: this.categorie_socio_pro,
-                    permis: this.permis,
-                    // option: this.option_garantie,
-                    entree: this.entree_le,
-                    tierce: this.tierce,
-                    // prime_nette: this.form.primes_nette,
-                    // accessoires: this.form.accessoires,
-                    // frais_courtier: this.form.frais_courtier,
-                    // cfga: this.cfga,
-                    // taxes_totales: this.form.taxes_totales,
-                    // commission_courtier: calculateCommissionCourtier(),
-                    // commission_apporteur: calculateCommission(),
-                    // gestion: this.gestion,
-                    // primes_ttc: totalPrimeTtc,
-                    sync: 0,
-                    supprimer_automobile: 0,
-                    id_entreprise: entrepriseId,
-                    id: userId,
-                },
-            ];
-
-            await AppStorage.storeDataInIndexedDB(
-                "automobiles",
-                newAutomobileData
-            );
-
-            let test = JSON.parse(JSON.stringify(this.typegarantie));
-            let donnees = [];
-
-            for (let i = 0; i < Object.keys(test).length; i++) {
-                donnees.push(test[i]);
-            }
-
-            for (let i = 0; i < donnees.length; i++) {
-                // Générer un UUID unique
-                const uuidGarantie = uuidv4();
-
-                const newGarantieData = [
-                    {
-                        uuidGarantie: uuidGarantie,
-                        uuidAutomobile: uuidAutomobile,
-                        nom_garantie: donnees[i],
-                        sync: 0,
-                        id_entreprise: entrepriseId,
-                    },
-                ];
-
-                await AppStorage.storeDataInIndexedDB(
-                    "garanties",
-                    newGarantieData
-                );
-            }
+        try {
+            await AppStorage.storeDataInIndexedDB("prospects", newProspectData);
+            // return true; // Succès
+            return { success: true, uuid };
+        } catch (error) {
+            console.error("Erreur lors du stockage du prospect :", error);
+            throw new Error("Échec du stockage du prospect");
         }
     }
+
+    // async verifProspect(nomProspect, telProspect, entrepriseId) {
+    //     try {
+    //         const { valide } = await AppStorage.prospectExists(nomProspect, telProspect, entrepriseId);
+
+    //         return { valide };
+
+    //     } catch (error) {
+    //         console.error("Erreur lors de la vérification de l'existence du prospect :", error);
+    //         return { valide: false, error: "Erreur lors de la vérification de l'existence du prospect" };
+    //     }
+    // }
+
+    async ChangeEtat(uuidProspectToUpdate, nouveauStatut, nouveauSyncState) {
+        try {
+            await AppStorage.updateProspectChange(uuidProspectToUpdate, nouveauStatut, nouveauSyncState);
+
+            const updatedProspects = await AppStorage.getProspects();
+            // return { success: true };
+            return updatedProspects;
+        } catch (error) {
+            console.error("Erreur lors du changement d'état :", error);
+            throw new Error("Échec du changement d'état");
+        }
+    }
+
+    async updateProspect(prospectoedit, uuidProspectToUpdate) {
+        const nouvellesInfos = {
+            civilite: prospectoedit.civilite,
+            nom_prospect: prospectoedit.nom_prospect,
+            postal_prospect: prospectoedit.postal_prospect,
+            adresse_prospect: prospectoedit.adresse_prospect,
+            tel_prospect: prospectoedit.tel_prospect,
+            profession_prospect: prospectoedit.profession_prospect,
+            email_prospect: prospectoedit.email_prospect,
+            fax_prospect: prospectoedit.fax_prospect,
+            etat: prospectoedit.etat,
+            sync: 0,
+        };
+
+
+        await AppStorage.updateProspect(uuidProspectToUpdate, nouvellesInfos);
+
+        const updatedProspects = await AppStorage.getProspects();
+
+        return updatedProspects;
+    }
+
+    async changeProspect(uuidProspectToUpdate, newState, newSyncState, prospectoedit, entrepriseId, userId, numeroClient) {
+        const uuid = uuidv4();
+
+        await AppStorage.updateProspectEtat(uuidProspectToUpdate, newState, newSyncState);
+
+
+        const updatedProspects = await AppStorage.getProspects();
+
+        //Inserer le client
+        const newClientData = [{
+            civilite: prospectoedit.civilite,
+            nom_client: prospectoedit.nom_prospect,
+            postal_client: prospectoedit.postal_prospect,
+            adresse_client: prospectoedit.adresse_prospect,
+            tel_client: prospectoedit.tel_prospect,
+            profession_client: prospectoedit.profession_prospect,
+            fax_client: prospectoedit.fax_prospect,
+            email_client: prospectoedit.email_prospect,
+            sync: 0,
+            uuidClient: uuid,
+            id_entreprise: entrepriseId,
+            user_id: userId,
+            numero_client: numeroClient,
+            supprimer_client: 0,
+        }];
+
+        await AppStorage.storeDataInIndexedDB("clients", newClientData);
+
+        return updatedProspects;
+    }
+
+    async deleteProspect(uuidProspectToUpdate, newDelete, newSyncState) {
+        try {
+            await AppStorage.updateProspectDelete(uuidProspectToUpdate, newDelete, newSyncState);
+
+            return { success: true };
+        } catch (error) {
+            console.error("Erreur lors du changement d'état :", error);
+            throw new Error("Échec du changement d'état");
+        }
+    }
+
+    async addProspectBranche(form, userId, entrepriseId, uuidProspect) {
+        const uuid = uuidv4();
+
+        const newBrancheProspectData = [
+            {
+                uuidBrancheProspect: uuid,
+                uuidBranche: form.branche_id,
+                description: form.description,
+                id_entreprise: entrepriseId,
+                id: userId,
+                uuidProspect: uuidProspect,
+                sync: 0,
+            },
+        ];
+
+        await AppStorage.storeDataInIndexedDB(
+            "brancheprospects",
+            newBrancheProspectData
+        );
+
+        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
+        const updatedBrancheProspects = await AppStorage.getBrancheProspectsByuuidProspect(uuidProspect);
+
+        return updatedBrancheProspects;
+
+    }
+
+    async getProspects() {
+        return await AppStorage.getProspects();
+    }
+
+    async getProspectByUuid(uuid) {
+        try {
+            return await AppStorage.getProspectByUuid(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async searchProspectsByName(name) {
+        try {
+            return await AppStorage.searchProspectsByName(name);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
 }
 
-export default OfflineService;
+// export default OfflineService;
+export default new OfflineService();

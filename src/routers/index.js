@@ -57,7 +57,10 @@ import notfound from "../pages/notfound.vue";
 import tarification from "../pages/module/tarification.vue";
 import listauto from "../pages/automobile/listauto.vue";
 import createauto from "../pages/automobile/createauto.vue";
-import detailsapporteur from "../pages/apporteur/detailsApporteur.vue"
+import detailsapporteur from "../pages/apporteur/detailsApporteur.vue";
+import listeaccident from "../pages/accident/listeaccident.vue";
+import createaccident from "../pages/accident/createaccident.vue";
+import listecode from "../pages/accident/listecode.vue";
 
 // Fonction de vérification
 function isPageValid(route) {
@@ -378,19 +381,10 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/:path(.*)*',
+    path: '/:catchAll(.*)',
     name: 'notfound',
     component: notfound,
-    // beforeEnter: (to, from, next) => {
-    //   console.log('Before enter NotFound route');
-    //   if (isPageValid(to.fullPath)) {
-    //     // La page existe, laissez la navigation se poursuivre normalement
-    //     next();
-    //   } else {
-    //     // La page n'existe pas, redirigez vers la page NotFound
-    //     next('/not-found');
-    //   }
-    // }
+    meta: { requiresAuth: true }
   },
   {
     path: '/tarification',
@@ -408,6 +402,24 @@ const routes = [
     path: '/createauto',
     name: 'createauto',
     component: createauto,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/listeaccident',
+    name: 'listeaccident',
+    component: listeaccident,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/createaccident',
+    name: 'createaccident',
+    component: createaccident,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/listecode',
+    name: 'listecode',
+    component: listecode,
     meta: { requiresAuth: true }
   },
 ];

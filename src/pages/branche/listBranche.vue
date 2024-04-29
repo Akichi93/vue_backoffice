@@ -105,65 +105,35 @@ export default {
   },
   created() {
     this.getBranches();
-    this.getRoleconnect();
+    // this.getRoleconnect();
   },
   methods: {
     async getBranches() {
-
-      // const response = await fetch(
-      //   "/api/check-internet-connection"
-      // );
-      // const data = await response.json();
-
-      // this.isConnected = data.connected;
-      // if (this.isConnected) {
-      //   getbrancheExport().then((result) => {
-      //     // Mettre à jour IndexedDB avec les branches récupérés
-      //     AppStorage.storeDataInIndexedDB("branches", result.data);
-
-      //     AppStorage.getBranches().then((result) => {
-      //       this.branches = result;
-
-      //       this.branches.sort((a, b) => {
-      //         // Comparaison alphabétique des propriétés 'nom_branche'
-      //         const nameA = a.nom_branche.toUpperCase(); // Ignorer la casse
-      //         const nameB = b.nom_branche.toUpperCase(); // Ignorer la casse
-      //         if (nameA < nameB) {
-      //           return -1;
-      //         }
-      //         if (nameA > nameB) {
-      //           return 1;
-      //         }
-      //         return 0; // Les noms sont identiques
-      //       });
-      //     });
-      //   });
-      // } else {
       AppStorage.getBranches().then((result) => {
         this.branches = result;
 
-        this.branches.sort((a, b) => {
-          // Comparaison alphabétique des propriétés 'nom_branche'
-          const nameA = a.nom_branche.toUpperCase(); // Ignorer la casse
-          const nameB = b.nom_branche.toUpperCase(); // Ignorer la casse
-          if (nameA < nameB) {
-            return -1;
-          }
-          if (nameA > nameB) {
-            return 1;
-          }
-          return 0; // Les noms sont identiques
-        });
+        // this.branches.sort((a, b) => {
+        //   // Comparaison alphabétique des propriétés 'nom_branche'
+        //   const nameA = a.nom_branche.toUpperCase(); // Ignorer la casse
+        //   const nameB = b.nom_branche.toUpperCase(); // Ignorer la casse
+        //   if (nameA < nameB) {
+        //     return -1;
+        //   }
+        //   if (nameA > nameB) {
+        //     return 1;
+        //   }
+        //   return 0; // Les noms sont identiques
+        // });
 
       });
       // }
     },
 
-    getRoleconnect() {
-      getRoleActif().then((result) => {
-        this.roleactif = result;
-      });
-    },
+    // getRoleconnect() {
+    //   getRoleActif().then((result) => {
+    //     this.roleactif = result;
+    //   });
+    // },
 
     async editbranche(uuidBranche) {
       try {
@@ -171,37 +141,9 @@ export default {
       } catch (error) {
         console.log(error);
       }
-      // axios
-      //   .get("api/auth/editBranche/" + id_branche)
-      //   .then((response) => {
-      //     this.branchetoedit = response.data;
-
-      //   })
-      //   .catch((error) => console.log(error));
     },
 
-    // searchtask() {
-    //   const token = localStorage.getItem("token");
-
-    //   // Configurez les en-têtes de la requête
-    //   const headers = {
-    //     Authorization: "Bearer " + token,
-    //     "x-access-token": token,
-    //   };
-    //   if (this.q.length > 0) {
-    //     axios
-    //       .get("/api/auth/branchesList/" + this.q, { headers })
-    //       .then((response) => (
-    //         this.branches = response.data.data
-    //       ))
-    //       .catch((error) => console.log(error));
-    //   } else {
-    //     axios
-    //       .get("/api/auth/branchesList/", { headers })
-    //       .then((response) => (this.branches = response.data))
-    //       .catch((error) => console.log(error));
-    //   }
-    // },
+  
 
     searchtask() {
       if (this.q.length > 3) {

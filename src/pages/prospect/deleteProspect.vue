@@ -36,6 +36,7 @@
 <script>
 import AppStorage from "../../db/AppStorage";
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from '../../services/switchService';
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
@@ -51,7 +52,17 @@ export default {
 
       const newSyncState = 0;
 
-      const avenantMisAJour = await AppStorage.updateProspectDelete(uuidProspectToUpdate, newDelete, newSyncState);
+      const { success } = await switchService.deleteProspect(uuidProspectToUpdate, newDelete, newSyncState);
+
+      if (success) {
+        toaster.success(`Prospect supprimé`, {
+          position: "top-right",
+        });
+      } else {
+        toaster.error(`Erreur lors de la suppression du prospect`, {
+          position: "top-right",
+        });
+      }
 
       // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
       const updatedProspects = await AppStorage.getProspects();
@@ -62,20 +73,6 @@ export default {
       toaster.success(`Prospect supprimé`, {
         position: "top-right",
       });
-      // const entrepriseId = localStorage.getItem("entreprise");
-      // axios
-      //   .patch("/api/auth/deleteProspect/" + this.prospectoedit.id_prospect, {
-      //     id_entreprise: entrepriseId,
-      //   })
-      //   .then((response) => {
-      //     this.$emit("prospect-deleted", response);
-      //     if (response.status === 200) {
-      //       toaster.success(`Prospect supprimé avec succes`, {
-      //         position: "top-right",
-      //       });
-      //     }
-      //   })
-      //   .catch((error) => console.log(error));
     },
   },
 };

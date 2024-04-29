@@ -82,7 +82,7 @@
           </div>
         </div>
 
-        <addprospectbranche @prospectbranche-add="refresh"></addprospectbranche>
+        <addprospectbranche @brancheprospect-add="refresh"></addprospectbranche>
         <!-- <editprospectbranche></editprospectbranche> -->
       </div>
     </div>
@@ -129,6 +129,7 @@ export default {
     async fetchData() {
       const uuidProspect = this.$route.params.uuidProspect;
       AppStorage.getBrancheProspectsByuuidProspect(uuidProspect).then((result) => {
+        console.log(result)
         this.prospects = result;
       });
     },

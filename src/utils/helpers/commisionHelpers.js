@@ -8,6 +8,4 @@ export const calculateCommissionApporteur = ({ primes_nette, tauxcomp, taux }) =
 export const calculateCommissionCompagnie = ({ primes_nette, tauxcomp }) => {
     const commission = primes_nette * tauxcomp * commissionApporteur;
     return commission.toFixed(2);
-}
-
-
+}  
