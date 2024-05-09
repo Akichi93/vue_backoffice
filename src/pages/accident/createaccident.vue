@@ -83,6 +83,7 @@
                           <div class="col-lg-9">
                             <div class="input-block mb-3">
                               <input
+                                v-model="form.nom"
                                 type="text"
                                 placeholder="Nom & prénom"
                                 class="form-control"
@@ -96,7 +97,7 @@
                           >
                           <div class="col-lg-9">
                             <Multiselect
-                              v-model="accident_id"
+                              v-model="form.accident_id"
                               :options="accidents"
                               @change="optionActivite"
                               :searchable="true"
@@ -448,6 +449,7 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import Multiselect from "@vueform/multiselect";
 import AppStorage from "../../db/AppStorage";
+import { v4 as uuidv4 } from "uuid";
 import { validateChoiceForm } from "../../utils/helpers/formValidation";
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({
@@ -465,9 +467,9 @@ export default {
     return {
       form: {
         compagnie_id: "",
+        accident_id: "",
       },
 
-      accident_id: "",
       montant_id: "",
       deces: "",
       ipt: "",
@@ -478,7 +480,7 @@ export default {
       TaxePrimeAnnuelle: "",
       accessoireanuelle: "",
       primeTTCAnuelle: "",
-      primeTTCCourte:"",
+      primeTTCCourte: "",
       debut: "",
       fin: "",
       nombreJours: "",
@@ -638,7 +640,7 @@ export default {
 
         if (PrimeNetteCourte && TaxePrimeCourte && accessoirecourte) {
           const primeTTCCourte =
-          PrimeNetteCourte + TaxePrimeCourte + accessoirecourte;
+            PrimeNetteCourte + TaxePrimeCourte + accessoirecourte;
 
           // Arrondir le résultat et le convertir en entier
           const primeTTCCourteArrondie = parseInt(Math.round(primeTTCCourte));
@@ -659,7 +661,7 @@ export default {
 
     async optionFrais(option) {
       const id_compagnie = this.form.compagnie_id;
-      const id_activite = this.accident_id;
+      const id_activite = this.form.accident_id;
       const deces = this.deces;
       const ipt = this.ipt;
 
@@ -767,9 +769,54 @@ export default {
       });
     },
 
-    async storeAccident(){
-      
-    }
+    async storeAccident() {
+
+      const uuid = uuidv4();
+      const userId = parseInt(AppStorage.getId(), 10);
+      const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
+      // const activiteName = await AppStorage.getActivityNameByUUID(
+      //       this.form.accident_id
+      //     );
+
+      const newTarificationData = [
+        {
+          uuidTarificationAccident: uuid,
+          uuidCompagnie: this.form.compagnie_id,
+          nom_complet: this.form.nom,
+          activite: this.form.accident_id,
+          effectif: this.effectifValue,
+          duree: this.nombreJours,
+          deces: this.deces,
+          ipt: this.ipt,
+          frais_medicaux: this.montant_id,
+          prime_nette_brute: this.montantDeces,
+          taux_reduction_effectif: this.tauxEffectif,
+          prime_nette_reduite: this.PrimeReduite,
+          prime_nette_annuelle: this.PrimeNetteAnnuelle,
+          accessoire_annuel: this.accessoireanuelle,
+          taxe_annuelle: this.TaxePrimeAnnuelle,
+          prime_ttc_annuelle: this.primeTTCAnuelle,
+          prime_nette_courte: this.PrimeNetteCourte,
+          taux_reduction_duree: this.pourcentageDay,
+          accesoire_courte: this.accessoirecourte,
+          taxe_courte: this.TaxePrimeCourte,
+          prime_ttc_courte: this.primeTTCCourte,
+          sync: 0,
+          id_entreprise: entrepriseId,
+          id: userId,
+        },
+      ];
+
+      await AppStorage.storeDataInIndexedDB(
+        "tarificationaccidents",
+        newTarificationData
+      );
+
+      this.$router.push("/listeaccident");
+
+      toaster.success(`tarification ajouté `, { position: "top-right" });
+    },
   },
 };
 </script>

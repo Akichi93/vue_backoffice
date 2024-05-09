@@ -2835,6 +2835,16 @@ class AppStorage {
         await this.storeData('tarificateuraccidents', tarificateuraccidents);
     }
 
+    static async getActivityNameByUUID(uuidTarificateurAccident) {
+        const alltarificateurs = await this.getTarificateurAccidents();
+
+        const tarificateur = alltarificateurs.find(tarificateur => tarificateur.uuidTarificateurAccident === uuidTarificateurAccident);
+
+        return tarificateur ? tarificateur.activite : null;
+    }
+
+
+
     // Tarificateurs Frais
     static async getTarificateurFrais() {
         return this.getData('tarificateurfrais') || [];
@@ -3138,19 +3148,19 @@ class AppStorage {
         return tauxEffectif;
     }
 
-    static async getTauxMonth(nombreJours, uuidCompagnie){
+    static async getTauxMonth(nombreJours, uuidCompagnie) {
         const allAssurances = await this.getAssuranceTemporaires();
-        
+
         // Parcourir toutes les assurances
         for (const assurance of allAssurances) {
             // Extraire nbreMoisMin et nbreMoisMax de cette assurance
             const nbreMoisMin = assurance.nbreMoisMin;
             const nbreMoisMax = assurance.nbreMoisMax;
-            
+
             // Convertir les mois en jours
             const joursMin = nbreMoisMin * 30; // On suppose que chaque mois a 30 jours
             const joursMax = nbreMoisMax * 30;
-    
+
             // Vérifier si le nombre de jours se situe dans la plage
             if (nombreJours >= joursMin && nombreJours <= joursMax && assurance.uuidCompagnie === uuidCompagnie) {
                 // Le nombre de jours est dans la plage
@@ -3158,11 +3168,72 @@ class AppStorage {
                 return assurance.pourcentage;
             }
         }
-    
+
         // Si aucun résultat n'a été trouvé
         return null;
     }
-    
+
+    // Tarification Accident
+    // static async getTarificationAccidents() {
+    //     const  tarifications = await this.getData('tarificationaccidents') || [];
+    //     const  compagnies = await this.getData('compagnies') || [];
+    //     const  activites = await this.getData('tarificateuraccidents') || [];
+
+    //     console.log(tarifications)
+    //     // return this.getData('tarificationaccidents') || [];
+    // }
+
+    static async getTarificationAccidents() {
+        const tarifications = await this.getData('tarificationaccidents') || [];
+        const compagnies = await this.getData('compagnies') || [];
+        const tarificateuraccidents = await this.getData('tarificateuraccidents') || [];
+
+        // Joindre les données des clients, apporteurs et compagnies aux contrats
+        const contratsAvecDonnees = tarifications.map(tarification => {
+            const compagnie = compagnies.find(compagnie => compagnie.uuidCompagnie === tarification.uuidCompagnie);
+            const tarificateuraccident = tarificateuraccidents.find(tarificateuraccident => tarificateuraccident.uuidTarificateurAccident === tarification.activite);
+
+            return {
+                ...tarification,
+                compagnie,
+                tarificateuraccident
+            };
+        });
+
+        return contratsAvecDonnees
+
+
+    }
+
+    static async getTarificationAccidentByuuid(uuidTarificationAccident) {
+        const allTarificationss = await this.getData('tarificationaccidents') || [];
+        return allTarificationss.find(tarification => tarification.uuidTarificationAccident === uuidTarificationAccident);
+    }
+
+    static async getFactureAccident(uuidTarificationAccident) {
+        const tarifications = await this.getTarificationAccidentByuuid(uuidTarificationAccident);
+        const compagnies = await this.getData('compagnies') || [];
+        const tarificateuraccidents = await this.getData('tarificateuraccidents') || [];
+
+        // Joindre les données des clients, apporteurs et compagnies aux contrats
+        const contratsAvecDonnees = tarifications.map(tarification => {
+            const compagnie = compagnies.find(compagnie => compagnie.uuidCompagnie === tarification.uuidCompagnie);
+            const tarificateuraccident = tarificateuraccidents.find(tarificateuraccident => tarificateuraccident.uuidTarificateurAccident === tarification.activite);
+
+            return {
+                ...tarification,
+                compagnie,
+                tarificateuraccident
+            };
+        });
+
+        return contratsAvecDonnees
+    }
+
+
+    static async storeTarificationAccidents(tarificationaccidents) {
+        await this.storeData('tarificationaccidents', tarificationaccidents);
+    }
 
     //
     static async store(token, user, id, entreprise, role, contact, adresse, email, mode) {

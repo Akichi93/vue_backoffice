@@ -42,6 +42,7 @@ class User {
             { endpoint: 'getfraismedicals', storageKey: 'fraismedicals' },
             { endpoint: 'gettarificateuraccidents', storageKey: 'tarificateuraccidents' },
             { endpoint: 'gettarificateurfrais', storageKey: 'tarificateurfrais' },
+            { endpoint: 'gettarificationaccidents', storageKey: 'tarificationaccidents' },
         ];
 
         const accessToken = AppStorage.getToken();
