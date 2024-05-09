@@ -27,9 +27,8 @@
   </div>
 </template>
 <script>
-import AppStorage from "../../db/AppStorage";
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
+import switchService from '../../services/switchService';
 const toaster = createToaster({
   /* options */
 });
@@ -47,10 +46,12 @@ export default {
       const newSyncState = 0;
 
       try {
-        await AppStorage.updateTauxApporteurByUuid(uuidTauxApporteurUpdate, newTaux, newSyncState);
+        // await AppStorage.updateTauxApporteurByUuid(uuidTauxApporteurUpdate, newTaux, newSyncState);
 
-        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-        const updatedTauxApporteurs = await AppStorage.getTauxApporteursByIdApporteur(uuidTauxApporteurUpdate);
+      
+        // const updatedTauxApporteurs = await AppStorage.getTauxApporteursByIdApporteur(uuidTauxApporteurUpdate);
+
+        const updatedTauxApporteurs = await switchService.updateTauxApporteur(uuidTauxApporteurUpdate,newTaux,newSyncState)
 
         // Émettre un événement avec les prospects mis à jour
         this.$emit("tauxapporteur-update", updatedTauxApporteurs);
@@ -61,20 +62,7 @@ export default {
       } catch (error) {
         console.error('Erreur lors de la mise à jour du taux  :', error.message);
       }
-      // axios
-      //   .post("/api/auth/updateTauxApporteur", {
-      //     id_tauxapp: this.tauxtoedit.id_tauxapp,
-      //     taux: this.tauxtoedit.taux,
-      //     id: this.tauxtoedit.id_apporteur,
-      //   })
-      //   .then((response) => {
-      //     this.$emit('taux-update', response)
-      //     // if (response.status === 200) {
-      //       toaster.success("Taux modifié", {
-      //         position: "top-right",
-      //       });
-      //     // }
-      //   });
+     
     },
 
   },

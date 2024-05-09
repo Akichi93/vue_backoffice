@@ -42,7 +42,6 @@ class AppStorage {
     }
 
     static async storeData(key, data) {
-        // localStorage.setItem(key, JSON.stringify(data));
         await this.storeDataInIndexedDB(key, data);
     }
 
@@ -76,6 +75,7 @@ class AppStorage {
             if (Array.isArray(existingData) && Array.isArray(data)) {
                 const mergedData = existingData.concat(data);
                 // dataEncrypted = LocalService.encrypte(mergedData)
+
                 await store.put(mergedData, key);
                 // await store.put(dataEncrypted, key);
                 console.log(`Données fusionnées à apiData dans IndexedDB avec succès`);
@@ -482,21 +482,21 @@ class AppStorage {
     static async getBrancheProspectsByuuidProspect(uuidProspect) {
         const brancheprospects = await this.getData('brancheprospects') || [];
         const branches = await this.getData('branche') || [];
-        
+
         // Filtrer les prospects en fonction de uuidBrancheProspect
         const filteredProspects = brancheprospects.filter(prospect => prospect.uuidProspect === uuidProspect);
-    
+
         // Joindre les informations de branche à filteredProspects
         const prospectsWithBranche = filteredProspects.map(prospect => {
             const branche = branches.find(branch => branch.uuidBranche === prospect.uuidBranche);
             return { ...prospect, branche };
         });
-    
+
         console.log(prospectsWithBranche);
-    
+
         return prospectsWithBranche;
     }
-    
+
 
     static async getDifferenceOfBranches() {
         const branches = await this.getBranches();
@@ -2749,6 +2749,422 @@ class AppStorage {
         }
     }
 
+    // Reductions Groupes
+
+    static async storeReductionGroups(reductiongroups) {
+        await this.storeData('reductiongroups', reductiongroups);
+    }
+
+    static async getReductionGroups() {
+        const allReductions = await this.getData('reductiongroups') || [];
+        const compagnies = await this.getData('compagnies') || [];
+
+        const compagniesMap = {};
+        compagnies.forEach(compagnie => {
+            compagniesMap[compagnie.uuidCompagnie] = compagnie;
+        });
+
+
+        const reductionsWithCompagnies = allReductions.map(reduction => {
+            const compagnie = compagniesMap[reduction.uuidCompagnie];
+            if (compagnie) {
+                return {
+                    ...reduction,
+                    compagnie
+                };
+            } else {
+
+                return reduction;
+            }
+        });
+
+        return reductionsWithCompagnies;
+    }
+
+
+    // Assurance temporaire
+
+    static async storeAssuranceTemporaires(assurancetemporaires) {
+        await this.storeData('assurancetemporaires', assurancetemporaires);
+    }
+
+    static async getAssuranceTemporaires() {
+
+        const allAssurances = await this.getData('assurancetemporaires') || [];
+        const compagnies = await this.getData('compagnies') || [];
+
+        const compagniesMap = {};
+        compagnies.forEach(compagnie => {
+            compagniesMap[compagnie.uuidCompagnie] = compagnie;
+        });
+
+
+        const reductionsWithCompagnies = allAssurances.map(reduction => {
+            const compagnie = compagniesMap[reduction.uuidCompagnie];
+            if (compagnie) {
+                return {
+                    ...reduction,
+                    compagnie
+                };
+            } else {
+
+                return reduction;
+            }
+        });
+
+        return reductionsWithCompagnies;
+    }
+
+    // Frais médical
+
+    static async getFraisMedicals() {
+        return this.getData('fraismedicals') || [];
+    }
+
+    static async storeFraisMedicals(fraismedicals) {
+        await this.storeData('fraismedicals', fraismedicals);
+    }
+
+    // Tarificateurs Accidents
+
+    static async getTarificateurAccidents() {
+        return this.getData('tarificateuraccidents') || [];
+    }
+
+    static async storeTarificateurAccidents(tarificateuraccidents) {
+        await this.storeData('tarificateuraccidents', tarificateuraccidents);
+    }
+
+    // Tarificateurs Frais
+    static async getTarificateurFrais() {
+        return this.getData('tarificateurfrais') || [];
+    }
+
+    static async storeTarificateurFrais(tarificateurfrais) {
+        await this.storeData('tarificateurfrais', tarificateurfrais);
+    }
+
+    static async getTarificateurIA() {
+        const tarificateursfrais = await this.getData('tarificateurfrais') || [];
+        const tarifcateursaccidents = await this.getData('tarificateuraccidents') || [];
+        const fraismedicals = await this.getData('fraismedicals') || [];
+
+        // Créer un objet pour accéder plus facilement aux frais médicaux par UUID
+        const fraisMedicalMap = fraismedicals.reduce((acc, frais) => {
+            acc[frais.uuidFraisMedical] = frais;
+            return acc;
+        }, {});
+
+        // Créer un objet pour accéder plus facilement aux tarificateurs d'accidents par UUID
+        const tarificateurAccidentMap = tarifcateursaccidents.reduce((acc, tarificateur) => {
+            acc[tarificateur.uuidTarificateurAccident] = tarificateur;
+            return acc;
+        }, {});
+
+        // Joindre les données des tarificateurs de frais avec les frais médicaux et les tarificateurs d'accidents correspondants
+        const joinedData = tarificateursfrais.map(tarificateur => {
+            const fraisMedical = fraisMedicalMap[tarificateur.uuidFraisMedical];
+            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
+
+            return {
+                uuidTarificateurAccident: tarificateur.uuidTarificateurAccident,
+                sync: tarificateur.sync,
+                taux: tarificateur.taux,
+                uuidCompagnie: tarificateur.uuidCompagnie,
+                uuidFraisMedical: tarificateur.uuidFraisMedical,
+                montant: fraisMedical.montant,
+                classe: tarificateurAccident.classe,
+                activite: tarificateurAccident.activite,
+                tauxDeces: tarificateurAccident.tauxDeces,
+                tauxIPT: tarificateurAccident.tauxIPT
+            };
+        });
+        // console.log(joinedData)
+
+        return joinedData;
+    }
+
+
+    // static async getTarificateurIA() {
+    //     const tarificateursfrais = await this.getData('tarificateurfrais') || [];
+    //     const tarifcateursaccidents = await this.getData('tarificateuraccidents') || [];
+    //     const fraismedicals = await this.getData('fraismedicals') || [];
+
+    //     // Créer un objet pour accéder plus facilement aux frais médicaux par UUID
+    //     const fraisMedicalMap = fraismedicals.reduce((acc, frais) => {
+    //         acc[frais.uuidFraisMedical] = frais;
+    //         return acc;
+    //     }, {});
+
+    //     // Créer un objet pour accéder plus facilement aux tarificateurs d'accidents par UUID
+    //     const tarificateurAccidentMap = tarifcateursaccidents.reduce((acc, tarificateur) => {
+    //         acc[tarificateur.uuidTarificateurAccident] = tarificateur;
+    //         return acc;
+    //     }, {});
+
+    //     // Joindre les données des tarificateurs de frais avec les frais médicaux et les tarificateurs d'accidents correspondants
+    //     const joinedData = tarificateursfrais.map(tarificateur => {
+    //         const fraisMedical = fraisMedicalMap[tarificateur.uuidFraisMedical];
+    //         const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
+
+    //         return {
+    //             ...tarificateur,
+    //             fraisMedical,
+    //             tarificateurAccident
+    //         };
+    //     });
+
+    //     console.log(joinedData);
+    // }
+
+    // static async getTarificateurIA() {
+    //     const tarificateursfrais = await this.getData('tarificateurfrais') || [];
+    //     const tarifcateursaccidents = await this.getData('tarificateuraccidents') || [];
+    //     const fraismedicals = await this.getData('fraismedicals') || [];
+
+    //     // Créer un objet pour accéder plus facilement aux frais médicaux par UUID
+    //     const fraisMedicalMap = fraismedicals.reduce((acc, frais) => {
+    //         acc[frais.uuidFraisMedical] = frais;
+    //         return acc;
+    //     }, {});
+
+    //     // Créer un objet pour accéder plus facilement aux tarificateurs d'accidents par UUID
+    //     const tarificateurAccidentMap = tarifcateursaccidents.reduce((acc, tarificateur) => {
+    //         acc[tarificateur.uuidTarificateurAccident] = tarificateur;
+    //         return acc;
+    //     }, {});
+
+    //     // Joindre les données des tarificateurs de frais avec les frais médicaux et les tarificateurs d'accidents correspondants
+    //     const joinedData = tarificateursfrais.map(tarificateur => {
+    //         const fraisMedical = fraisMedicalMap[tarificateur.uuidFraisMedical];
+    //         const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
+
+    //         return {
+    //             ...tarificateur,
+    //             classe: tarificateurAccident.classe,
+    //             activite: tarificateurAccident.activite,
+    //             tauxDeces: tarificateurAccident.tauxDeces,
+    //             tauxIPT: tarificateurAccident.tauxIPT,
+    //             montant: fraisMedical.montant,
+    //         };
+
+
+    //     });
+    // }
+
+    // static async getTauxDeces(activite, compagnieId) {
+    //     const tarificateursfrais = await this.getData('tarificateurfrais') || [];
+    //     const tarifcateursaccidents = await this.getData('tarificateuraccidents') || [];
+    //     const fraismedicals = await this.getData('fraismedicals') || [];
+
+    //     // Créer un objet pour accéder plus facilement aux frais médicaux par UUID
+    //     const fraisMedicalMap = fraismedicals.reduce((acc, frais) => {
+    //         acc[frais.uuidFraisMedical] = frais;
+    //         return acc;
+    //     }, {});
+
+    //     // Créer un objet pour accéder plus facilement aux tarificateurs d'accidents par UUID
+    //     const tarificateurAccidentMap = tarifcateursaccidents.reduce((acc, tarificateur) => {
+    //         acc[tarificateur.uuidTarificateurAccident] = tarificateur;
+    //         return acc;
+    //     }, {});
+
+    //     // Filtrer les tarificateurs de frais en fonction de l'activité sélectionnée
+    //     const filteredTarificateursFrais = tarificateursfrais.filter(tarificateur => {
+    //         const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
+    //         return tarificateurAccident.uuidTarificateurAccident === activite && tarificateur.uuidCompagnie === compagnieId;
+    //     });
+
+    //     // Joindre les données filtrées des tarificateurs de frais avec les frais médicaux et les tarificateurs d'accidents correspondants
+    //     const joinedData = filteredTarificateursFrais.map(tarificateur => {
+    //         const fraisMedical = fraisMedicalMap[tarificateur.uuidFraisMedical];
+    //         const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
+
+    //         return {
+    //             uuidTarificateurAccident: tarificateur.uuidTarificateurAccident,
+    //             sync: tarificateur.sync,
+    //             taux: tarificateur.taux,
+    //             uuidCompagnie: tarificateur.uuidCompagnie,
+    //             uuidFraisMedical: tarificateur.uuidFraisMedical,
+    //             montant: fraisMedical.montant,
+    //             classe: tarificateurAccident.classe,
+    //             activite: tarificateurAccident.activite,
+    //             tauxDeces: tarificateurAccident.tauxDeces,
+    //             tauxIPT: tarificateurAccident.tauxIPT
+    //         };
+    //     });
+
+    //     return joinedData;
+    // }
+
+    static async getTauxDeces(activite, compagnieId, montantId) {
+        const tarificateursfrais = await this.getData('tarificateurfrais') || [];
+        const tarifcateursaccidents = await this.getData('tarificateuraccidents') || [];
+        const fraismedicals = await this.getData('fraismedicals') || [];
+
+
+        // Créer un objet pour accéder plus facilement aux frais médicaux par UUID
+        const fraisMedicalMap = fraismedicals.reduce((acc, frais) => {
+            acc[frais.uuidFraisMedical] = frais;
+            return acc;
+        }, {});
+
+        // Créer un objet pour accéder plus facilement aux tarificateurs d'accidents par UUID
+        const tarificateurAccidentMap = tarifcateursaccidents.reduce((acc, tarificateur) => {
+            acc[tarificateur.uuidTarificateurAccident] = tarificateur;
+            return acc;
+        }, {});
+
+        // Filtrer les tarificateurs de frais en fonction de l'activité, de la compagnie et du montant sélectionnés
+        const filteredTarificateursFrais = tarificateursfrais.filter(tarificateur => {
+            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
+            const fraisMedical = fraisMedicalMap[tarificateur.uuidFraisMedical]; // Définir fraisMedical ici
+            return tarificateurAccident.uuidTarificateurAccident === activite &&
+                tarificateur.uuidCompagnie === compagnieId &&
+                fraisMedical.uuidFraisMedical === montantId;
+        });
+
+        // Récupérer les taux de décès des tarificateurs filtrés
+        const tauxDeces = filteredTarificateursFrais.map(tarificateur => {
+            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
+            return tarificateurAccident.tauxDeces;
+        });
+
+        const nombreEntier = parseInt(tauxDeces);
+
+        return nombreEntier;
+    }
+
+    static async getTauxIpt(activite, compagnieId, montantId) {
+        const tarificateursfrais = await this.getData('tarificateurfrais') || [];
+        const tarifcateursaccidents = await this.getData('tarificateuraccidents') || [];
+        const fraismedicals = await this.getData('fraismedicals') || [];
+
+
+        // Créer un objet pour accéder plus facilement aux frais médicaux par UUID
+        const fraisMedicalMap = fraismedicals.reduce((acc, frais) => {
+            acc[frais.uuidFraisMedical] = frais;
+            return acc;
+        }, {});
+
+        // Créer un objet pour accéder plus facilement aux tarificateurs d'accidents par UUID
+        const tarificateurAccidentMap = tarifcateursaccidents.reduce((acc, tarificateur) => {
+            acc[tarificateur.uuidTarificateurAccident] = tarificateur;
+            return acc;
+        }, {});
+
+        // Filtrer les tarificateurs de frais en fonction de l'activité, de la compagnie et du montant sélectionnés
+        const filteredTarificateursFrais = tarificateursfrais.filter(tarificateur => {
+            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
+            const fraisMedical = fraisMedicalMap[tarificateur.uuidFraisMedical]; // Définir fraisMedical ici
+            return tarificateurAccident.uuidTarificateurAccident === activite &&
+                tarificateur.uuidCompagnie === compagnieId &&
+                fraisMedical.uuidFraisMedical === montantId;
+        });
+
+        // Récupérer les taux de décès des tarificateurs filtrés
+        const tauxIPT = filteredTarificateursFrais.map(tarificateur => {
+            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
+            return tarificateurAccident.tauxIPT;
+        });
+
+        const nombreEntier = parseInt(tauxIPT);
+
+        return nombreEntier;
+    }
+
+    static async getTauxFrais(activite, compagnieId, montantId) {
+        const tarificateursfrais = await this.getData('tarificateurfrais') || [];
+        const tarifcateursaccidents = await this.getData('tarificateuraccidents') || [];
+        const fraismedicals = await this.getData('fraismedicals') || [];
+
+        // Créer un objet pour accéder plus facilement aux frais médicaux par UUID
+        const fraisMedicalMap = fraismedicals.reduce((acc, frais) => {
+            acc[frais.uuidFraisMedical] = frais;
+            return acc;
+        }, {});
+
+        // Créer un objet pour accéder plus facilement aux tarificateurs d'accidents par UUID
+        const tarificateurAccidentMap = tarifcateursaccidents.reduce((acc, tarificateur) => {
+            acc[tarificateur.uuidTarificateurAccident] = tarificateur;
+            return acc;
+        }, {});
+
+        const tarificateursFraisMap = tarificateursfrais.reduce((acc, tarificateurfrais) => {
+            acc[tarificateurfrais.uuidFraisMedical] = tarificateurfrais;
+            return acc;
+        }, {});
+
+        // Filtrer les tarificateurs de frais en fonction de l'activité, de la compagnie et du montant sélectionnés
+        const filteredTarificateursFrais = tarificateursfrais.filter(tarificateur => {
+            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
+            const fraisMedical = fraisMedicalMap[tarificateur.uuidFraisMedical]; // Définir fraisMedical ici
+            return tarificateurAccident.uuidTarificateurAccident === activite &&
+                tarificateur.uuidCompagnie === compagnieId &&
+                fraisMedical.uuidFraisMedical === montantId;
+        });
+
+        // Récupérer les taux de tarificateurs filtrés
+        const taux = filteredTarificateursFrais.map(tarificateurfrais => {
+            const tarificateurAccident = tarificateursFraisMap[tarificateurfrais.uuidFraisMedical];
+            return tarificateurAccident.taux;
+        });
+
+        const nombreEntier = parseInt(taux);
+
+        return nombreEntier;
+    }
+
+    static async getTauxEffectif(Effectif, uuidCompagnie) {
+        const allReductions = await this.getReductionGroups();
+        let tauxEffectif = null;
+
+        // Parcours de toutes les lignes de réduction
+        for (const reduction of allReductions) {
+            // Vérification si l'effectif se situe dans la plage spécifiée
+            if (
+                Effectif >= parseInt(reduction.nbrePersonneMin) &&
+                Effectif <= parseInt(reduction.nbrePersonneMax) &&
+                reduction.uuidCompagnie === uuidCompagnie
+            ) {
+                // Si l'effectif est dans la plage et correspond à la compagnie spécifiée, récupérer le taux effectif
+                tauxEffectif = reduction.pourcentage;
+                // Sortir de la boucle car nous avons trouvé le taux effectif correspondant
+                break;
+            }
+        }
+
+        // Retourner le taux effectif trouvé
+        return tauxEffectif;
+    }
+
+    static async getTauxMonth(nombreJours, uuidCompagnie){
+        const allAssurances = await this.getAssuranceTemporaires();
+        
+        // Parcourir toutes les assurances
+        for (const assurance of allAssurances) {
+            // Extraire nbreMoisMin et nbreMoisMax de cette assurance
+            const nbreMoisMin = assurance.nbreMoisMin;
+            const nbreMoisMax = assurance.nbreMoisMax;
+            
+            // Convertir les mois en jours
+            const joursMin = nbreMoisMin * 30; // On suppose que chaque mois a 30 jours
+            const joursMax = nbreMoisMax * 30;
+    
+            // Vérifier si le nombre de jours se situe dans la plage
+            if (nombreJours >= joursMin && nombreJours <= joursMax && assurance.uuidCompagnie === uuidCompagnie) {
+                // Le nombre de jours est dans la plage
+                // Retourner le pourcentage correspondant
+                return assurance.pourcentage;
+            }
+        }
+    
+        // Si aucun résultat n'a été trouvé
+        return null;
+    }
+    
+
+    //
     static async store(token, user, id, entreprise, role, contact, adresse, email, mode) {
         await this.storeToken(token);
         await this.storeUser(user);

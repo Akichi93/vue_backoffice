@@ -289,6 +289,81 @@ export function validateBrancheProspectForm(form) {
   return errors;
 }
 
+export function validateReductionForm(form) {
+  const errors = {};
+
+  if (!form.compagnie_id) {
+    errors.compagnie_id = 'Veuillez selectionnez une compagnie.';
+  }
+
+  if (!form.pourcentage) {
+    errors.pourcentage = 'Veuillez entrez le pourcentage.';
+  }
+
+  return errors;
+}
+
+export function validateAssuranceForm(form) {
+  const errors = {};
+
+  if (!form.compagnie_id) {
+    errors.compagnie_id = 'Veuillez selectionnez une compagnie.';
+  }
+
+  if (!form.pourcentage) {
+    errors.pourcentage = 'Veuillez entrez le pourcentage.';
+  }
+
+  return errors;
+}
+
+export function validateFraisForm(form) {
+  const errors = {};
+
+  if (!form.montant) {
+    errors.montant = 'Veuillez entrez le montant.';
+  }
+
+  return errors;
+}
+
+export function validateTarificationForm(form) {
+  const errors = {};
+
+  if (!form.compagnie_id) {
+    errors.compagnie_id = 'Veuillez selectionnez une compagnie.';
+  }
+
+  if (!form.classe) {
+    errors.classe = 'Veuillez entrez la classe.';
+  }
+
+  if (!form.activite) {
+    errors.activite = 'Veuillez entrez l\'activité.';
+  }
+
+  if (!form.deces) {
+    errors.deces = 'Veuillez entrez le taux du décès.';
+  }
+
+  if (!form.ipt) {
+    errors.ipt = 'Veuillez entrez le taux ipt.';
+  }
+
+  return errors;
+}
+export function validateChoiceForm(form) {
+  const errors = {};
+
+  if (!form.compagnie_id) {
+    errors.compagnie_id = 'Veuillez selectionnez une compagnie.';
+  }
+  return errors;
+}
+
+export function validateTarificateurForm(form){
+  
+}
 
 export function isValidEmail(email) {
   // Logique pour vérifier si l'email est valide

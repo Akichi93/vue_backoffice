@@ -105,6 +105,7 @@ import addtauxapporteur from "./addtauxapporteur.vue";
 import edittauxapporteur from "./edittauxapporteur.vue";
 import AppStorage from "../../db/AppStorage.js";
 import searchbranche from "../../components/search/searchbranche.vue";
+import switchService from '../../services/switchService';
 export default {
   name: "tauxapporteur",
   components: { Header, Sidebar, addtauxapporteur, edittauxapporteur,searchbranche, },
@@ -126,11 +127,9 @@ export default {
       const uuidApporteur = this.$route.params.uuidApporteur;
 
       try {
-        const tauxApporteurs = await AppStorage.getTauxApporteursByIdApporteur(
+        this.tauxApporteurs = await switchService.getTauxApporteurs(
           uuidApporteur
         );
-
-        this.tauxApporteurs = tauxApporteurs;
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
       }
@@ -140,8 +139,7 @@ export default {
       const uuidApporteur = this.$route.params.uuidApporteur;
 
       try {
-        const names = await AppStorage.getApporteurNameByUUID(uuidApporteur);
-        this.names = names;
+        this.names = await switchService.getNameApporteur(uuidApporteur);
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
       }
@@ -149,70 +147,26 @@ export default {
 
     async getTaux(uuidTauxApporteur) {
       try {
-        this.tauxtoedit = await AppStorage.getTauxApporteurById(
-          uuidTauxApporteur
-        );
+        this.tauxtoedit = await switchService.getTauxApporteurByUuid(uuidTauxApporteur);
       } catch (error) {
         console.log(error);
       }
     },
-    // getApporteur() {
-    //   axios
-    //     .get(`/api/auth/getNameApporteur/${this.$route.params.id_apporteur}`)
-    //     .then((response) => (this.tauxapporteurtoedit = response.data))
-    //     .catch((error) => console.log(error));
-    // },
-
-    // getTaux(id_tauxapp) {
-    //   axios
-    //     .get("/api/auth/editTauxApporteur/" + id_tauxapp)
-    //     .then((response) => (this.tauxtoedit = response.data))
-    //     .catch((error) => console.log(error));
-    // },
-
-    // fetchTask() {
-    //   this.error = this.names = null;
-    //   this.loading = true;
-    //   var that = this;
-    //   axios
-    //     .all([
-    //       axios.get(
-    //         `/api/auth/getNameApporteur/${this.$route.params.id_apporteur}`
-    //       ),
-    //       axios.get(
-    //         `/api/auth/getTauxApporteur/${this.$route.params.id_apporteur}`
-    //       ),
-    //       axios.get(
-    //         `/api/auth/getBrancheDiffApporteur/${this.$route.params.id_apporteur}`
-    //       ),
-    //     ])
-    //     .then(
-    //       axios.spread(function (names, apporteurs, branches) {
-    //         that.names = names.data;
-    //         that.apporteurs = apporteurs.data;
-    //         that.branches = branches.data;
-    //       })
-    //     );
-    // },
-    searchtask() {
+    
+    async searchtask() {
       if (this.q.length > 3) {
         const uuidApporteur = this.$route.params.uuidApporteur;
-        AppStorage.searchTauxApporteurByNomBranche(this.q,uuidApporteur).then((result) => {
-          this.tauxApporteurs = result;
-        });
+        this.tauxApporteurs = await switchService.searchTauxApporteurByNomBranche(this.q,uuidApporteur)
       } else {
         this.fetchData();
       }
     },
-    refresh() {
+   async refresh() {
       const uuidApporteur = this.$route.params.uuidApporteur;
-      AppStorage.getTauxApporteursByIdApporteur(uuidApporteur).then((result) => {
-        this.tauxApporteurs = result;
-      });
+      this.tauxApporteurs = await switchService.getTauxApporteurs(uuidApporteur);
     },
   },
   created() {
-    // this.getTaux();
     this.fetchData();
     this.fetchName();
   },

@@ -250,10 +250,8 @@ import inputText from "../../components/input/inputText.vue";
 import addadresse from "../../pages/form/addadresse.vue";
 import { createToaster } from "@meforma/vue-toaster";
 import AppStorage from "../../db/AppStorage.js";
-import { apiUrl } from "../../utils/constants/apiUrl.js";
 import { validateApporteurForm } from "../../utils/helpers/formValidation";
-import AxiosService from "../../services/AxiosService";
-import { v4 as uuidv4 } from "uuid";
+import switchService from "../../services/switchService";
 const toaster = createToaster({
   /* options */
 });
@@ -310,140 +308,34 @@ export default {
       this.errors = validateApporteurForm(this.form);
 
       if (Object.keys(this.errors).length > 0) {
-        // Afficher un message d'erreur
-        toaster.error(`Veuillez remplir les champs`, {
+        toaster.error(`Veuillez remplir tous les champs`, {
           position: "top-right",
         });
+        return;
       }
 
-      if (Object.keys(this.errors).length === 0) {
-        if (this.unique) {
-          const uuid = uuidv4();
-          const userId = parseInt(AppStorage.getId(), 10);
-          const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+      const unique = this.unique;
+      const userId = parseInt(AppStorage.getId(), 10);
+      const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+      let donnees = this.extractValues(this.branches);
+      let datas = this.extractUuidBranches(this.branches);
+      let codeApporteur = this.generateCodeApporteur();
 
-          let codeApporteur = this.generateCodeApporteur();
-          let donnees = this.extractValues(this.branches);
-          let datas = this.extractUuidBranches(this.branches);
+      await switchService.storeApporteur(
+        this.form,
+        userId,
+        entrepriseId,
+        codeApporteur,
+        unique,
+        donnees,
+        datas
+      );
 
-          const newApporteurData = [
-            {
-              nom_apporteur: this.form.nom_apporteur,
-              contact_apporteur: this.form.contact_apporteur,
-              email_apporteur: this.form.email_apporteur,
-              adresse_apporteur: this.form.adresse_apporteur,
-              code_postal: this.form.code_postal,
-              // accidents: donnees,
-              // ids: datas,
-              sync: 0,
-              id_entreprise: entrepriseId,
-              id: userId,
-              uuidApporteur: uuid,
-              code_apporteur: codeApporteur,
-              supprimer_apporteur: 0,
-            },
-          ];
+      toaster.success(`Apporteur ajouté`, {
+        position: "top-right",
+      });
 
-          await AppStorage.storeDataInIndexedDB("apporteurs", newApporteurData);
-
-          const branchesMap = await AppStorage.getBranches();
-
-          // Convertir l'objet en tableau de paires clé-valeur
-          const entries = Object.entries(branchesMap);
-
-          for (const [key, value] of entries) {
-            // Générer un UUID unique pour uuidTauxcompagnie
-            const uuidTauxcompagnie = uuidv4();
-
-            let newTauxApporteur = [
-              {
-                uuidTauxApporteur: uuidTauxcompagnie,
-                uuidApporteur: uuid,
-                sync: 0,
-                taux: this.unique,
-                nom_branche: value.nom_branche,
-                id_entreprise: entrepriseId,
-                uuidBranche: value.uuidBranche,
-              },
-            ];
-
-            await AppStorage.storeDataInIndexedDB(
-              "tauxapporteurs",
-              newTauxApporteur
-            );
-          }
-
-          toaster.success(`Compagnie ajouté`, {
-            position: "top-right",
-          });
-
-          this.$router.push("/listapporteur");
-        } else {
-          const uuid = uuidv4();
-          const userId = parseInt(AppStorage.getId(), 10);
-          const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
-
-          let codeApporteur = this.generateCodeApporteur();
-          let donnees = this.extractValues(this.branches);
-          let datas = this.extractUuidBranches(this.branches);
-
-          const newApporteurData = [
-            {
-              nom_apporteur: this.form.nom_apporteur,
-              contact_apporteur: this.form.contact_apporteur,
-              email_apporteur: this.form.email_apporteur,
-              adresse_apporteur: this.form.adresse_apporteur,
-              code_postal: this.form.code_postal,
-              // accidents: donnees,
-              // ids: datas,
-              sync: 0,
-              id_entreprise: entrepriseId,
-              id: userId,
-              uuidApporteur: uuid,
-              code_apporteur: codeApporteur,
-              supprimer_apporteur: 0,
-            },
-          ];
-
-          await AppStorage.storeDataInIndexedDB("apporteurs", newApporteurData);
-
-          const branchesMap = await AppStorage.getBranches();
-          for (let i = 0; i < datas.length; i++) {
-            // const nom_branche = branchesMap[datas[i]];
-            const dataItem = datas[i];
-
-            const branch = branchesMap.find(
-              (branch) => branch.uuidBranche === dataItem
-            );
-            const nom_branche = branch.nom_branche;
-            // Générer un UUID unique pour uuidTauxcompagnie
-            const uuidTauxcompagnie = uuidv4();
-
-            let newTauxApporteur = [
-              {
-                uuidTauxApporteur: uuidTauxcompagnie,
-                uuidApporteur: uuid,
-                sync: 0,
-                taux: donnees[i],
-                nom_branche: nom_branche,
-                id_entreprise: entrepriseId,
-                uuidBranche: datas[i],
-              },
-            ];
-
-            await AppStorage.storeDataInIndexedDB(
-              "tauxapporteurs",
-              newTauxApporteur
-            );
-          }
-
-          toaster.success(`Apporteur ajouté `, {
-            position: "top-right",
-          });
-
-          this.$router.push("/listapporteur");
-        }
-      }
+      this.$router.push("/listapporteur");
     },
 
     getFormattedDate() {
@@ -479,15 +371,11 @@ export default {
     },
 
     async getAdresse() {
-      AppStorage.getLocalisations().then((result) => {
-        this.localisations = result;
-      });
+      this.localisations = await switchService.getAdresses();
     },
 
-    getBranche: function () {
-      AppStorage.getBranches().then((result) => {
-        this.branches = result;
-      });
+    async getBranche() {
+      this.branches = await switchService.getBranches();
     },
   },
   components: { Header, Sidebar, inputText, addadresse, Multiselect },

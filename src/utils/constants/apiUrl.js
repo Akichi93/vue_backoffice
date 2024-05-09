@@ -48,6 +48,9 @@ const apiUrl = {
     getreglement: createApiUrl('getreglements'),
     postreglement: createApiUrl('postreglements'),
     postfileavenant: createApiUrl('postfileavenants'),
+    setetatprospect: (uuidProspect) => `${base_url}/etatProspect/${uuidProspect}`,
+    getuser: createApiUrl('utilisateurs'),
+    setedituser: (id) => `${base_url}/utilisateurs/edit/${id}`,
 };
 
 // Export des fonctions et données

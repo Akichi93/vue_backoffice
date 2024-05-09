@@ -91,6 +91,7 @@ import searchbranche from "../../components/search/searchbranche.vue";
 import pagination from "laravel-vue-pagination";
 import brancheexport from "../../components/export/brancheexport.vue";
 import AppStorage from "../../db/AppStorage.js";
+import switchService from '../../services/switchService';
 export default {
   data() {
     return {
@@ -105,35 +106,13 @@ export default {
   },
   created() {
     this.getBranches();
-    // this.getRoleconnect();
   },
   methods: {
     async getBranches() {
-      AppStorage.getBranches().then((result) => {
-        this.branches = result;
-
-        // this.branches.sort((a, b) => {
-        //   // Comparaison alphabétique des propriétés 'nom_branche'
-        //   const nameA = a.nom_branche.toUpperCase(); // Ignorer la casse
-        //   const nameB = b.nom_branche.toUpperCase(); // Ignorer la casse
-        //   if (nameA < nameB) {
-        //     return -1;
-        //   }
-        //   if (nameA > nameB) {
-        //     return 1;
-        //   }
-        //   return 0; // Les noms sont identiques
-        // });
-
-      });
-      // }
+      this.branches = await switchService.getBranches();
     },
 
-    // getRoleconnect() {
-    //   getRoleActif().then((result) => {
-    //     this.roleactif = result;
-    //   });
-    // },
+   
 
     async editbranche(uuidBranche) {
       try {
@@ -155,11 +134,8 @@ export default {
       }
     },
 
-    refresh() {
-      // Récupérer les branches depuis IndexedDB après l'ajout d'un nouveau client
-      AppStorage.getBranches().then((result) => {
-        this.branches = result;
-      });
+    async refresh() {
+      this.branches = await switchService.getBranches();
     }
   },
 

@@ -2,6 +2,13 @@ import { v4 as uuidv4 } from 'uuid';
 import AppStorage from "../db/AppStorage.js";
 class OfflineService {
 
+    async getAdresses() {
+        return await AppStorage.getLocalisations();
+    }
+
+    async getBranches() {
+        return await AppStorage.getBranches();
+    }
 
     async storeBranche(nomBranche, entrepriseId) {
         const uuid = uuidv4();
@@ -22,6 +29,18 @@ class OfflineService {
             console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
             return { success: false, error: "Erreur lors de l'ajout de la branche" };
         }
+
+    }
+
+    async getBrancheByUuid(uuid) {
+        try {
+            return await AppStorage.getBrancheByUuid(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async updateBranche() {
 
     }
 
@@ -55,18 +74,6 @@ class OfflineService {
             throw new Error("Échec du stockage du prospect");
         }
     }
-
-    // async verifProspect(nomProspect, telProspect, entrepriseId) {
-    //     try {
-    //         const { valide } = await AppStorage.prospectExists(nomProspect, telProspect, entrepriseId);
-
-    //         return { valide };
-
-    //     } catch (error) {
-    //         console.error("Erreur lors de la vérification de l'existence du prospect :", error);
-    //         return { valide: false, error: "Erreur lors de la vérification de l'existence du prospect" };
-    //     }
-    // }
 
     async ChangeEtat(uuidProspectToUpdate, nouveauStatut, nouveauSyncState) {
         try {
@@ -192,6 +199,278 @@ class OfflineService {
         }
     }
 
+    async storeClient(form, entrepriseId, userId, numeroClient) {
+        const uuid = uuidv4();
+
+        const newClientData = [{
+            civilite: form.civilite,
+            nom_client: form.nom_client,
+            postal_client: form.postal_client,
+            adresse_client: form.adresse_client,
+            tel_client: form.tel_client,
+            profession_client: form.profession_client,
+            fax_client: form.fax_client,
+            email_client: form.email_client,
+            sync: 0,
+            uuidClient: uuid,
+            id_entreprise: entrepriseId,
+            user_id: userId,
+            numero_client: numeroClient,
+            supprimer_client: 0,
+        }];
+
+        await AppStorage.storeDataInIndexedDB("clients", newClientData);
+        const updatedClients = await AppStorage.getClients();
+
+        return updatedClients;
+    }
+
+    async updateClient(clientoedit, uuidClientToUpdate) {
+
+        const nouvellesInfos = {
+            civilite: clientoedit.civilite,
+            nom_client: clientoedit.nom_client,
+            postal_client: clientoedit.postal_client,
+            adresse_client: clientoedit.adresse_client,
+            tel_client: clientoedit.tel_client,
+            profession_client: clientoedit.profession_client,
+            email_client: clientoedit.email_client,
+            fax_client: clientoedit.fax_client,
+            sync: 0,
+        };
+
+        await AppStorage.updateClient(uuidClientToUpdate, nouvellesInfos);
+
+        const updatedClients = await AppStorage.getClients();
+
+        return updatedClients;
+
+    }
+
+    async getClients() {
+        return await AppStorage.getClients();
+    }
+
+    async getClientByUuid(uuid) {
+        try {
+            return await AppStorage.getClientByUuid(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async searchClientsByName(name) {
+        try {
+            return await AppStorage.searchClientsByName(name);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getApporteurs() {
+        return await AppStorage.getApporteurs();
+    }
+
+    async getApporteurByUuid(uuid) {
+        try {
+            return await AppStorage.getApporteurByUuid(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async storeApporteur(form, userId, entrepriseId, codeApporteur, unique, donnees, datas) {
+        const uuid = uuidv4();
+        if (unique) {
+            // let donnees = this.extractValues(this.branches);
+            // let datas = this.extractUuidBranches(this.branches);
+
+            const newApporteurData = [
+                {
+                    nom_apporteur: form.nom_apporteur,
+                    contact_apporteur: form.contact_apporteur,
+                    email_apporteur: form.email_apporteur,
+                    adresse_apporteur: form.adresse_apporteur,
+                    code_postal: form.code_postal,
+                    sync: 0,
+                    id_entreprise: entrepriseId,
+                    id: userId,
+                    uuidApporteur: uuid,
+                    code_apporteur: codeApporteur,
+                    supprimer_apporteur: 0,
+                },
+            ];
+
+            await AppStorage.storeDataInIndexedDB("apporteurs", newApporteurData);
+
+            const branchesMap = await AppStorage.getBranches();
+
+            // Convertir l'objet en tableau de paires clé-valeur
+            const entries = Object.entries(branchesMap);
+
+            for (const [key, value] of entries) {
+                // Générer un UUID unique pour uuidTauxcompagnie
+                const uuidTauxcompagnie = uuidv4();
+
+                let newTauxApporteur = [
+                    {
+                        uuidTauxApporteur: uuidTauxcompagnie,
+                        uuidApporteur: uuid,
+                        sync: 0,
+                        taux: this.unique,
+                        nom_branche: value.nom_branche,
+                        id_entreprise: entrepriseId,
+                        uuidBranche: value.uuidBranche,
+                    },
+                ];
+
+                await AppStorage.storeDataInIndexedDB(
+                    "tauxapporteurs",
+                    newTauxApporteur
+                );
+            }
+            return { success: true, uuid };
+
+        } else {
+            const newApporteurData = [
+                {
+                    nom_apporteur: form.nom_apporteur,
+                    contact_apporteur: form.contact_apporteur,
+                    email_apporteur: form.email_apporteur,
+                    adresse_apporteur: form.adresse_apporteur,
+                    code_postal: form.code_postal,
+                    sync: 0,
+                    id_entreprise: entrepriseId,
+                    id: userId,
+                    uuidApporteur: uuid,
+                    code_apporteur: codeApporteur,
+                    supprimer_apporteur: 0,
+                },
+            ];
+
+            await AppStorage.storeDataInIndexedDB("apporteurs", newApporteurData);
+
+            const branchesMap = await AppStorage.getBranches();
+            for (let i = 0; i < datas.length; i++) {
+                // const nom_branche = branchesMap[datas[i]];
+                const dataItem = datas[i];
+
+                const branch = branchesMap.find(
+                    (branch) => branch.uuidBranche === dataItem
+                );
+                const nom_branche = branch.nom_branche;
+                // Générer un UUID unique pour uuidTauxcompagnie
+                const uuidTauxcompagnie = uuidv4();
+
+                let newTauxApporteur = [
+                    {
+                        uuidTauxApporteur: uuidTauxcompagnie,
+                        uuidApporteur: uuid,
+                        sync: 0,
+                        taux: donnees[i],
+                        nom_branche: nom_branche,
+                        id_entreprise: entrepriseId,
+                        uuidBranche: datas[i],
+                    },
+                ];
+
+                await AppStorage.storeDataInIndexedDB(
+                    "tauxapporteurs",
+                    newTauxApporteur
+                );
+
+                return { success: true, uuid };
+            }
+
+
+        }
+    }
+
+    async searchApporteursByName(name) {
+        try {
+            return await AppStorage.searchApporteursByName(name);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getTauxApporteurs(uuid) {
+        try {
+            return await AppStorage.getTauxApporteursByIdApporteur(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getNameApporteur(uuid) {
+        try {
+            return await AppStorage.getApporteurNameByUUID(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getTauxApporteurByUuid(uuid) {
+        try {
+            return await AppStorage.getTauxApporteurById(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async searchTauxApporteurByNomBranche(name, uuid) {
+        try {
+            return await AppStorage.searchTauxApporteurByNomBranche(name, uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async updateTauxApporteur(uuidTauxApporteurUpdate, newTaux, newSyncState) {
+        await AppStorage.updateTauxApporteurByUuid(uuidTauxApporteurUpdate, newTaux, newSyncState);
+
+        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
+        const updatedTauxApporteurs = await AppStorage.getTauxApporteursByIdApporteur(uuidTauxApporteurUpdate);
+
+        return updatedTauxApporteurs;
+    }
+
+    async updateApporteur(apporteurtoedit,uuidApporteurToUpdate) {
+
+        const nouvellesInfos = {
+            nom_apporteur: apporteurtoedit.nom_apporteur,
+            adresse_apporteur: apporteurtoedit.adresse_apporteur,
+            email_apporteur: apporteurtoedit.email_apporteur,
+            postal_compagnie: apporteurtoedit.postal_compagnie,
+            contact_compagnie: apporteurtoedit.contact_compagnie,
+            postal_compagnie: apporteurtoedit.postal_compagnie,
+            sync: 0,
+        };
+
+
+
+        await AppStorage.updateApporteur(uuidApporteurToUpdate, nouvellesInfos);
+
+        const updatedApporteurs = await AppStorage.getApporteurs();
+
+        return updatedApporteurs;
+    }
+
+    async getInfoApporteur(uuid){
+        try {
+            return await AppStorage.getAvenantsByUUIDApporteur(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getSommeCommissionsApporteur(uuid){
+        try {
+            return await AppStorage.getSommeCommissionsApporteur(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 }
 
 // export default OfflineService;

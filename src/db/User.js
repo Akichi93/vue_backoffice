@@ -36,6 +36,12 @@ class User {
             { endpoint: 'gettauxcompagnies', storageKey: 'tauxcompagnies' },
             { endpoint: 'gettauxapporteurs', storageKey: 'tauxapporteurs' },
             { endpoint: 'getfileavenants', storageKey: 'fileavenants' },
+
+            { endpoint: 'getreductiongroups', storageKey: 'reductiongroups' },
+            { endpoint: 'getassurancetemporaires', storageKey: 'assurancetemporaires' },
+            { endpoint: 'getfraismedicals', storageKey: 'fraismedicals' },
+            { endpoint: 'gettarificateuraccidents', storageKey: 'tarificateuraccidents' },
+            { endpoint: 'gettarificateurfrais', storageKey: 'tarificateurfrais' },
         ];
 
         const accessToken = AppStorage.getToken();

@@ -246,7 +246,7 @@ import { validateProspectForm } from "../../utils/helpers/formValidation";
 import { createToaster } from "@meforma/vue-toaster";
 import { apiUrl } from "../../utils/constants/apiUrl";
 import { v4 as uuidv4 } from "uuid";
-import offlineService from "../../services/offlineService.js";
+import switchService from '../../services/switchService.js';
 const toaster = createToaster({
   /* options */
 });
@@ -317,7 +317,7 @@ export default {
       const userId = parseInt(AppStorage.getId(), 10);
 
       const { success, uuid, existingProspect } =
-        await offlineService.storeProspect(this.form, userId, entrepriseId);
+        await switchService.storeProspect(this.form, userId, entrepriseId);
 
       if (success) {
         this.$router.push("/listprospect");

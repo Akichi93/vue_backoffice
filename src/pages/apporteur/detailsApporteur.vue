@@ -24,49 +24,6 @@
                     </div>
                 </div>
 
-                <div class="card mb-0">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="profile-view">
-                                    <div class="profile-basic">
-                                        <div class="row">
-                                            <div class="col-md-7">
-                                                <ul class="personal-info">
-                                                    <!-- <li>
-                                                        <div class="title">Nom:</div>
-                                                        <div class="text">
-                                                            {{ apporteurs.nom_apporteur }}
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="title">Adresse:</div>
-                                                        <div class="text">
-                                                            {{ apporteurs.adresse_apporteur }}
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="title">Contact:</div>
-                                                        <div class="text">
-                                                            {{ apporteurs.contact_apporteur }}
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="title">Postal:</div>
-                                                        <div class="text">
-                                                            {{ apporteurs.code_postal }}
-                                                        </div>
-                                                    </li> -->
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div id="emp_profile" class="pro-overview tab-pane fade show active">
                     <div class="row">
                         <div class="col-md-12">
@@ -128,6 +85,7 @@
 import AppStorage from '../../db/AppStorage';
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
+import switchService from '../../services/switchService';
 import validatepaye from "./validatepaye.vue"
 export default {
     name: "statapporteur",
@@ -138,7 +96,6 @@ export default {
     },
     data() {
         return {
-            // apporteurs: [],
             contrats: [],
             sommes: "",
             sommepayes: "",
@@ -157,56 +114,24 @@ export default {
             } catch (error) {
                 console.log(error);
             }
-            // axios
-            //     .get("/api/auth/editAvenant/" + id_avenant)
-            //     .then((response) => {
-            //         this.avenantoedit = response.data;
-
-
-            //         // this.form.id_avenant = response.data.id_avenant;
-            //     })
-            //     .catch((error) => console.log(error));
         },
 
         async fetchData() {
 
             const uuidApporteur = this.$route.params.uuidApporteur;
             try {
-                const contrats = await AppStorage.getAvenantsByUUIDApporteur(uuidApporteur);
 
-                this.contrats = contrats;
+                this.contrats = await switchService.getInfoApporteur(uuidApporteur);
 
             } catch (error) {
                 console.error("Une erreur s'est produite lors de la récupération des contrats:", error);
             }
-
-            // const token = localStorage.getItem("token");
-
-            // // Configurez les en-têtes de la requête
-            // const headers = {
-            //   Authorization: "Bearer " + token,
-            //   "x-access-token": token,
-            // };
-            // axios
-            //   .get(`/api/auth/detailsapporteurs/${this.$route.params.id_apporteur}`, {
-            //     headers,
-            //   })
-            //   .then((response) => {
-            //     this.apporteurs = response.data.apporteurs;
-            //     this.listescontrats = response.data.listescontrats;
-            //     this.sommes = response.data.sommes;
-            //     this.sommepayes = response.data.sommepayes;
-            //   })
-            //   .catch((error) => {
-            //     this.error = error.response.data.message || error.message;
-            //   });
         },
 
         async fetchDataSomme() {
             const uuidApporteur = this.$route.params.uuidApporteur; // Remplacez "votre_uuid_apporteur" par l'UUID approprié
-            const sommes = await AppStorage.getSommeCommissionsApporteur(uuidApporteur)
-            this.sommes = sommes;
-
+            // const sommes = await AppStorage.getSommeCommissionsApporteur(uuidApporteur)
+            this.sommes = await switchService.getSommeCommissionsApporteur(uuidApporteur);
         },
 
         async fetchDataSommePayer() {

@@ -12,9 +12,7 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <router-link to="/home">
-                      Tableau de bord
-                    </router-link>
+                    <router-link to="/home"> Tableau de bord </router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Client
@@ -29,8 +27,13 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <a href="#" data-bs-toggle="modal" data-bs-target="#add_client" class="btn btn-success btn-add-emp"
-                style="width: auto"><i class="fas fa-plus"></i> Ajouter client
+              <a
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#add_client"
+                class="btn btn-success btn-add-emp"
+                style="width: auto"
+                ><i class="fas fa-plus"></i> Ajouter client
               </a>
             </div>
           </div>
@@ -38,9 +41,13 @@
 
         <div class="row">
           <div class="col-row">
-            <searchbranche :placeholder="'Rechercher un client'" v-model="q" @keyup="searchtask"></searchbranche>
+            <searchbranche
+              :placeholder="'Rechercher un client'"
+              v-model="q"
+              @keyup="searchtask"
+            ></searchbranche>
           </div>
-          <div class="col-md-12" style="display: flex;justify-content: end;">
+          <div class="col-md-12" style="display: flex; justify-content: end">
             <clientexport></clientexport>
           </div>
 
@@ -66,8 +73,13 @@
                       <td v-text="client.tel_client"></td>
                       <td v-text="client.profession_client"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_project"
-                          @click="editClient(client.uuidClient)"><i class="fas fa-pen"></i></a>
+                        <a
+                          href="#"
+                          data-bs-toggle="modal"
+                          data-bs-target="#edit_project"
+                          @click="editClient(client.uuidClient)"
+                          ><i class="fas fa-pen"></i
+                        ></a>
                       </td>
                     </tr>
                   </template>
@@ -75,7 +87,10 @@
               </table>
             </div>
             <addclient @client-add="refresh"></addclient>
-            <editclient v-bind:clientoedit="clientoedit" @client-updated="refresh"></editclient>
+            <editclient
+              v-bind:clientoedit="clientoedit"
+              @client-updated="refresh"
+            ></editclient>
 
             <!-- <pagination align="center" :data="paginations" :limit="5" :current_page="paginations.current_page"
               :last_page="paginations.last_page" @pagination-change-page="getClients">
@@ -96,6 +111,7 @@ import searchbranche from "../../components/search/searchbranche.vue";
 import pagination from "laravel-vue-pagination";
 import clientexport from "../../components/export/clientexport.vue";
 import AppStorage from "../../db/AppStorage.js";
+import switchService from "../../services/switchService";
 export default {
   name: "prospect",
   components: {
@@ -105,7 +121,7 @@ export default {
     editclient,
     searchbranche,
     pagination,
-    clientexport
+    clientexport,
   },
   name: "listclient",
   data() {
@@ -116,7 +132,7 @@ export default {
       localisations: {},
       professions: {},
       q: "",
-      clientoedit: '',
+      clientoedit: "",
       isConnected: false,
       itemsPerPage: 5, // Nombre d'éléments par page
       currentPage: 1, // Page actuelle
@@ -127,60 +143,28 @@ export default {
   },
   methods: {
     async getClients() {
-      // const response = await fetch(
-      //   "/api/check-internet-connection"
-      // );
-      // const data = await response.json();
-
-      // this.isConnected = data.connected;
-      // if (this.isConnected) {
-
-      //   // Verifier Si les données IndexedDB et synchroniser ce qui n'a pas été synchro 
-
-      //   getClientSelect().then((result) => {
-      //     // Mettre à jour IndexedDB avec les clients récupérés
-      //     AppStorage.storeDataInIndexedDB("clients", result.data);
-
-      //     //Insertion des données
-      //     AppStorage.getClients().then((result) => {
-      //       this.clients = result;
-      //     });
-
-
-      //   });
-      // } else {
-        AppStorage.getClients().then((result) => {
-          this.clients = result;
-
-        });
-      // }
+      this.clients = await switchService.getClients();
     },
 
     async editClient(uuidClient) {
       try {
-        this.clientoedit = await AppStorage.getClientByUuid(uuidClient);
+        this.clientoedit = await switchService.getClientByUuid(uuidClient);
       } catch (error) {
         console.log(error);
       }
     },
 
-
-    searchtask() {
+    async searchtask() {
       if (this.q.length > 3) {
-        AppStorage.searchClientsByName(this.q).then((result) => {
-          this.clients = result;
-        });
+        this.clients = await switchService.searchClientsByName(this.q);
       } else {
         this.getClients();
       }
     },
 
-    refresh() {
-      // Récupérer les clients depuis IndexedDB après l'ajout d'un nouveau client
-      AppStorage.getClients().then((result) => {
-        this.clients = result;
-      });
-    }
+    async refresh() {
+      this.clients = await switchService.getClients();
+    },
   },
 };
 </script>

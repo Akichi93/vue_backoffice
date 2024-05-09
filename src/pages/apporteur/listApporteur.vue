@@ -114,6 +114,7 @@ import deleteApporteur from "./deleteApporteur.vue";
 // import pagination from "laravel-vue-pagination";
 import apporteurexport from "../../components/export/apporteurexport.vue";
 import AppStorage from "../../db/AppStorage.js";
+import switchService from '../../services/switchService';
 export default {
   components: {
     Header,
@@ -135,75 +136,34 @@ export default {
   },
   created() {
     this.getApporteurs();
-    this.getRoleconnect();
+    // this.getRoleconnect();
   },
   methods: {
 
     async getApporteurs() {
-
-      // const response = await fetch(
-      //   "/api/check-internet-connection"
-      // );
-      // const data = await response.json();
-
-      // this.isConnected = data.connected;
-      // if (this.isConnected) {
-      //   // Verifier Si les données IndexedDB et synchroniser ce qui n'a pas été synchro 
-      //   getApporteursExport().then((result) => {
-      //     // Mettre à jour IndexedDB avec les apporteurs récupérés
-      //     AppStorage.storeDataInIndexedDB("apporteurs", result.data);
-
-      //     //Insertion des données
-      //     AppStorage.getApporteurs().then((result) => {
-      //       this.apporteurs = result;
-      //     });
-
-
-      //   });
-      // } else {
-        AppStorage.getApporteurs().then((result) => {
-          this.apporteurs = result;
-        });
-      // }
-
+      this.apporteurs = await switchService.getApporteurs();
     },
-
-    getRoleconnect() {
-      getRoleActif().then((result) => {
-        this.roleactif = result;
-      });
-    },
-
-
-    // editApporteur(id_apporteur) {
-    //   axios
-    //     .get("/api/auth/editApporteur/" + id_apporteur)
-    //     .then((response) => (this.apporteurtoedit = response.data))
-    //     .catch((error) => console.log(error));
-    // },
 
     async editApporteur(uuidApporteur) {
       try {
-        this.apporteurtoedit = await AppStorage.getApporteurByUuid(uuidApporteur);
+        this.apporteurtoedit = await switchService.getApporteurByUuid(
+          uuidApporteur
+        );
       } catch (error) {
         console.log(error);
       }
     },
 
-    searchtask() {
+    async searchtask() {
       if (this.q.length > 3) {
-        AppStorage.searchApporteursByName(this.q).then((result) => {
-          this.apporteurs = result;
-        });
+        this.apporteurs = await switchService.searchApporteursByName(this.q);
       } else {
         this.getApporteurs();
       }
     },
 
-    refresh() {
-      AppStorage.getApporteurs().then((result) => {
-        this.apporteurs = result;
-      });
+   async refresh() {
+      this.apporteurs = await switchService.getApporteurs();
     },
   },
 };

@@ -16,7 +16,7 @@
               </h3>
               <ul class="breadcrumb">
                 <li class="breadcrumb-item">
-                  <a href="admin-dashboard-1.html">Tableau de bord</a>
+                  <router-link to=":home">Tableau de bord</router-link>
                 </li>
                 <li class="breadcrumb-item active">Accident individuel</li>
               </ul>
@@ -33,7 +33,43 @@
                   Proposition de couverture individuelle accident
                 </h4> -->
                 <div class="card-body">
-                  <div class="col-md-12">
+                  <div class="row" v-show="show">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <Multiselect
+                          v-model="form.compagnie_id"
+                          :options="compagnies"
+                          :searchable="true"
+                          @change="optionCompagnie"
+                          name="police"
+                          :custom-label="
+                            ({ uuidCompagnie, nom_compagnie }) =>
+                              `${uuidCompagnie} - [${nom_compagnie}]`
+                          "
+                          valueProp="uuidCompagnie"
+                          placeholder="Choisir une compagnie"
+                          label="nom_compagnie"
+                          track-by="nom_compagnie"
+                        ></Multiselect>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <div>
+                          <button
+                            type="button"
+                            class="btn btn-primary w-100"
+                            @click="viewForm()"
+                          >
+                            <i class="ri-equalizer-fill me-1 align-bottom"></i>
+                            valider
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12" v-show="showForm">
                     <div class="row">
                       <!-- Première colonne -->
                       <div class="col-md-6">
@@ -59,7 +95,21 @@
                             >Activité <span class="text-danger">*</span></label
                           >
                           <div class="col-lg-9">
-                            <input type="text" class="form-control" placeholder="Activité" />
+                            <Multiselect
+                              v-model="accident_id"
+                              :options="accidents"
+                              @change="optionActivite"
+                              :searchable="true"
+                              name="police"
+                              :custom-label="
+                                ({ uuidTarificateurAccident, activite }) =>
+                                  `${uuidTarificateurAccident} - [${activite}]`
+                              "
+                              valueProp="uuidTarificateurAccident"
+                              placeholder="Choisir une activité"
+                              label="activite"
+                              track-by="activite"
+                            ></Multiselect>
                           </div>
                         </div>
                         <div class="input-block mb-3 row">
@@ -67,15 +117,46 @@
                             >Effectif<span class="text-danger">*</span></label
                           >
                           <div class="col-lg-9">
-                            <input type="text" class="form-control" placeholder="Effectif" />
+                            <input
+                              type="number"
+                              v-model="effectifValue"
+                              @input="optionEffectif(effectifValue)"
+                              class="form-control"
+                              placeholder="Effectif"
+                            />
                           </div>
                         </div>
                         <div class="input-block mb-3 row">
+                          <br />
                           <label class="col-lg-3 col-form-label"
                             >Durée<span class="text-danger">*</span></label
                           >
-                          <div class="col-lg-9">
-                            <input type="text" class="form-control m-b-20" placeholder="Durée" />
+                          <div class="col-lg-3">
+                            <label>Début</label>
+                            <input
+                              @change="updateNombreJours"
+                              type="date"
+                              class="form-control m-b-20"
+                              v-model="debut"
+                            />
+                          </div>
+                          <div class="col-lg-3">
+                            <label>Fin</label>
+                            <input
+                              @change="updateNombreJours"
+                              type="date"
+                              class="form-control m-b-20"
+                              v-model="fin"
+                            />
+                          </div>
+                          <div class="col-lg-3">
+                            <label>Nbre de jour(s)</label>
+                            <input
+                              v-model="nombreJours"
+                              readonly
+                              type="text"
+                              class="form-control m-b-20"
+                            />
                           </div>
                         </div>
                       </div>
@@ -93,7 +174,7 @@
                                   <span class="text-danger">*</span></label
                                 >
                               </div>
-                              <div class="col-lg-9">
+                              <!-- <div class="col-lg-9">
                                 <div class="input-block mb-3">
                                   <input
                                     type="text"
@@ -101,26 +182,30 @@
                                     class="form-control"
                                   />
                                 </div>
-                              </div>
+                              </div> -->
 
                               <div class="row">
                                 <label class="col-lg-3 col-form-label"></label>
                                 <div class="col-lg-9">
                                   <div class="row">
                                     <div class="col-md-6">
+                                      <label>Décès</label>
                                       <div class="input-block mb-4">
                                         <input
-                                          type="text"
-                                          placeholder="Décès"
+                                          @change="onDecesChange"
+                                          v-model="deces"
+                                          type="number"
                                           class="form-control"
                                         />
                                       </div>
                                     </div>
                                     <div class="col-md-6">
                                       <div class="input-block mb-4">
+                                        <label>IPT</label>
                                         <input
-                                          type="text"
-                                          placeholder="IPT"
+                                          @change="onIptChange"
+                                          type="number"
+                                          v-model="ipt"
                                           class="form-control"
                                         />
                                       </div>
@@ -135,18 +220,33 @@
                                   <div class="row">
                                     <div class="col-md-6">
                                       <div class="input-block mb-3">
-                                        <input
-                                          type="text"
-                                          placeholder="Frais médicaux"
-                                          class="form-control"
-                                        />
+                                        <label>Frais médicaux</label>
+                                        <Multiselect
+                                          v-model="montant_id"
+                                          :options="montants"
+                                          @change="optionFrais"
+                                          :searchable="true"
+                                          name="police"
+                                          :custom-label="
+                                            ({ uuidFraisMedical, montant }) =>
+                                              `${uuidFraisMedical} - [${montant}]`
+                                          "
+                                          valueProp="uuidFraisMedical"
+                                          placeholder="Choisir un montant"
+                                          label="montant"
+                                          track-by="montant"
+                                        ></Multiselect>
                                       </div>
                                     </div>
                                     <div class="col-md-6">
                                       <div class="input-block mb-3">
+                                        <label
+                                          >Prime nette brute/personne</label
+                                        >
                                         <input
                                           type="text"
-                                          placeholder="Prime nette brute/personne"
+                                          v-model="montantDeces"
+                                          readonly
                                           class="form-control"
                                         />
                                       </div>
@@ -161,18 +261,24 @@
                                   <div class="row">
                                     <div class="col-md-6">
                                       <div class="input-block mb-3">
+                                        <label>Taux de réduction</label>
                                         <input
+                                          v-model="tauxEffectif"
                                           type="text"
-                                          placeholder="Taux de réduction"
+                                          readonly
                                           class="form-control"
                                         />
                                       </div>
                                     </div>
                                     <div class="col-md-6">
                                       <div class="input-block mb-3">
+                                        <label
+                                          >Prime nette reduite/personne</label
+                                        >
                                         <input
+                                          v-model="PrimeReduite"
                                           type="text"
-                                          placeholder="Prime nette reduite/personne"
+                                          readonly
                                           class="form-control"
                                         />
                                       </div>
@@ -187,7 +293,7 @@
                     </div>
                   </div>
 
-                  <div class="row">
+                  <div class="row" v-show="showForm">
                     <div class="col-md-6">
                       <div class="card-body">
                         <div class="form-group row">
@@ -198,7 +304,9 @@
                           >
                           <div class="col-sm-8">
                             <input
+                              v-model="PrimeNetteAnnuelle"
                               type="number"
+                              readonly
                               class="form-control"
                               id="primeNetteAnnuelle"
                             />
@@ -212,6 +320,8 @@
                           >
                           <div class="col-sm-8">
                             <input
+                              v-model="accessoireanuelle"
+                              @input="optionTaxeAnuelle(accessoireanuelle)"
                               type="number"
                               class="form-control"
                               id="accessoires"
@@ -224,6 +334,8 @@
                           >
                           <div class="col-sm-8">
                             <input
+                              v-model="TaxePrimeAnnuelle"
+                              readonly
                               type="number"
                               class="form-control"
                               id="taxes"
@@ -234,7 +346,9 @@
                           <label class="col-sm-4 col-form-label"
                             ><b>Prime TTC:</b></label
                           >
-                          <div class="col-sm-8"></div>
+                          <div class="col-sm-8">
+                            {{ primeTTCAnuelle }}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -246,8 +360,19 @@
                             class="col-sm-4 col-form-label"
                             >Prime nette courte durée:</label
                           >
-                          <div class="col-sm-8">
+                          <div class="col-sm-2">
                             <input
+                              v-model="pourcentageDay"
+                              readonly
+                              type="number"
+                              class="form-control"
+                              id="primeNetteCourteDuree"
+                            />
+                          </div>
+                          <div class="col-sm-6">
+                            <input
+                              v-model="PrimeNetteCourte"
+                              readonly
                               type="number"
                               class="form-control"
                               id="primeNetteCourteDuree"
@@ -262,6 +387,8 @@
                           >
                           <div class="col-sm-8">
                             <input
+                              v-model="accessoirecourte"
+                              @input="optionTaxeCourte(accessoirecourte)"
                               type="number"
                               class="form-control"
                               id="accessoires2"
@@ -274,6 +401,8 @@
                           >
                           <div class="col-sm-8">
                             <input
+                              v-model="TaxePrimeCourte"
+                              readonly
                               type="number"
                               class="form-control"
                               id="taxes2"
@@ -284,23 +413,29 @@
                           <label class="col-sm-4 col-form-label"
                             ><b>Prime TTC:</b></label
                           >
-                          <div class="col-sm-8"></div>
+                          <div class="col-sm-8">
+                            {{ primeTTCCourte }}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div class="submit-section">
-              <!-- <button class="btn btn-primary submit-btn m-r-10">
+                    <!-- <button class="btn btn-primary submit-btn m-r-10">
                 Enregistrer & imprimer
               </button> -->
-              <button class="btn btn-primary submit-btn">Enregistrer</button>
-            </div>
+                    <button
+                      v-show="showForm"
+                      class="btn btn-primary submit-btn"
+                      @click="storeAccident"
+                    >
+                      Enregistrer
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-
-          
           </div>
         </div>
       </div>
@@ -311,13 +446,332 @@
   <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
+import Multiselect from "@vueform/multiselect";
+import AppStorage from "../../db/AppStorage";
+import { validateChoiceForm } from "../../utils/helpers/formValidation";
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({
+  /* options */
+});
 
 export default {
   name: "listprospect",
   components: {
     Header,
     Sidebar,
+    Multiselect,
+  },
+  data() {
+    return {
+      form: {
+        compagnie_id: "",
+      },
+
+      accident_id: "",
+      montant_id: "",
+      deces: "",
+      ipt: "",
+      montantDeces: "",
+      tauxEffectif: "",
+      PrimeReduite: "",
+      PrimeNetteAnnuelle: "",
+      TaxePrimeAnnuelle: "",
+      accessoireanuelle: "",
+      primeTTCAnuelle: "",
+      primeTTCCourte:"",
+      debut: "",
+      fin: "",
+      nombreJours: "",
+      pourcentageDay: "",
+      PrimeNetteCourte: "",
+      TaxePrimeCourte: "",
+      show: true,
+      showForm: false,
+      effectifValue: "",
+      compagnies: [],
+      accidents: [],
+      montants: [],
+      errors: {},
+    };
+  },
+  created() {
+    this.getCompagnie();
+    this.getMontant();
+    this.getTarificationAccident();
+    this.calculatePrimeReduite();
+  },
+
+  methods: {
+    async viewForm() {
+      this.errors = validateChoiceForm(this.form);
+
+      if (Object.keys(this.errors).length > 0) {
+        toaster.error(`Veuillez Selectionnez la compagnie`, {
+          position: "top-right",
+        });
+        return;
+      }
+      this.showForm = true;
+      this.show = false;
+    },
+
+    // onDecesChange() {
+    //   const montant_id = this.montant_id;
+    //   this.optionFrais(montant_id);
+    // },
+
+    // // Méthode appelée lorsque la valeur de 'ipt' change
+    // onIptChange() {
+    //   const montant_id = this.montant_id;
+    //   this.optionFrais(montant_id);
+    // },
+
+    async calculerNombreJours(debut, fin) {
+      // Convertir les chaînes de date en objets Date
+      const dateDebut = new Date(debut);
+      const dateFin = new Date(fin);
+
+      // Calculer la différence entre les dates en millisecondes
+      const differenceEnMillisec = dateFin - dateDebut;
+
+      // Convertir la différence en jours
+      const differenceEnJours = differenceEnMillisec / (1000 * 3600 * 24);
+
+      // Retourner le nombre de jours arrondi à l'entier le plus proche
+      return Math.round(differenceEnJours);
+    },
+
+    async updateNombreJours() {
+      // Vérifier si les dates de début et de fin sont définies
+      if (this.debut && this.fin) {
+        // Calculer le nombre de jours entre les dates
+        const nombreJours = await this.calculerNombreJours(
+          this.debut,
+          this.fin
+        );
+
+        // Mettre à jour la valeur du champ "Nombre de jour(s)"
+        this.nombreJours = nombreJours;
+
+        if (nombreJours) {
+          const id_compagnie = this.form.compagnie_id;
+          const pourcentageDay = await AppStorage.getTauxMonth(
+            nombreJours,
+            id_compagnie
+          );
+
+          this.pourcentageDay = pourcentageDay;
+        }
+        const PrimeNetteAnnuelle = this.PrimeNetteAnnuelle;
+        const pourcentageDay = this.pourcentageDay;
+
+        if (nombreJours && PrimeNetteAnnuelle) {
+          const PrimeNetteCourte = (PrimeNetteAnnuelle * pourcentageDay) / 100;
+
+          this.PrimeNetteCourte = PrimeNetteCourte;
+        }
+      }
+    },
+
+    async calculatePrimeReduite(tauxEffectif, montantDeces) {
+      if (tauxEffectif && montantDeces) {
+        const CalculPrimeReduite =
+          montantDeces - (montantDeces * tauxEffectif) / 100;
+
+        // Arrondir le résultat et le convertir en entier
+        const PrimeReduite = parseInt(Math.round(CalculPrimeReduite));
+
+        return PrimeReduite;
+      }
+    },
+
+    async calculatePrimeNetteAnnuelle(PrimeReduite) {
+      const effectif = parseInt(this.effectifValue);
+      if (PrimeReduite && effectif) {
+        const CalculPrimeNetteAnnuelle = PrimeReduite * effectif;
+
+        // Arrondir le résultat et le convertir en entier
+        const PrimeNetteAnnuelle = parseInt(
+          Math.round(CalculPrimeNetteAnnuelle)
+        );
+
+        return PrimeNetteAnnuelle;
+      }
+    },
+
+    async optionTaxeAnuelle(accessoireanuelle) {
+      const PrimeNetteAnnuelle = this.PrimeNetteAnnuelle;
+
+      if (PrimeNetteAnnuelle && accessoireanuelle) {
+        const TaxePrimeAnnuelle =
+          ((PrimeNetteAnnuelle + accessoireanuelle) * 14.5) / 100;
+
+        // Arrondir le résultat et le convertir en entier
+        const TaxePrimeAnnuelleArrondie = parseInt(
+          Math.round(TaxePrimeAnnuelle)
+        );
+
+        this.TaxePrimeAnnuelle = TaxePrimeAnnuelleArrondie;
+
+        if (PrimeNetteAnnuelle && TaxePrimeAnnuelle && accessoireanuelle) {
+          const primeTTCAnuelle =
+            PrimeNetteAnnuelle + TaxePrimeAnnuelle + accessoireanuelle;
+
+          // Arrondir le résultat et le convertir en entier
+          const primeTTCAnuelleArrondie = parseInt(Math.round(primeTTCAnuelle));
+
+          this.primeTTCAnuelle = primeTTCAnuelleArrondie;
+        }
+      }
+    },
+
+    async optionTaxeCourte(accessoirecourte) {
+      const PrimeNetteCourte = this.PrimeNetteCourte;
+      if (PrimeNetteCourte && accessoirecourte) {
+        const TaxePrimeCourte =
+          ((PrimeNetteCourte + accessoirecourte) * 14.5) / 100;
+
+        // Arrondir le résultat et le convertir en entier
+        const TaxePrimeCourteArrondie = parseInt(Math.round(TaxePrimeCourte));
+
+        this.TaxePrimeCourte = TaxePrimeCourteArrondie;
+
+        if (PrimeNetteCourte && TaxePrimeCourte && accessoirecourte) {
+          const primeTTCCourte =
+          PrimeNetteCourte + TaxePrimeCourte + accessoirecourte;
+
+          // Arrondir le résultat et le convertir en entier
+          const primeTTCCourteArrondie = parseInt(Math.round(primeTTCCourte));
+
+          this.primeTTCCourte = primeTTCCourteArrondie;
+        }
+      }
+    },
+
+    async optionEffectif(option) {
+      const id_compagnie = this.form.compagnie_id;
+      const tauxEffectif = await AppStorage.getTauxEffectif(
+        option,
+        id_compagnie
+      );
+      this.tauxEffectif = tauxEffectif;
+    },
+
+    async optionFrais(option) {
+      const id_compagnie = this.form.compagnie_id;
+      const id_activite = this.accident_id;
+      const deces = this.deces;
+      const ipt = this.ipt;
+
+      const tauxDeces = await AppStorage.getTauxDeces(
+        id_activite,
+        id_compagnie,
+        option
+      );
+      const tauxIpt = await AppStorage.getTauxIpt(
+        id_activite,
+        id_compagnie,
+        option
+      );
+
+      const tauxFrais = await AppStorage.getTauxFrais(
+        id_activite,
+        id_compagnie,
+        option
+      );
+
+      // Calculer le montant des décès en utilisant la fonction calculerMontantDeces
+      this.montantDeces = await this.calculerMontantDeces(
+        deces,
+        tauxDeces,
+        ipt,
+        tauxIpt,
+        tauxFrais
+      );
+
+      const tauxEffectif = this.tauxEffectif;
+      const montantDeces = this.montantDeces;
+
+      if (tauxEffectif != null && montantDeces != null) {
+        this.PrimeReduite = await this.calculatePrimeReduite(
+          tauxEffectif,
+          montantDeces
+        );
+      }
+
+      const PrimeReduite = this.PrimeReduite;
+      if (PrimeReduite != null) {
+        this.PrimeNetteAnnuelle = await this.calculatePrimeNetteAnnuelle(
+          PrimeReduite
+        );
+      }
+    },
+
+    async calculerMontantDeces(
+      nombreDeces,
+      tauxDeces,
+      nombreIpt,
+      tauxIpt,
+      tauxFrais
+    ) {
+      // Vérifiez si les valeurs sont valides et sont des nombres
+      if (
+        !isNaN(nombreDeces) &&
+        !isNaN(tauxDeces) &&
+        !isNaN(nombreIpt) &&
+        !isNaN(tauxIpt) &&
+        !isNaN(tauxFrais)
+      ) {
+        // Convertissez les valeurs en nombres
+        const nombreDecesEntier = parseInt(nombreDeces);
+        const tauxDecesNombre = parseFloat(tauxDeces);
+        const nombreIptEntier = parseFloat(nombreIpt);
+        const tauxIptNombre = parseFloat(tauxIpt);
+        const tauxFraisNombre = parseFloat(tauxFrais);
+
+        // Vérifiez si les valeurs sont positives
+        if (nombreDecesEntier >= 0 && tauxDecesNombre >= 0) {
+          // Calculez le montant des décès en multipliant le nombre de décès par le taux de décès
+          let montantDeces =
+            Math.floor((nombreDecesEntier * tauxDecesNombre) / 1000) +
+            Math.floor((nombreIptEntier * tauxIptNombre) / 1000) +
+            Math.floor(tauxFraisNombre);
+
+          // Retourner le montant arrondi
+          return montantDeces;
+        } else {
+          // Si les valeurs sont négatives, retournez une erreur
+          return "Erreur : Les nombres positifs.";
+        }
+      } else {
+        // Si les valeurs ne sont pas des nombres, retournez une erreur
+        return 0;
+      }
+    },
+
+    async getCompagnie() {
+      AppStorage.getCompagnies().then((result) => {
+        this.compagnies = result;
+      });
+    },
+
+    async getMontant() {
+      AppStorage.getFraisMedicals().then((result) => {
+        this.montants = result;
+      });
+    },
+
+    async getTarificationAccident() {
+      AppStorage.getTarificateurAccidents().then((result) => {
+        this.accidents = result;
+      });
+    },
+
+    async storeAccident(){
+      
+    }
   },
 };
 </script>
+<style src="@vueform/multiselect/themes/default.css"></style>
     
