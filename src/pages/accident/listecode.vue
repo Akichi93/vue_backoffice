@@ -95,13 +95,32 @@
                           <td v-text="reduction.nbrePersonneMax"></td>
                           <td v-text="reduction.pourcentage"></td>
                           <td v-text="reduction.compagnie.nom_compagnie"></td>
-                          <td></td>
+                          <td
+                            class="text-end ico-sec d-flex justify-content-end"
+                          >
+                            <a
+                              href="#"
+                              data-bs-toggle="modal"
+                              data-bs-target="#edit_reduction_group"
+                              v-bind:reductiontoedit="reductiontoedit"
+                              @click="
+                                editReductionGroupe(
+                                  reduction.uuidReductionGroupe
+                                )
+                              "
+                              ><i class="fas fa-pen"></i
+                            ></a>
+                          </td>
                         </tr>
                       </template>
                     </tbody>
                   </table>
                 </div>
                 <addReduction @reduction-add="refresh"></addReduction>
+                <editReduction
+                  v-bind:reductiontoedit="reductiontoedit"
+                  @reduction-updated="refresh"
+                ></editReduction>
               </div>
             </div>
           </div>
@@ -141,8 +160,23 @@
                           <td v-text="assurance.nbreMoisMax"></td>
                           <td v-text="assurance.pourcentage"></td>
                           <td v-text="assurance.compagnie.nom_compagnie"></td>
-                          <td></td>
-                          <td></td>
+
+                          <td
+                            class="text-end ico-sec d-flex justify-content-end"
+                          >
+                            <a
+                              href="#"
+                              data-bs-toggle="modal"
+                              data-bs-target="#edit_assurance_temporaire"
+                              v-bind:assurancetoedit="assurancetoedit"
+                              @click="
+                                editAssuranceTemporaire(
+                                  assurance.uuidAssuranceTemporaire
+                                )
+                              "
+                              ><i class="fas fa-pen"></i
+                            ></a>
+                          </td>
                         </tr>
                       </template>
                     </tbody>
@@ -151,6 +185,9 @@
                 <addAssurance
                   @assurance-add="handleAssurancesChange"
                 ></addAssurance>
+                <editAssurance
+                  v-bind:assurancetoedit="assurancetoedit"
+                ></editAssurance>
               </div>
             </div>
           </div>
@@ -232,13 +269,31 @@
                           <td v-text="accident.activite"></td>
                           <td v-text="accident.tauxDeces"></td>
                           <td v-text="accident.tauxIPT"></td>
-                          <td></td>
+                          <td
+                            class="text-end ico-sec d-flex justify-content-end"
+                          >
+                            <a
+                              href="#"
+                              data-bs-toggle="modal"
+                              data-bs-target="#edit_assurance_temporaire"
+                              ><i class="fas fa-eye"></i
+                            ></a>
+
+                            <a
+                              href="#"
+                              data-bs-toggle="modal"
+                              data-bs-target="#edit_assurance_temporaire"
+                              ><i class="fas fa-pen"></i
+                            ></a>
+                          </td>
                         </tr>
                       </template>
                     </tbody>
                   </table>
                 </div>
-                <addTarification @tarification-add="refresh"></addTarification>
+                <addTarification
+                  @tarification-add="handleTarification"
+                ></addTarification>
               </div>
             </div>
           </div>
@@ -256,6 +311,8 @@ import addTarification from "./addTarification.vue";
 import addReduction from "./addReduction.vue";
 import addAssurance from "./addAssurance.vue";
 import addMontant from "./addMontant.vue";
+import editReduction from "./editReduction.vue";
+import editAssurance from "./editAssurance.vue";
 
 export default {
   name: "listprospect",
@@ -266,6 +323,8 @@ export default {
     addReduction,
     addAssurance,
     addMontant,
+    editReduction,
+    editAssurance,
   },
   data() {
     return {
@@ -275,6 +334,8 @@ export default {
       montants: [],
       accidents: [],
       tarifications: [],
+      reductiontoedit: "",
+      assurancetoedit: "",
     };
   },
   created() {
@@ -291,10 +352,31 @@ export default {
         this.reductions = result;
       });
     },
+
+    async editReductionGroupe(uuidReductionGroupe) {
+      try {
+        this.reductiontoedit = await AppStorage.getReductionGroupByUuid(
+          uuidReductionGroupe
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     async getAssurance() {
       AppStorage.getAssuranceTemporaires().then((result) => {
         this.assurances = result;
       });
+    },
+
+    async editAssuranceTemporaire(uuidAssuranceTemporaire) {
+      try {
+        this.assurancetoedit = await AppStorage.getAssuranceTemporaireByUuid(
+          uuidAssuranceTemporaire
+        );
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     async getMontant() {
@@ -330,6 +412,12 @@ export default {
     handleMontantsChange() {
       AppStorage.getFraisMedicals().then((result) => {
         this.montants = result;
+      });
+    },
+
+    handleTarification() {
+      AppStorage.getTarificateurAccidents().then((result) => {
+        this.accidents = result;
       });
     },
   },

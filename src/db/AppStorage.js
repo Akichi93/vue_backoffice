@@ -207,7 +207,7 @@ class AppStorage {
 
     static async getClientByUuid(clientUuid) {
         const allContrats = await this.getData('clients') || [];
-        return allContrats.find(contrat => contrat.uuidClient === clientUuid);
+        return allContrats.find(contrat => contrat.uuidReductionGroupe === clientUuid);
     }
 
     static async getClientNameByUUID(uuidClient) {
@@ -2781,6 +2781,31 @@ class AppStorage {
         return reductionsWithCompagnies;
     }
 
+    static async getReductionGroupByUuid(uuidReductionGroupe) {
+        const allReductions = await this.getData('reductiongroups') || [];
+        return allReductions.find(reduction => reduction.uuidReductionGroupe === uuidReductionGroupe);
+    }
+
+    static async updateReduction(uuidReductionGroupe, nouvellesInfos) {
+        // Obtenez la liste des reductions
+        const allReductions = await this.getData('reductiongroups') || [];
+
+        // Recherche du client par son UUID
+        const ReductionIndex = allReductions.findIndex(reduction => reduction.uuidReductionGroupe === uuidReductionGroupe);
+
+        if (ReductionIndex !== -1) {
+            // Mettre à jour les informations du prospect
+            Object.assign(allReductions[ReductionIndex], nouvellesInfos)
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('reductiongroups', allReductions);
+
+            return allReductions[ReductionIndex];
+        } else {
+            throw new Error('Reduction non trouvé');
+        }
+    }
+
 
     // Assurance temporaire
 
@@ -2813,6 +2838,31 @@ class AppStorage {
         });
 
         return reductionsWithCompagnies;
+    }
+
+    static async getAssuranceTemporaireByUuid(uuidAssuranceTemporaire) {
+        const allAssurances = await this.getData('assurancetemporaires') || [];
+        return allAssurances.find(assurance => assurance.uuidAssuranceTemporaire === uuidAssuranceTemporaire);
+    }
+
+    static async updateAssurance(uuidAssuranceTemporaire, nouvellesInfos) {
+        // Obtenez la liste des reductions
+        const allAssurances = await this.getData('reductiongroups') || [];
+
+        // Recherche du client par son UUID
+        const AssuranceIndex = allAssurances.findIndex(assurance => assurance.uuidAssuranceTemporaire === uuidAssuranceTemporaire);
+
+        if (AssuranceIndex !== -1) {
+            // Mettre à jour les informations du prospect
+            Object.assign(allAssurances[AssuranceIndex], nouvellesInfos)
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('assurancetemporaires', allAssurances);
+
+            return allAssurances[AssuranceIndex];
+        } else {
+            throw new Error('Assurance non trouvé');
+        }
     }
 
     // Frais médical
@@ -3211,24 +3261,38 @@ class AppStorage {
     }
 
     static async getFactureAccident(uuidTarificationAccident) {
-        const tarifications = await this.getTarificationAccidentByuuid(uuidTarificationAccident);
-        const compagnies = await this.getData('compagnies') || [];
-        const tarificateuraccidents = await this.getData('tarificateuraccidents') || [];
+        try {
+            const tarification = await this.getTarificationAccidentByuuid(uuidTarificationAccident);
 
-        // Joindre les données des clients, apporteurs et compagnies aux contrats
-        const contratsAvecDonnees = tarifications.map(tarification => {
-            const compagnie = compagnies.find(compagnie => compagnie.uuidCompagnie === tarification.uuidCompagnie);
-            const tarificateuraccident = tarificateuraccidents.find(tarificateuraccident => tarificateuraccident.uuidTarificateurAccident === tarification.activite);
+            if (!tarification) {
+                throw new Error('No tarification found for the given UUID');
+            }
 
-            return {
+            const compagnies = await this.getData('compagnies') || [];
+            const tarificateuraccidents = await this.getData('tarificateuraccidents') || [];
+
+            // Recherche des compagnies et tarificateurs
+            const compagnie = compagnies.find(comp => comp.uuidCompagnie === tarification.uuidCompagnie);
+            const tarificateuraccident = tarificateuraccidents.find(tarif => tarif.uuidTarificateurAccident === tarification.activite);
+
+            // Extraction de la propriété "activite" de l'objet "tarificateuraccident"
+            const activite = tarificateuraccident ? tarificateuraccident.activite : null;
+
+            // Construction de l'objet avec les données de tarification, compagnie et activite
+            const contratAvecDonnees = {
                 ...tarification,
                 compagnie,
-                tarificateuraccident
+                activite
             };
-        });
 
-        return contratsAvecDonnees
+            return contratAvecDonnees;
+        } catch (error) {
+            console.error('Erreur dans getFactureAccident :', error);
+            throw error;
+        }
     }
+
+
 
 
     static async storeTarificationAccidents(tarificationaccidents) {

@@ -82,12 +82,23 @@
                         >
                           <i class="fas fa-eye"></i>
                         </a>
+
+                        <!-- <a
+                          href="#"
+                          data-bs-toggle="modal"
+                          data-bs-target="#view_test"
+                          title="Voir la facture"
+                        >
+                          <i class="fas fa-eye"></i>
+                        </a> -->
                       </td>
                     </tr>
                   </template>
                 </tbody>
               </table>
             </div>
+            <factureTarifacticationAccident v-bind:facturetoedit="facturetoedit"></factureTarifacticationAccident>
+            <!-- <viewTest></viewTest> -->
           </div>
         </div>
       </div>
@@ -98,12 +109,16 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import AppStorage from "../../db/AppStorage";
+import factureTarifacticationAccident from './factureTarifacticationAccident.vue';
+import viewTest from "./viewTest.vue";
 
 export default {
   name: "listprospect",
   components: {
     Header,
     Sidebar,
+    factureTarifacticationAccident,
+    viewTest
   },
   data() {
     return {
@@ -126,6 +141,7 @@ export default {
       this.facturetoedit = await AppStorage.getFactureAccident(
         uuidTarificationAccident
       );
+      console.log(this.facturetoedit)
     },
   },
 };

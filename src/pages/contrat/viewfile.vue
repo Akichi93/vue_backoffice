@@ -59,7 +59,7 @@ export default {
   methods: {
     fetchFiles() {
       const uuid = this.avenantoedit.uuidAvenant;
-      alert(uuid)
+      // alert(uuid)
       axios
         .get(`https://fl4ir.loca.lt/api/auth/fileavenants/${uuid}`)
         .then((response) => {

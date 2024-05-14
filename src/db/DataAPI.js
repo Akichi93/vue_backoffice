@@ -14,9 +14,7 @@ export default {
                     "x-access-token": token,
                 }
             });
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des branches.');
-            // }
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("branches", newData);
         } catch (error) {
@@ -37,9 +35,7 @@ export default {
 
             const response = await axios.get(apiUrl.getprospect, { headers });
 
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des prospects.');
-            // }
+
             const newData = response.data;
 
             await AppStorage.updateSyncIndexedDB("prospects", newData);
@@ -59,9 +55,7 @@ export default {
 
         try {
             const response = await axios.get(apiUrl.getclient, { headers });
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des clients.');
-            // }
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("clients", newData);
         } catch (error) {
@@ -81,9 +75,7 @@ export default {
         try {
             const response = await axios.get(apiUrl.getcompagnie, { headers });
 
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des compagnies.');
-            // }
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("compagnies", newData);
         } catch (error) {
@@ -103,9 +95,7 @@ export default {
         try {
             const response = await axios.get(apiUrl.gettauxcompagnie, { headers });
 
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des taux compagnies.');
-            // }
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("tauxcompagnies", newData);
         } catch (error) {
@@ -125,9 +115,6 @@ export default {
         try {
             const response = await axios.get(apiUrl.getapporteur, { headers });
 
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des apporteurs.');
-            // }
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("apporteurs", newData);
         } catch (error) {
@@ -147,9 +134,7 @@ export default {
         try {
             const response = await axios.get(apiUrl.gettauxapporteur, { headers });
 
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des taux apporteurs.');
-            // }
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("tauxapporteurs", newData);
         } catch (error) {
@@ -157,26 +142,6 @@ export default {
             throw error;
         }
     },
-
-    // async getGraveTauxApporteursData() {
-    //     const token = AppStorage.getToken();
-    //     try {
-    //         const response = await fetch(apiUrl.gettauxapporteur, {
-    //             headers: {
-    //                 Authorization: "Bearer " + token,
-    //                 "x-access-token": token,
-    //             }
-    //         });
-    //         if (!response.ok) {
-    //             throw new Error('Erreur lors de la récupération des données graves des taux apporteurs.');
-    //         }
-    //         const newData = await response.json();
-    //         await AppStorage.updateSyncIndexedDB('branches', newData);
-    //     } catch (error) {
-    //         console.error('Erreur lors de la récupération des données graves des taux apporteurs:', error);
-    //         throw error;
-    //     }
-    // },
 
     async getGraveContratsData() {
         const token = AppStorage.getToken();
@@ -189,10 +154,7 @@ export default {
         try {
             const response = await axios.get(apiUrl.getcontrat, { headers });
 
-            // Vérification de la réussite de la requête
-            // if (response.status !== 200) {
-            //     throw new Error('Erreur lors de la récupération des données graves des contrats.');
-            // }
+
             const newData = response.data;
 
             await AppStorage.updateSyncIndexedDB("contrats", newData);
@@ -213,9 +175,7 @@ export default {
         try {
             const response = await axios.get(apiUrl.getavenant, { headers });
 
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des avenants.');
-            // }
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("avenants", newData);
         } catch (error) {
@@ -235,10 +195,8 @@ export default {
         try {
 
             const response = await axios.get(apiUrl.getautomobile, { headers });
-            
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
-            // }
+
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("automobiles", newData);
         } catch (error) {
@@ -313,7 +271,7 @@ export default {
         }
     },
 
-    
+
 
     async getGraveCategoriesData() {
         const token = AppStorage.getToken();
@@ -326,10 +284,8 @@ export default {
         try {
 
             const response = await axios.get(apiUrl.getcategorie, { headers });
-            
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
-            // }
+
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("categories", newData);
         } catch (error) {
@@ -349,10 +305,8 @@ export default {
         try {
 
             const response = await axios.get(apiUrl.getmarque, { headers });
-            
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
-            // }
+
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("marques", newData);
         } catch (error) {
@@ -372,10 +326,8 @@ export default {
         try {
 
             const response = await axios.get(apiUrl.getgenre, { headers });
-            
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
-            // }
+
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("genres", newData);
         } catch (error) {
@@ -395,10 +347,8 @@ export default {
         try {
 
             const response = await axios.get(apiUrl.getcouleur, { headers });
-            
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
-            // }
+
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("couleurs", newData);
         } catch (error) {
@@ -418,10 +368,8 @@ export default {
         try {
 
             const response = await axios.get(apiUrl.getenergie, { headers });
-            
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des automobiles.');
-            // }
+
+
             const newData = response.data;
             await AppStorage.updateSyncIndexedDB("energies", newData);
         } catch (error) {
@@ -429,5 +377,49 @@ export default {
             throw error;
         }
     },
+
+    async getGraveReductionGroupsData() {
+        const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+
+            const response = await axios.get(apiUrl.getreductiongroup, { headers });
+
+
+            const newData = response.data;
+            await AppStorage.updateSyncIndexedDB("reductiongroups", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des energies:', error);
+            throw error;
+        }
+    },
+
+    async getGraveAssuranceTemporairesData() {
+        const token = AppStorage.getToken();
+
+        const headers = {
+            Authorization: "Bearer " + token,
+            "x-access-token": token,
+        };
+
+        try {
+
+            const response = await axios.get(apiUrl.getassurancetemporaire, { headers });
+
+
+            const newData = response.data;
+            await AppStorage.updateSyncIndexedDB("assurancetemporaires", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des energies:', error);
+            throw error;
+        }
+    },
+
+
 
 };

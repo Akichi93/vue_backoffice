@@ -36,7 +36,12 @@ const SyncService = {
             'genres',
             'couleurs',
             'energies',
-            // Ajouter d'autres types ici selon la priorité souhaitée
+            'reductiongroups',
+            'assurancetemporaires',
+            'fraismedicals',
+            'tarificateuraccidents',
+            'tarificateurfrais',
+            'tarificationaccidents',
         ];
 
         for (const dataType of syncOrder) {
@@ -115,6 +120,24 @@ const SyncService = {
                 break;
             case 'energies':
                 queue = await AppStorage.getEnergies();
+                break;
+            case 'reductiongroups':
+                queue = await AppStorage.getReductionGroups();
+                break;
+            case 'getassurancetemporaires':
+                queue = await AppStorage.getAssuranceTemporaires();
+                break;
+            case 'fraismedicals':
+                queue = await AppStorage.getFraisMedicals();
+                break;
+            case 'tarificateuraccidents':
+                queue = await AppStorage.getTarificateurAccidents();
+                break;
+            case 'tarificateurfrais':
+                queue = await AppStorage.getTarificateurFrais();
+                break;
+            case 'tarificationaccidents':
+                queue = await AppStorage.getTarificationAccidents();
                 break;
             default:
                 console.warn(`La méthode de synchronisation pour ${dataType} n'est pas définie.`);

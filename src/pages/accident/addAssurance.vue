@@ -159,7 +159,7 @@ export default {
       const newAssuranceData = [
         {
           id: userId,
-          uuidReductionGroupe: uuid,
+          uuidAssuranceTemporaire: uuid,
           uuidCompagnie: this.form.compagnie_id,
           nbreMoisMin: this.form.nbre_min,
           nbreMoisMax: this.form.nbre_max,

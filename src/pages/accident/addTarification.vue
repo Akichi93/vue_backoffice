@@ -261,7 +261,7 @@ export default {
         );
       }
 
-      const updatedTarifications = await AppStorage.getTarificationAccident();
+      const updatedTarifications = await AppStorage.getTarificateurAccidents();
 
       this.$emit("tarification-add", updatedTarifications);
 

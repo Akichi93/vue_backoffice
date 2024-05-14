@@ -51,6 +51,12 @@ const apiUrl = {
     setetatprospect: (uuidProspect) => `${base_url}/etatProspect/${uuidProspect}`,
     getuser: createApiUrl('utilisateurs'),
     setedituser: (id) => `${base_url}/utilisateurs/edit/${id}`,
+    getreductiongroup: createApiUrl('getreductiongroups'),
+    getassurancetemporaire: createApiUrl('getassurancetemporaires'),
+    getfraismedical: createApiUrl('getfraismedicals'),
+    gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
+    gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
+    gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
 };
 
 // Export des fonctions et données
