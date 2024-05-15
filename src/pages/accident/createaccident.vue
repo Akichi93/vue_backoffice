@@ -730,6 +730,7 @@ export default {
         const nombreIptEntier = parseFloat(nombreIpt);
         const tauxIptNombre = parseFloat(tauxIpt);
         const tauxFraisNombre = parseFloat(tauxFrais);
+        console.log(nombreDecesEntier,tauxDecesNombre,nombreIptEntier,tauxIptNombre,tauxFraisNombre)
 
         // Vérifiez si les valeurs sont positives
         if (nombreDecesEntier >= 0 && tauxDecesNombre >= 0) {

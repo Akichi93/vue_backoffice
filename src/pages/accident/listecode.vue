@@ -171,7 +171,7 @@
                               v-bind:assurancetoedit="assurancetoedit"
                               @click="
                                 editAssuranceTemporaire(
-                                  assurance.uuidAssuranceTemporaire
+                                  assurance.uuidTarificateurAccident
                                 )
                               "
                               ><i class="fas fa-pen"></i
@@ -275,14 +275,20 @@
                             <a
                               href="#"
                               data-bs-toggle="modal"
-                              data-bs-target="#edit_assurance_temporaire"
+                              data-bs-target="#view_tarification"
+                              @click="
+                                viewTarificationAccident(
+                                  accident.uuidTarificateurAccident
+                                )
+                              "
+                             
                               ><i class="fas fa-eye"></i
                             ></a>
 
                             <a
                               href="#"
                               data-bs-toggle="modal"
-                              data-bs-target="#edit_assurance_temporaire"
+                              data-bs-target="#edit_tarification"                              
                               ><i class="fas fa-pen"></i
                             ></a>
                           </td>
@@ -294,6 +300,7 @@
                 <addTarification
                   @tarification-add="handleTarification"
                 ></addTarification>
+                <viewTarification  v-bind:tarificationtoedit="tarificationtoedit"></viewTarification>
               </div>
             </div>
           </div>
@@ -313,6 +320,7 @@ import addAssurance from "./addAssurance.vue";
 import addMontant from "./addMontant.vue";
 import editReduction from "./editReduction.vue";
 import editAssurance from "./editAssurance.vue";
+import viewTarification from "./viewTarification.vue";
 
 export default {
   name: "listprospect",
@@ -325,6 +333,7 @@ export default {
     addMontant,
     editReduction,
     editAssurance,
+    viewTarification,
   },
   data() {
     return {
@@ -336,6 +345,7 @@ export default {
       tarifications: [],
       reductiontoedit: "",
       assurancetoedit: "",
+      tarificationtoedit: "",
     };
   },
   created() {
@@ -391,8 +401,20 @@ export default {
       });
     },
 
+    async viewTarificationAccident(uuidTarificateurAccident) {
+      try {
+        this.tarificationtoedit = await AppStorage.getTarificateurAccidentByUuid(
+          uuidTarificateurAccident
+        );
+        console.log(this.tarificationtoedit)
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     async getTarification() {
       AppStorage.getTarificateurIA().then((result) => {
+        // console.log(result);
         this.tarifications = result;
       });
     },

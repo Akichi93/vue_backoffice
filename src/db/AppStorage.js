@@ -2944,6 +2944,40 @@ class AppStorage {
         return joinedData;
     }
 
+    static async getTarificateurAccidentByUuid(uuidTarificateurAccident) {
+        const allTarifications = await this.getTarificateurIA();
+        
+        // Filtrer les tarifications avec l'UUID spécifié
+        const filteredTarifications = allTarifications.filter(tarification => tarification.uuidTarificateurAccident === uuidTarificateurAccident);
+    
+        // Regrouper les tarifications par UUID
+        const groupedTarifications = filteredTarifications.reduce((acc, tarification) => {
+            if (!acc[tarification.uuidTarificateurAccident]) {
+                acc[tarification.uuidTarificateurAccident] = {
+                    uuidTarificateurAccident: tarification.uuidTarificateurAccident,
+                    sync: tarification.sync,
+                    uuidCompagnie: tarification.uuidCompagnie,
+                    uuidFraisMedical: tarification.uuidFraisMedical,
+                    classe: tarification.classe,
+                    activite: tarification.activite,
+                    tarificationsDetails: []
+                };
+            }
+            acc[tarification.uuidTarificateurAccident].tarificationsDetails.push({
+                tauxDeces: tarification.tauxDeces,
+                tauxIPT: tarification.tauxIPT,
+                taux: tarification.taux,
+                montant: tarification.montant
+            });
+            return acc;
+        }, {});
+    
+        // Convertir l'objet regroupé en tableau
+        const result = Object.values(groupedTarifications);
+    
+        return result;
+    }
+
 
     // static async getTarificateurIA() {
     //     const tarificateursfrais = await this.getData('tarificateurfrais') || [];
@@ -3090,7 +3124,7 @@ class AppStorage {
             return tarificateurAccident.tauxDeces;
         });
 
-        const nombreEntier = parseInt(tauxDeces);
+        const nombreEntier = parseFloat(tauxDeces);
 
         return nombreEntier;
     }
@@ -3128,7 +3162,7 @@ class AppStorage {
             return tarificateurAccident.tauxIPT;
         });
 
-        const nombreEntier = parseInt(tauxIPT);
+        const nombreEntier = parseFloat(tauxIPT);
 
         return nombreEntier;
     }
