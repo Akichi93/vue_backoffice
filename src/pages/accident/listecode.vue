@@ -247,6 +247,13 @@
                       data-bs-toggle="modal"
                       data-bs-target="#add_tarification"
                       class="btn btn-success btn-add-emp"
+                      ><i class="fas fa-plus"></i> importer classe</a
+                    >
+                    <a
+                      href="#"
+                      data-bs-toggle="modal"
+                      data-bs-target="#add_tarification"
+                      class="btn btn-success btn-add-emp"
                       ><i class="fas fa-plus"></i> Ajouter</a
                     >
                   </div>
