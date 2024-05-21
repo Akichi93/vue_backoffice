@@ -155,5 +155,5 @@ export default {
 };
 </script>
 
-<style src="@vueform/multiselect/themes/default.css"></style>
+<!-- <style src="@vueform/multiselect/themes/default.css"></style> -->
         

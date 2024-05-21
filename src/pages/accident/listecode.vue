@@ -713,6 +713,6 @@ export default {
   margin-bottom: 10px;
 }
 </style>
-<style src="@vueform/multiselect/themes/default.css"></style>
+<!-- <style src="@vueform/multiselect/themes/default.css"></style> -->
 
     
