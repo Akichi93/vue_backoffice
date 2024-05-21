@@ -106,12 +106,19 @@ import addtauxcompagnie from "./addtauxcompagnie.vue";
 import edittauxcompagnie from "./edittauxcompagnie.vue";
 import AppStorage from "../../db/AppStorage.js";
 import searchbranche from "../../components/search/searchbranche.vue";
+import switchService from "../../services/switchService";
 const toaster = createToaster({
   /* options */
 });
 export default {
   name: "tauxcompagnie",
-  components: { Header, Sidebar, addtauxcompagnie, edittauxcompagnie,searchbranche },
+  components: {
+    Header,
+    Sidebar,
+    addtauxcompagnie,
+    edittauxcompagnie,
+    searchbranche,
+  },
   data() {
     return {
       value: null,
@@ -127,7 +134,7 @@ export default {
       const uuidCompagnie = this.$route.params.uuidCompagnie;
 
       try {
-        const tauxCompagnies = await AppStorage.getTauxCompagniesByIdCompagnie(
+        const tauxCompagnies = await switchService.getTauxCompagnies(
           uuidCompagnie
         );
 
@@ -141,7 +148,7 @@ export default {
       const uuidcompagnie = this.$route.params.uuidCompagnie;
 
       try {
-        const names = await AppStorage.getCompagnieNameByUUID(uuidcompagnie);
+        const names = await switchService.getNameCompagnie(uuidcompagnie);
         this.names = names;
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
@@ -150,7 +157,7 @@ export default {
 
     async getTaux(uuidTauxCompagnie) {
       try {
-        this.tauxtoedit = await AppStorage.getTauxCompagnieById(
+        this.tauxtoedit = await switchService.getTauxCompagnieByUuid(
           uuidTauxCompagnie
         );
       } catch (error) {
@@ -158,59 +165,21 @@ export default {
       }
     },
 
-    // async getCompagnie() {
-    //     // axios
-    //     //     .get(`/api/auth/getNameCompagnie/${this.$route.params.id_compagnie}`)
-    //     //     .then((response) => (this.tauxcompagnietoedit = response.data))
-    //     //     .catch((error) => console.log(error));
-
-    //     const tauxCompagnie = await AppStorage.getTauxCompagnieById(this.$route.params.id_compagnie);
-    //     console.log(tauxCompagnie)
-    // },
-
-    // getTaux(id_tauxcomp) {
-    //     axios
-    //         .get("/api/auth/editTauxCompagnie/" + id_tauxcomp)
-    //         .then((response) => (
-    //             this.tauxtoedit = response.data))
-    //         .catch((error) => console.log(error));
-    // },
-
-    // fetchTask() {
-    //     this.error = this.names = null;
-    //     this.loading = true;
-    //     var that = this;
-    //     axios
-    //         .all([
-    //             axios.get(
-    //                 `/api/auth/getNameCompagnie/${this.$route.params.id_compagnie}`
-    //             ),
-    //             axios.get(
-    //                 `/api/auth/getTauxCompagnie/${this.$route.params.id_compagnie}`
-    //             ),
-    //             axios.get(
-    //                 `/api/auth/getBrancheDiffCompagnie/${this.$route.params.id_compagnie}`
-    //             ),
-
-    //         ])
-    //         .then(
-    //             axios.spread(function (names, compagnies, branches) {
-    //                 that.names = names.data;
-    //                 that.compagnies = compagnies.data;
-    //                 that.branches = branches.data;
-    //             })
-    //         );
-    // },
-    searchtask() {
+    async searchtask() {
       if (this.q.length > 3) {
         const uuidCompagnie = this.$route.params.uuidCompagnie;
-        AppStorage.searchTauxCompagnieByNomBranche(this.q,uuidCompagnie).then((result) => {
-          this.tauxCompagnies = result;
-        });
+        this.tauxCompagnies = await switchService.searchTauxCompagnieByNomBranche(this.q,uuidCompagnie)
+
+        // AppStorage.searchTauxCompagnieByNomBranche(this.q, uuidCompagnie).then(
+        //   (result) => {
+        //     this.tauxCompagnies = result;
+        //   }
+        // );
       } else {
         this.fetchData();
       }
     },
+
     refresh() {
       const uuidCompagnie = this.$route.params.uuidCompagnie;
       AppStorage.getTauxCompagniesByIdCompagnie(uuidCompagnie).then(
@@ -221,7 +190,6 @@ export default {
     },
   },
   created() {
-    // this.getTaux();
     this.fetchData();
     this.fetchName();
   },

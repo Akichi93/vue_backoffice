@@ -11,12 +11,11 @@ export default {
   },
 
   methods: {
-    getBranche() {
-      AppStorage.getBranches().then((result) => {
-        this.branches = result;
-
-      
-        });
+   async getBranche() {
+    this.branches = await switchService.getBranches();
+      // AppStorage.getBranches().then((result) => {
+      //   this.branches = result;
+      //   });
       // getbrancheExport().then((result) => {
       //   this.branches = result;
       // });

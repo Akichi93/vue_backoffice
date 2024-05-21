@@ -471,6 +471,66 @@ class OfflineService {
             throw new Error(error);
         }
     }
+
+    async getAdresse(){
+        return await AppStorage.getLocalisations();
+    }
+
+    async getProfession(){
+        return await AppStorage.getProfessions();
+    }
+
+    async getCompagnies() {
+        return await AppStorage.getCompagnies();
+    }
+
+    async getCompagnieByUuid(uuid) {
+        try {
+            return await AppStorage.getCompagnieByUuid(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async searchCompagniesByName(name) {
+        try {
+            return await AppStorage.searchCompagniesByName(name);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getTauxCompagnies(uuid) {
+        try {
+            return await AppStorage.getTauxCompagniesByIdCompagnie(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getNameCompagnie(uuid) {
+        try {
+            return await AppStorage.getCompagnieNameByUUID(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getTauxCompagnieByUuid(uuid) {
+        try {
+            return await AppStorage.getTauxCompagnieById(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async searchTauxCompagnieByNomBranche(name, uuid) {
+        try {
+            return await AppStorage.searchTauxCompagnieByNomBranche(name, uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 }
 
 // export default OfflineService;

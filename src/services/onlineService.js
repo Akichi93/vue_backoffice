@@ -1,18 +1,19 @@
 import { v4 as uuidv4 } from 'uuid';
 import AppStorage from "../db/AppStorage.js";
 import { apiUrl } from '../utils/constants/apiUrl.js';
+import AxiosService from './AxiosService.js'; // Importer AxiosService
 
 class OnlineService {
-    constructor() {
-        // Récupérer le token une fois lors de la création de l'instance de la classe
-        this.token = AppStorage.getToken();
+    // constructor() {
+    //     // Récupérer le token une fois lors de la création de l'instance de la classe
+    //     this.token = AppStorage.getToken();
 
-        // Configurez les en-têtes de la requête avec le token récupéré
-        this.headers = {
-            Authorization: "Bearer " + this.token,
-            "x-access-token": this.token,
-        };
-    }
+    //     // Configurez les en-têtes de la requête avec le token récupéré
+    //     this.headers = {
+    //         Authorization: "Bearer " + this.token,
+    //         "x-access-token": this.token,
+    //     };
+    // }
 
     async storeBranche(nomBranche, entrepriseId) {
         const uuid = uuidv4();
@@ -25,7 +26,7 @@ class OnlineService {
         };
 
         try {
-            await axios.post(apiUrl.postbranche, newBrancheData, { headers: this.headers });
+            await AxiosService.post(apiUrl.postbranche, newBrancheData); // Utiliser AxiosService
             return { success: true, uuid };
         } catch (error) {
             console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
@@ -55,8 +56,7 @@ class OnlineService {
         }];
 
         try {
-            await axios.post(apiUrl.postprospect, newProspectData, { headers: this.headers });
-            // return true; // Succès
+            await AxiosService.post(apiUrl.postprospect, newProspectData); // Utiliser AxiosService
             return { success: true, uuid };
         } catch (error) {
             console.error("Erreur lors du stockage du prospect :", error);
@@ -67,8 +67,8 @@ class OnlineService {
     async ChangeEtat(uuidProspectToUpdate, nouveauStatut, nouveauSyncState) {
         try {
             const url = apiUrl.setetatprospect(uuidProspectToUpdate); // Utilisation de setetatprospect pour obtenir l'URL
-            const response = await axios.post(url, { etat: nouveauStatut });
-            return response.data;
+            const response = await AxiosService.post(url, { etat: nouveauStatut }); // Utiliser AxiosService
+            return response;
         } catch (error) {
             throw new Error('Erreur lors de la mise à jour de l\'état du prospect:', error);
         }
@@ -77,7 +77,7 @@ class OnlineService {
     async storeClient(form, entrepriseId, userId, numeroClient) {
         const uuid = uuidv4();
 
-        const newClientData =  {
+        const newClientData = {
             civilite: form.civilite,
             nom_client: form.nom_client,
             postal_client: form.postal_client,
@@ -90,10 +90,10 @@ class OnlineService {
             id_entreprise: entrepriseId,
             uuidClient: uuid,
             numero_client: numeroClient,
-        };     
+        };
 
         try {
-            const updatedClients = await axios.post(apiUrl.postclient, newClientData, { headers: this.headers });
+            const updatedClients = await AxiosService.post(apiUrl.postclient, newClientData); // Utiliser AxiosService
             return updatedClients;
         } catch (error) {
             console.error("Erreur lors de l'ajout du client:", error);
@@ -101,18 +101,35 @@ class OnlineService {
         }
     }
 
-    async updateClient(){
-        const response = await axios.patch(`/api/auth/updateClient/${this.clientoedit.id_client}`, {
-            //     civilite: this.clientoedit.civilite,
-            //     nom_client: this.clientoedit.nom_client,
-            //     postal_client: this.clientoedit.postal_client,
-            //     adresse_client: this.clientoedit.adresse_client,
-            //     tel_client: this.clientoedit.tel_client,
-            //     profession_client: this.clientoedit.profession_client,
-            //     fax_client: this.clientoedit.fax_client,
-            //     email_client: this.clientoedit.email_client,
-            //     id_entreprise: entrepriseId,
-              });
+    async updateClient(clientData) {
+        try {
+            const url = `/api/auth/updateClient/${clientData.id_client}`;
+            const response = await AxiosService.patch(url, clientData); // Utiliser AxiosService
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du client:", error);
+            return { success: false, error: "Erreur lors de la mise à jour du client" };
+        }
+    }
+
+    async getAdresse() {
+        try {
+            const response = await AxiosService.get(apiUrl.getlocalisation); // Utiliser AxiosService
+            return { success: true, data: response };
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de la récupération des adresses" };
+        }
+    }
+
+    async getProfession() {
+        try {
+            const response = await AxiosService.get(apiUrl.getprofession); // Utiliser AxiosService
+            return { success: true, data: response };
+        } catch (error) {
+            console.error("Erreur lors de la récupération des professions:", error);
+            return { success: false, error: "Erreur lors de la récupération des professions" };
+        }
     }
 }
 

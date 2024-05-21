@@ -246,7 +246,7 @@ import { validateProspectForm } from "../../utils/helpers/formValidation";
 import { createToaster } from "@meforma/vue-toaster";
 import { apiUrl } from "../../utils/constants/apiUrl";
 import { v4 as uuidv4 } from "uuid";
-import switchService from '../../services/switchService.js';
+import switchService from "../../services/switchService.js";
 const toaster = createToaster({
   /* options */
 });
@@ -293,15 +293,10 @@ export default {
 
   methods: {
     async getAdresse() {
-      AppStorage.getLocalisations().then((result) => {
-        this.localisations = result;
-      });
+      this.localisations = await switchService.getAdresse();
     },
-
     async getProfession() {
-      AppStorage.getProfessions().then((result) => {
-        this.professions = result;
-      });
+      this.professions = await switchService.getProfession();
     },
     async storeProspect() {
       this.errors = validateProspectForm(this.form);

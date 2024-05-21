@@ -10,4 +10,5 @@ export default defineConfig({
     inlineEnv: true,
   },
   plugins: [vue()],
+  
 })

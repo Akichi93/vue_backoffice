@@ -32,83 +32,133 @@
           <div class="row" id="printMe">
             <div class="col-md-12 d-flex">
               <div class="card profile-box flex-fill">
-                <div class="card-body">
-                  <ul class="personal-info">
-                    <li>
-                      <div class="title">Proposant</div>
-                      <div class="text">{{ facturetoedit.nom_complet }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Activité</div>
-                      <div class="text">{{ facturetoedit.activite }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Effectif</div>
-                      <div class="text">{{ facturetoedit.effectif }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Durée (jours)</div>
-                      <div class="text">{{ facturetoedit.duree }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Décès</div>
-                      <div class="text">{{ facturetoedit.deces }}</div>
-                    </li>
-                    <li>
-                      <div class="title">IPT</div>
-                      <div class="text">{{ facturetoedit.ipt }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Frais médicaux</div>
-                      <div class="text">{{ facturetoedit.frais_medicaux }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Prime nette brute / personne</div>
-                      <div class="text">{{ facturetoedit.prime_nette_brute }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Taux de réduction (en pourcentage)</div>
-                      <div class="text">{{ facturetoedit.taux_reduction_effectif }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Prime nette reduite / personne</div>
-                      <div class="text">{{ facturetoedit.prime_nette_brute }}</div>
-                    </li>
+                <!-- <div class="card-body"> -->
+                <div class="container">
+                  <h1 class="title-header text-center">
+                    PROPOSITION DE COUVERTURE INDIVIDUELLE ACCIDENTS
+                  </h1>
 
-                    <li>
-                      <div class="title">Prime nette annuelle</div>
-                      <div class="text">{{ facturetoedit.prime_nette_annuelle }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Accessoires</div>
-                      <div class="text">{{ facturetoedit.accessoire_annuel }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Taxes</div>
-                      <div class="text">{{ facturetoedit.taxe_annuelle }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Primes TTC</div>
-                      <div class="text">{{ facturetoedit.prime_ttc_annuelle }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Prime nette courte durée</div>
-                      <div class="text">{{ facturetoedit.prime_nette_courte }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Accessoires</div>
-                      <div class="text">{{ facturetoedit.accesoire_courte }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Taxes</div>
-                      <div class="text">{{ facturetoedit.taxe_courte }}</div>
-                    </li>
-                    <li>
-                      <div class="title">Primes TTC</div>
-                      <div class="text">{{ facturetoedit.prime_ttc_courte }}</div>
-                    </li>
-                  </ul>
+                  <div class="info-section row">
+                    <div class="col-sm-3"><h5>Proposant :</h5></div>
+                    <div class="col-sm-9"><p>{{ facturetoedit.prospect.nom_prospect }}</p></div>
+                  </div>
+
+                  <div class="info-section row">
+                    <div class="col-sm-3"><h5>Activités :</h5></div>
+                    <div class="col-sm-9"><p>{{ facturetoedit.activite.activite }}</p></div>
+                  </div>          
+
+                  <div class="info-section row">
+                    <div class="col-sm-3"><h5>Effectif :</h5></div>
+                    <div class="col-sm-9"><p>{{ facturetoedit.effectif }}</p></div>
+                  </div>
+
+                  <div class="info-section row">
+                    <div class="col-sm-3"><h5>Durée (mois) :</h5></div>
+                    <div class="col-sm-9"><p>{{ facturetoedit.duree }}</p></div>
+                  </div>
+
+                  <div class="info-section row">
+                    <div class="col-sm-3"><h5>Capitaux assurés :</h5></div>
+                    <div class="col-sm-9"><p></p></div>
+                  </div>
+
+                  <table class="table table-bordered tarif-table">
+                    <tr>
+                      <th>Décès</th>
+                      <td>{{ facturetoedit.deces }} FCFA</td>
+                    </tr>
+                    <tr>
+                      <th>IPT</th>
+                      <td>{{ facturetoedit.ipt }} FCFA</td>
+                    </tr>
+                    <tr>
+                      <th>Frais Médicaux*</th>
+                      <td>100 000 FCFA</td>
+                    </tr>
+                  </table>
+
+                  <table class="table table-bordered tarif-table">
+                    <tr>
+                      <th>Prime nette brute / Personne</th>
+                      <td>{{ facturetoedit.prime_nette_brute }} FCFA</td>
+                    </tr>
+                    <tr>
+                      <th>Taux de réduction</th>
+                      <td>{{ facturetoedit.taux_reduction_effectif }} %</td>
+                    </tr>
+                    <tr>
+                      <th>Prime nette réduite / Personne</th>
+                      <td>{{ facturetoedit.prime_nette_reduite }} FCFA</td>
+                    </tr>
+                  </table>
+
+                  <table class="table table-bordered tarif-table">
+                    <tr>
+                      <th>Prime nette annuelle</th>
+                      <td>{{ facturetoedit.prime_nette_annuelle}} FCFA</td>
+                    </tr>
+                    <tr>
+                      <th>Accessoires</th>
+                      <td>{{ facturetoedit.accessoire_annuel }} FCFA</td>
+                    </tr>
+                    <tr>
+                      <th>Taxes</th>
+                      <td>{{ facturetoedit.accesoire_courte }} FCFA</td>
+                    </tr>
+                    <tr>
+                      <th>Primes TTC</th>
+                      <td>{{ facturetoedit.prime_ttc_annuelle }} FCFA</td>
+                    </tr>
+                  </table>
+
+                  <table class="table table-bordered tarif-table">
+                    <tr>
+                      <th>Prime nette courte durée</th>
+                      <td>{{ facturetoedit.prime_nette_courte }} FCFA</td>
+                    </tr>
+                    <tr>
+                      <th>Accessoires</th>
+                      <td>{{ facturetoedit.accesoire_courte }} FCFA</td>
+                    </tr>
+                    <tr>
+                      <th>Taxes</th>
+                      <td>{{ facturetoedit.taxe_courte }} FCFA</td>
+                    </tr>
+                    <tr>
+                      <th>Primes TTC</th>
+                      <td>{{ facturetoedit.prime_ttc_courte }} FCFA</td>
+                    </tr>
+                  </table>
+
+                  <div class="info-section row">
+                    <div class="col-sm-3">
+                      <h5>Clause limitation d’Indemnité :</h5>
+                    </div>
+                    <div class="col-sm-9">
+                      <p>
+                        « L’engagement de l’assureur est limité à 750.000.000
+                        FCFA par événement, quel que soit le nombre de victimes.
+                        »
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="info-section row">
+                    <div class="col-sm-3"><h5>Clause Age :</h5></div>
+                    <div class="col-sm-9">
+                      <p>
+                        « Sont exclues de la garantie, les personnes âgées de
+                        moins de 16 ans et de plus de 60 ans à la souscription.
+                        Les assurés âgés de 65 ans au cours du contrat cessent
+                        de plein droit d’être garantis à l’expiration de l’année
+                        d’assurance pendant laquelle ils atteignent cet âge. »
+                      </p>
+                    </div>
+                  </div>
                 </div>
+
+             
               </div>
             </div>
           </div>
@@ -117,63 +167,108 @@
     </div>
   </div>
 </template>
-  <script>
+<script>
 import html2pdf from "html2pdf.js";
 export default {
   props: ["facturetoedit"],
   methods: {
     exportToPDF() {
-      const element = document.getElementById("printMe"); // Récupérer l'élément à convertir en PDF
+      const element = document.getElementById("printMe");
 
-      // Configuration des options pour html2pdf
       const options = {
-        margin: [10, 10, 10, 10], // Marges en pixels (haut, droite, bas, gauche)
-        filename: "facture.pdf", // Nom du fichier PDF à télécharger
-        image: { type: "jpeg", quality: 0.98 }, // Format d'image et qualité (optionnel)
-        // jsPDF: { unit: "px", format: "a4", orientation: "portrait" }, // Taille de la page PDF (A4 en mode portrait)
-        html2canvas: { scale: 2 }, // Facteur d'échelle pour améliorer la résolution (optionnel)
+        margin: [10, 10, 10, 10],
+        filename: "facture.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
       };
 
-      // Convertir et télécharger en PDF avec les options configurées
       html2pdf()
         .set(options)
         .from(element)
         .then(() => {
-          // Appliquer des styles spécifiques au PDF généré
           const pdf = document.querySelector(".html2pdf__page");
           if (pdf) {
-            pdf.style.fontSize = "10px"; // Définir la taille de police pour le PDF
-            // Vous pouvez également appliquer d'autres styles CSS nécessaires ici
+            pdf.style.fontSize = "10px"; // Réduire la taille de la police
           }
         })
         .save();
     },
     print() {
-      // Pass the element id here
-
       this.$htmlToPaper("printMe");
     },
   },
 };
 </script>
-  <style scoped>
+
+<style scoped>
+/* Réduire la taille de la police pour tout le contenu */
+* {
+  font-size: 15px !important;
+}
+
+/* Réduire les marges pour maximiser l'espace */
+.tarif-table {
+  margin-top: 15px;
+}
+.section-title {
+  margin-top: 20px;
+}
+.note {
+  font-style: italic;
+  margin-top: 10px;
+}
+.info-section {
+  margin-top: 5px;
+}
+.info-section h5 {
+  font-weight: bold;
+}
+.title-header {
+  border: 2px solid black;
+  background-color: rgb(0, 195, 255);
+  color: white;
+  padding: 10px;
+  margin-top: 20px;
+}
+.info-section h5,
+.tarif-table th {
+  font-size: 1rem;
+}
+.tarif-table th {
+  width: 400px; /* Réduire la largeur des cellules de tableau */
+}
+
+.tarif-table {
+  margin-top: 5px; /* Réduire la marge supérieure */
+  margin-bottom: 5px; /* Réduire la marge inférieure */
+}
+
+.tarif-table th,
+.tarif-table td {
+  padding: 5px; /* Réduire le rembourrage */
+  font-size: 10px; /* Réduire la taille de la police */
+}
 @media print {
-  /* Masquer certains éléments lors de l'impression */
-  .modal-header {
-    display: none; /* Masquer l'en-tête de la modale */
-  }
+  .modal-header,
   .btn-group {
-    display: none; /* Masquer les boutons d'actions */
+    display: none;
   }
-  .bottom-page {
-    display: none; /* Masquer la signature en bas de page */
+  .modal-content {
+    border: none;
+    box-shadow: none;
   }
-  .invoice {
-    padding: 20px; /* Ajouter un espace de marge intérieur à l'impression */
+  .modal-body {
+    padding: 0;
   }
-  .invoice img.logo {
-    max-width: 100px; /* Définir la largeur maximale de l'image */
+  .card {
+    box-shadow: none;
+    border: none;
+  }
+  .col-md-12 {
+    max-width: 100%;
+  }
+  .btn {
+    display: none;
   }
 }
 </style>
-  

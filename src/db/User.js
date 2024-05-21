@@ -39,9 +39,10 @@ class User {
 
             { endpoint: 'getreductiongroups', storageKey: 'reductiongroups' },
             { endpoint: 'getassurancetemporaires', storageKey: 'assurancetemporaires' },
-            { endpoint: 'getfraismedicals', storageKey: 'fraismedicals' },
+            { endpoint: 'getactivites', storageKey: 'activites' },
+            // { endpoint: 'getfraismedicals', storageKey: 'fraismedicals' },
             { endpoint: 'gettarificateuraccidents', storageKey: 'tarificateuraccidents' },
-            { endpoint: 'gettarificateurfrais', storageKey: 'tarificateurfrais' },
+            // { endpoint: 'gettarificateurfrais', storageKey: 'tarificateurfrais' },
             { endpoint: 'gettarificationaccidents', storageKey: 'tarificationaccidents' },
         ];
 

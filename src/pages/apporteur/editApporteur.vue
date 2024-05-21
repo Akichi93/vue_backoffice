@@ -102,6 +102,7 @@
 import AppStorage from "../../db/AppStorage.js";
 import adressecomponent from "../../components/select/adressecomponent.vue";
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from "../../services/switchService";
 const toaster = createToaster({
   /* options */
 });
@@ -120,7 +121,7 @@ export default {
     async apporteurUpdate() {
       const uuidApporteurToUpdate = this.apporteurtoedit.uuidApporteur;
       try {
-        const updatedApporteurs = await switchService.updatedApporteurs(
+        const updatedApporteurs = await switchService.updateApporteur(
           this.apporteurtoedit,
           uuidApporteurToUpdate
         );

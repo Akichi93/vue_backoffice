@@ -65,10 +65,8 @@
                 <tbody>
                   <template v-for="(tarification, i) in tarifications" :key="i">
                     <tr>
-                      <td v-text="tarification.nom_complet"></td>
-                      <td
-                        v-text="tarification.tarificateuraccident.activite"
-                      ></td>
+                      <td v-text="tarification.prospect.nom_prospect"></td>
+                      <td v-text="tarification.activite.activite"></td>
                       <td v-text="tarification.compagnie.nom_compagnie"></td>
                       <td class="text-end ico-sec d-flex justify-content-end">
                         <a
@@ -97,8 +95,9 @@
                 </tbody>
               </table>
             </div>
-            <factureTarifacticationAccident v-bind:facturetoedit="facturetoedit"></factureTarifacticationAccident>
-            <!-- <viewTest></viewTest> -->
+            <factureTarifacticationAccident
+              v-bind:facturetoedit="facturetoedit"
+            ></factureTarifacticationAccident>
           </div>
         </div>
       </div>
@@ -109,8 +108,7 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import AppStorage from "../../db/AppStorage";
-import factureTarifacticationAccident from './factureTarifacticationAccident.vue';
-import viewTest from "./viewTest.vue";
+import factureTarifacticationAccident from "./factureTarifacticationAccident.vue";
 
 export default {
   name: "listprospect",
@@ -118,13 +116,19 @@ export default {
     Header,
     Sidebar,
     factureTarifacticationAccident,
-    viewTest
   },
   data() {
     return {
       value: null,
       tarifications: [],
-      facturetoedit: "",
+      facturetoedit: {
+        prospect: {
+          nom_prospect: "",
+        },
+        activite: {
+          activite: "",
+        },
+      },
     };
   },
   created() {
@@ -141,7 +145,7 @@ export default {
       this.facturetoedit = await AppStorage.getFactureAccident(
         uuidTarificationAccident
       );
-      console.log(this.facturetoedit)
+      console.log(this.facturetoedit);
     },
   },
 };

@@ -11,10 +11,11 @@ export default {
   },
 
   methods: {
-    getApporteur() {
-      AppStorage.getApporteurs().then((result) => {
-        this.apporteurs = result;
-      });
+    async getApporteur() {
+      this.apporteurs = await switchService.getApporteurs();
+      // AppStorage.getApporteurs().then((result) => {
+      //   this.apporteurs = result;
+      // });
     },
     exportToCSV() {
       const header = Object.keys(this.apporteurs[0]).join(",");
@@ -44,10 +45,10 @@ export default {
 
     generateExcelContent() {
       const fieldMappings = {
-        'code_apporteur': 'Code Apporteur',
-        'nom_apporteur': 'Nom Apporteur',
-        'contact_apporteur': 'Contact Apporteur',
-        'adresse_apporteur': 'Adresse Apporteur'
+        code_apporteur: "Code Apporteur",
+        nom_apporteur: "Nom Apporteur",
+        contact_apporteur: "Contact Apporteur",
+        adresse_apporteur: "Adresse Apporteur",
       };
 
       const table = document.createElement("table");
@@ -84,9 +85,6 @@ export default {
   </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
   </head><body>${tableHtml}</body></html>`;
     },
-
-
-
   },
 };
 </script>

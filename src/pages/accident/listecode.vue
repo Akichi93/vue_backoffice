@@ -41,14 +41,7 @@
                     >Assurances temporaires</a
                   >
                 </li>
-                <li class="nav-item">
-                  <a
-                    href="#bank_statutory"
-                    data-bs-toggle="tab"
-                    class="nav-link"
-                    >Frais médicaux
-                  </a>
-                </li>
+
                 <li class="nav-item">
                   <a href="#emp_assets" data-bs-toggle="tab" class="nav-link"
                     >Tarification</a
@@ -245,20 +238,49 @@
                     <a
                       href="#"
                       data-bs-toggle="modal"
-                      data-bs-target="#add_tarification"
+                      data-bs-target="#import_file"
                       class="btn btn-success btn-add-emp"
-                      ><i class="fas fa-plus"></i> importer classe</a
-                    >
-                    <a
-                      href="#"
-                      data-bs-toggle="modal"
-                      data-bs-target="#add_tarification"
-                      class="btn btn-success btn-add-emp"
-                      ><i class="fas fa-plus"></i> Ajouter</a
-                    >
+                      ><i class="fas fa-plus"></i> ajouter
+                    </a>
                   </div>
                 </div>
-                <div class="table-responsive">
+                <div class="row" v-show="show">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <Multiselect
+                        v-model="form.compagnie_id"
+                        :options="compagnies"
+                        :searchable="true"
+                        @change="optionCompagnie"
+                        name="police"
+                        :custom-label="
+                          ({ uuidCompagnie, nom_compagnie }) =>
+                            `${uuidCompagnie} - [${nom_compagnie}]`
+                        "
+                        valueProp="uuidCompagnie"
+                        placeholder="Choisir une compagnie"
+                        label="nom_compagnie"
+                        track-by="nom_compagnie"
+                      ></Multiselect>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <div>
+                        <button
+                          type="button"
+                          class="btn btn-primary w-100"
+                          @click="viewForm()"
+                        >
+                          <i class="ri-equalizer-fill me-1 align-bottom"></i>
+                          valider
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="table-responsive" v-show="showForm">
                   <table class="table table-striped custom-table mb-0">
                     <thead>
                       <tr>
@@ -266,48 +288,103 @@
                         <th>Professions</th>
                         <th>Décès</th>
                         <th>IPT</th>
+                        <th>100.000</th>
+                        <th>200.000</th>
+                        <th>400.000</th>
+                        <th>500.000</th>
                         <th class="text-end">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <template v-for="(accident, i) in accidents" :key="i">
+                      <template
+                        v-for="(activite, index) in tarifs"
+                        :key="index"
+                      >
                         <tr>
-                          <td v-text="accident.classe"></td>
-                          <td v-text="accident.activite"></td>
-                          <td v-text="accident.tauxDeces"></td>
-                          <td v-text="accident.tauxIPT"></td>
+                          <td>
+                            <input
+                              type="text"
+                              v-model="activite.classe"
+                              readonly
+                              style="width: 80px"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              readonly
+                              v-model="activite.activite"
+                              style="width: 280px"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              v-model="activite.tauxDeces"
+                              style="width: 80px"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              v-model="activite.tauxIPT"
+                              style="width: 80px"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              v-model="activite.cent"
+                              style="width: 80px"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              v-model="activite.deuxCent"
+                              style="width: 80px"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              v-model="activite.quatreCent"
+                              style="width: 80px"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              v-model="activite.cinqCent"
+                              style="width: 80px"
+                            />
+                          </td>
+
                           <td
                             class="text-end ico-sec d-flex justify-content-end"
                           >
-                            <a
-                              href="#"
-                              data-bs-toggle="modal"
-                              data-bs-target="#view_tarification"
-                              @click="
-                                viewTarificationAccident(
-                                  accident.uuidTarificateurAccident
-                                )
-                              "
-                             
-                              ><i class="fas fa-eye"></i
-                            ></a>
-
-                            <a
-                              href="#"
-                              data-bs-toggle="modal"
-                              data-bs-target="#edit_tarification"                              
-                              ><i class="fas fa-pen"></i
-                            ></a>
+                            <button
+                              class="btn btn-primary"
+                              @click="submitRow(index)"
+                            >
+                              Soumettre
+                            </button>
                           </td>
                         </tr>
                       </template>
                     </tbody>
                   </table>
+                  <!-- <div class="submit-section">
+                    <button
+                      class="btn btn-primary submit-btn"
+                      @click="storeAll"
+                    >
+                      Enregistrer
+                    </button>
+                  </div> -->
                 </div>
-                <addTarification
-                  @tarification-add="handleTarification"
-                ></addTarification>
-                <viewTarification  v-bind:tarificationtoedit="tarificationtoedit"></viewTarification>
+
+                <importClasse></importClasse>
               </div>
             </div>
           </div>
@@ -318,33 +395,46 @@
   </div>
 </template>
   <script>
+import Multiselect from "@vueform/multiselect";
 import AppStorage from "../../db/AppStorage";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import addTarification from "./addTarification.vue";
 import addReduction from "./addReduction.vue";
 import addAssurance from "./addAssurance.vue";
 import addMontant from "./addMontant.vue";
 import editReduction from "./editReduction.vue";
 import editAssurance from "./editAssurance.vue";
 import viewTarification from "./viewTarification.vue";
+import importClasse from "./importClasse.vue";
+import { validateChoiceForm } from "../../utils/helpers/formValidation";
+import { v4 as uuidv4 } from "uuid";
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({
+  /* options */
+});
 
 export default {
   name: "listprospect",
   components: {
+    Multiselect,
     Header,
     Sidebar,
-    addTarification,
     addReduction,
     addAssurance,
     addMontant,
     editReduction,
     editAssurance,
     viewTarification,
+    importClasse,
   },
   data() {
     return {
+      activites: [
+        { classe: "", deces: "", ipt: "", uuidActivite: "" }, // Assurez-vous de définir deces sur une valeur initiale
+      ],
       value: null,
+      show: true,
+      showForm: false,
       reductions: [],
       assurances: [],
       montants: [],
@@ -353,6 +443,14 @@ export default {
       reductiontoedit: "",
       assurancetoedit: "",
       tarificationtoedit: "",
+      // activites: [],
+      tarifs: [],
+      compagnies: [],
+      tauxIpt: "",
+      tauxDeces: "",
+      form: {
+        compagnie_id: "",
+      },
     };
   },
   created() {
@@ -361,9 +459,46 @@ export default {
     this.getMontant();
     this.getTarificationAccident();
     this.getTarification();
+    this.getActivite();
+    this.getCompagnie();
   },
 
   methods: {
+    // storeAll() {
+    //   console.log("All data:", this.tarifs);
+    //   // Logique pour stocker toutes les données
+    //   // Vous pouvez envoyer les données à un serveur via une requête API par exemple
+    //   // axios.post('/api/save-tarifs', this.tarifs).then(response => {
+    //   //   console.log('Data saved successfully');
+    //   // }).catch(error => {
+    //   //   console.error('Error saving data', error);
+    //   // });
+    // },
+    async viewForm() {
+      this.errors = validateChoiceForm(this.form);
+
+      if (Object.keys(this.errors).length > 0) {
+        toaster.error(`Veuillez Selectionnez la compagnie`, {
+          position: "top-right",
+        });
+        return;
+      }
+      this.showForm = true;
+      this.show = false;
+      const uuidCompagnie = this.form.compagnie_id;
+      AppStorage.getActivitiesWithTarificateurAccidents(uuidCompagnie).then(
+        (result) => {
+          this.tarifs = result;
+        }
+      );
+    },
+
+    async getCompagnie() {
+      AppStorage.getCompagnies().then((result) => {
+        this.compagnies = result;
+      });
+    },
+
     async getReduction() {
       AppStorage.getReductionGroups().then((result) => {
         this.reductions = result;
@@ -398,6 +533,7 @@ export default {
 
     async getMontant() {
       AppStorage.getFraisMedicals().then((result) => {
+        // console.log(result);
         this.montants = result;
       });
     },
@@ -408,12 +544,71 @@ export default {
       });
     },
 
+    async getActivite() {
+      AppStorage.getActivites().then((result) => {
+        this.activites = result;
+      });
+    },
+
+    async submitRow(index) {
+      const activite = this.tarifs[index];
+      if (activite.uuidTarificateurAccident == null) {
+        const uuid = uuidv4();
+        const userId = parseInt(AppStorage.getId(), 10);
+        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+
+        const newTarificationAccidentData = [
+          {
+            id: userId,
+            uuidTarificateurAccident: uuid,
+            tauxDeces: activite.tauxDeces,
+            tauxIPT: activite.tauxIPT,
+            cent: activite.cent,
+            deuxCent: activite.deuxCent,
+            quatreCent: activite.quatreCent,
+            cinqCent: activite.cinqCent,
+            sync: 0,
+            id_entreprise: entrepriseId,
+            uuidCompagnie: this.form.compagnie_id,
+            uuidActivite: activite.uuidActivite,
+          },
+        ];
+
+        await AppStorage.storeDataInIndexedDB(
+          "tarificateuraccidents",
+          newTarificationAccidentData
+        );
+
+        toaster.success(`Tarificateur ajouté `, { position: "top-right" });
+      } else {
+        const uuidTarificationToUpdate = activite.uuidTarificateurAccident;
+
+        const nouvellesInfos = {
+          tauxDeces: activite.tauxDeces,
+          tauxIPT: activite.tauxIPT,
+          cent: activite.cent,
+          deuxCent: activite.deuxCent,
+          quatreCent: activite.quatreCent,
+          cinqCent: activite.cinqCent,
+          sync: 0,
+        };
+
+        await AppStorage.updateTarification(
+          uuidTarificationToUpdate,
+          nouvellesInfos
+        );
+
+        toaster.success(`Tarificateur modifié `, { position: "top-right" });
+      }
+    },
+
     async viewTarificationAccident(uuidTarificateurAccident) {
       try {
-        this.tarificationtoedit = await AppStorage.getTarificateurAccidentByUuid(
-          uuidTarificateurAccident
-        );
-        console.log(this.tarificationtoedit)
+        this.tarificationtoedit =
+          await AppStorage.getTarificateurAccidentByUuid(
+            uuidTarificateurAccident
+          );
+        console.log(this.tarificationtoedit);
       } catch (error) {
         console.log(error);
       }
@@ -448,6 +643,40 @@ export default {
       AppStorage.getTarificateurAccidents().then((result) => {
         this.accidents = result;
       });
+    },
+
+    getTauxDeces(activite) {
+      return activite.tarificateurAccidents
+        ? activite.tarificateurAccidents.tauxDeces
+        : "";
+    },
+
+    getTauxIpt(activite) {
+      return activite.tarificateurAccidents
+        ? activite.tarificateurAccidents.tauxIPT
+        : "";
+    },
+
+    getTauxCent(activite) {
+      return activite.tarificateurAccidents
+        ? activite.tarificateurAccidents.cent
+        : "";
+    },
+
+    getTauxDeuxCent(activite) {
+      return activite.tarificateurAccidents
+        ? activite.tarificateurAccidents.deuxCent
+        : "";
+    },
+    getTauxQuatreCent(activite) {
+      return activite.tarificateurAccidents
+        ? activite.tarificateurAccidents.quatreCent
+        : "";
+    },
+    getTauxCinqCent(activite) {
+      return activite.tarificateurAccidents
+        ? activite.tarificateurAccidents.cinqCent
+        : "";
     },
   },
 };
@@ -484,5 +713,6 @@ export default {
   margin-bottom: 10px;
 }
 </style>
+<style src="@vueform/multiselect/themes/default.css"></style>
 
     

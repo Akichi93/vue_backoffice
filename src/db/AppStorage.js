@@ -2893,6 +2893,74 @@ class AppStorage {
         return tarificateur ? tarificateur.activite : null;
     }
 
+    // Activités
+    static async getActivites() {
+        return this.getData('activites') || [];
+    }
+
+    static async storeActivites(activites) {
+        await this.storeData('activites', activites);
+    }
+
+    static async getActivitiesWithTarificateurAccidents(uuidCompagnie) {
+        // Récupérer toutes les activités
+        const activities = await this.getActivites();
+
+
+
+        // Récupérer tous les tarificateurAccidents
+        const tarificateurAccidents = await this.getTarificateurAccidents();
+
+        // Filtrer les tarificateurAccidents en fonction de l'uuidCompagnie fourni
+        const filteredTarificateurAccidents = tarificateurAccidents.filter(tarif => tarif.uuidCompagnie === uuidCompagnie);
+
+        // Mapper les activités pour inclure les données correspondantes de tarificateurAccidents
+        const activitiesWithTarificateurAccidents = activities.map(activity => {
+            const correspondingTarificateur = filteredTarificateurAccidents.find(tarif => tarif.uuidActivite === activity.uuidActivite);
+
+            return {
+                ...activity,
+                uuidTarificateurAccident: correspondingTarificateur ? correspondingTarificateur.uuidTarificateurAccident : null,
+                tauxDeces: correspondingTarificateur ? correspondingTarificateur.tauxDeces : null,
+                tauxIPT: correspondingTarificateur ? correspondingTarificateur.tauxIPT : null,
+                cent: correspondingTarificateur ? correspondingTarificateur.cent : null,
+                deuxCent: correspondingTarificateur ? correspondingTarificateur.deuxCent : null,
+                quatreCent: correspondingTarificateur ? correspondingTarificateur.quatreCent : null,
+                cinqCent: correspondingTarificateur ? correspondingTarificateur.cinqCent : null,
+                uuidCompagnie: correspondingTarificateur ? correspondingTarificateur.uuidCompagnie : null
+            };
+        });
+
+        return activitiesWithTarificateurAccidents;
+    }
+
+    static async updateTarification(uuidTarificateurAccident, nouvellesInfos) {
+        // Obtenez la liste des reductions
+
+        const allTarificateurs = await this.getTarificateurAccidents();
+
+        // Recherche du client par son UUID
+        const TarificateurIndex = allTarificateurs.findIndex(tarificateur => tarificateur.uuidTarificateurAccident === uuidTarificateurAccident);
+
+        if (TarificateurIndex !== -1) {
+            // Mettre à jour les informations du prospect
+            Object.assign(allTarificateurs[TarificateurIndex], nouvellesInfos)
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('tarificateuraccidents', allReductions);
+
+            return allTarificateurs[TarificateurIndex];
+        } else {
+            throw new Error('tarificateur non trouvé');
+        }
+    }
+
+
+
+    static async getTarificateurFrais() {
+        return this.getData('tarificateurfrais') || [];
+    }
+
 
 
     // Tarificateurs Frais
@@ -2946,10 +3014,10 @@ class AppStorage {
 
     static async getTarificateurAccidentByUuid(uuidTarificateurAccident) {
         const allTarifications = await this.getTarificateurIA();
-        
+
         // Filtrer les tarifications avec l'UUID spécifié
         const filteredTarifications = allTarifications.filter(tarification => tarification.uuidTarificateurAccident === uuidTarificateurAccident);
-    
+
         // Regrouper les tarifications par UUID
         const groupedTarifications = filteredTarifications.reduce((acc, tarification) => {
             if (!acc[tarification.uuidTarificateurAccident]) {
@@ -2971,10 +3039,10 @@ class AppStorage {
             });
             return acc;
         }, {});
-    
+
         // Convertir l'objet regroupé en tableau
         const result = Object.values(groupedTarifications);
-    
+
         return result;
     }
 
@@ -3092,122 +3160,86 @@ class AppStorage {
     // }
 
     static async getTauxDeces(activite, compagnieId, montantId) {
-        const tarificateursfrais = await this.getData('tarificateurfrais') || [];
         const tarifcateursaccidents = await this.getData('tarificateuraccidents') || [];
-        const fraismedicals = await this.getData('fraismedicals') || [];
 
+        // Find the matching tarificateur accident based on the activity, company, and selected amount
+        const matchingTarificateur = tarifcateursaccidents.find(tarificateur =>
+            tarificateur.uuidActivite === activite &&
+            tarificateur.uuidCompagnie === compagnieId
+        );
 
-        // Créer un objet pour accéder plus facilement aux frais médicaux par UUID
-        const fraisMedicalMap = fraismedicals.reduce((acc, frais) => {
-            acc[frais.uuidFraisMedical] = frais;
-            return acc;
-        }, {});
+        if (!matchingTarificateur) {
+            throw new Error('No matching tarificateur found');
+        }
 
-        // Créer un objet pour accéder plus facilement aux tarificateurs d'accidents par UUID
-        const tarificateurAccidentMap = tarifcateursaccidents.reduce((acc, tarificateur) => {
-            acc[tarificateur.uuidTarificateurAccident] = tarificateur;
-            return acc;
-        }, {});
+        // Extract the corresponding rate based on the selected montantId
+        const tauxDeces = matchingTarificateur.tauxDeces;
 
-        // Filtrer les tarificateurs de frais en fonction de l'activité, de la compagnie et du montant sélectionnés
-        const filteredTarificateursFrais = tarificateursfrais.filter(tarificateur => {
-            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
-            const fraisMedical = fraisMedicalMap[tarificateur.uuidFraisMedical]; // Définir fraisMedical ici
-            return tarificateurAccident.uuidTarificateurAccident === activite &&
-                tarificateur.uuidCompagnie === compagnieId &&
-                fraisMedical.uuidFraisMedical === montantId;
-        });
-
-        // Récupérer les taux de décès des tarificateurs filtrés
-        const tauxDeces = filteredTarificateursFrais.map(tarificateur => {
-            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
-            return tarificateurAccident.tauxDeces;
-        });
+        if (tauxDeces == null) {
+            throw new Error('No matching taux de décès found for the selected amount');
+        }
 
         const nombreEntier = parseFloat(tauxDeces);
 
+        // console.log(nombreEntier)
+
         return nombreEntier;
     }
+
 
     static async getTauxIpt(activite, compagnieId, montantId) {
-        const tarificateursfrais = await this.getData('tarificateurfrais') || [];
         const tarifcateursaccidents = await this.getData('tarificateuraccidents') || [];
-        const fraismedicals = await this.getData('fraismedicals') || [];
 
+        // console.log(tarifcateursaccidents);
 
-        // Créer un objet pour accéder plus facilement aux frais médicaux par UUID
-        const fraisMedicalMap = fraismedicals.reduce((acc, frais) => {
-            acc[frais.uuidFraisMedical] = frais;
-            return acc;
-        }, {});
+        // Trouver le tarificateur correspondant basé sur l'activité, la compagnie et le montant sélectionné
+        const matchingTarificateur = tarifcateursaccidents.find(tarificateur =>
+            tarificateur.uuidActivite === activite &&
+            tarificateur.uuidCompagnie === compagnieId
+        );
 
-        // Créer un objet pour accéder plus facilement aux tarificateurs d'accidents par UUID
-        const tarificateurAccidentMap = tarifcateursaccidents.reduce((acc, tarificateur) => {
-            acc[tarificateur.uuidTarificateurAccident] = tarificateur;
-            return acc;
-        }, {});
+        if (!matchingTarificateur) {
+            throw new Error('Aucun tarificateur correspondant trouvé');
+        }
 
-        // Filtrer les tarificateurs de frais en fonction de l'activité, de la compagnie et du montant sélectionnés
-        const filteredTarificateursFrais = tarificateursfrais.filter(tarificateur => {
-            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
-            const fraisMedical = fraisMedicalMap[tarificateur.uuidFraisMedical]; // Définir fraisMedical ici
-            return tarificateurAccident.uuidTarificateurAccident === activite &&
-                tarificateur.uuidCompagnie === compagnieId &&
-                fraisMedical.uuidFraisMedical === montantId;
-        });
+        // Extraire le taux correspondant basé sur le montant sélectionné
+        const tauxIpt = matchingTarificateur.tauxIPT;
 
-        // Récupérer les taux de décès des tarificateurs filtrés
-        const tauxIPT = filteredTarificateursFrais.map(tarificateur => {
-            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
-            return tarificateurAccident.tauxIPT;
-        });
+        if (tauxIpt == null) {
+            throw new Error('Aucun taux IPT correspondant trouvé pour le montant sélectionné');
+        }
 
-        const nombreEntier = parseFloat(tauxIPT);
+        const nombreEntier = parseFloat(tauxIpt);
 
         return nombreEntier;
     }
+
 
     static async getTauxFrais(activite, compagnieId, montantId) {
-        const tarificateursfrais = await this.getData('tarificateurfrais') || [];
         const tarifcateursaccidents = await this.getData('tarificateuraccidents') || [];
-        const fraismedicals = await this.getData('fraismedicals') || [];
 
-        // Créer un objet pour accéder plus facilement aux frais médicaux par UUID
-        const fraisMedicalMap = fraismedicals.reduce((acc, frais) => {
-            acc[frais.uuidFraisMedical] = frais;
-            return acc;
-        }, {});
+        // Trouver le tarificateur correspondant basé sur l'activité, la compagnie et le montant sélectionné
+        const matchingTarificateur = tarifcateursaccidents.find(tarificateur =>
+            tarificateur.uuidActivite === activite &&
+            tarificateur.uuidCompagnie === compagnieId
+        );
 
-        // Créer un objet pour accéder plus facilement aux tarificateurs d'accidents par UUID
-        const tarificateurAccidentMap = tarifcateursaccidents.reduce((acc, tarificateur) => {
-            acc[tarificateur.uuidTarificateurAccident] = tarificateur;
-            return acc;
-        }, {});
+        if (!matchingTarificateur) {
+            throw new Error('Aucun tarificateur correspondant trouvé');
+        }
 
-        const tarificateursFraisMap = tarificateursfrais.reduce((acc, tarificateurfrais) => {
-            acc[tarificateurfrais.uuidFraisMedical] = tarificateurfrais;
-            return acc;
-        }, {});
+        // Extraire le taux correspondant basé sur le montant sélectionné
+        const tauxFrais = matchingTarificateur[montantId];
 
-        // Filtrer les tarificateurs de frais en fonction de l'activité, de la compagnie et du montant sélectionnés
-        const filteredTarificateursFrais = tarificateursfrais.filter(tarificateur => {
-            const tarificateurAccident = tarificateurAccidentMap[tarificateur.uuidTarificateurAccident];
-            const fraisMedical = fraisMedicalMap[tarificateur.uuidFraisMedical]; // Définir fraisMedical ici
-            return tarificateurAccident.uuidTarificateurAccident === activite &&
-                tarificateur.uuidCompagnie === compagnieId &&
-                fraisMedical.uuidFraisMedical === montantId;
-        });
+        if (tauxFrais == null) {
+            throw new Error('Aucun taux de frais correspondant trouvé pour le montant sélectionné');
+        }
 
-        // Récupérer les taux de tarificateurs filtrés
-        const taux = filteredTarificateursFrais.map(tarificateurfrais => {
-            const tarificateurAccident = tarificateursFraisMap[tarificateurfrais.uuidFraisMedical];
-            return tarificateurAccident.taux;
-        });
-
-        const nombreEntier = parseInt(taux);
+        const nombreEntier = parseFloat(tauxFrais);
 
         return nombreEntier;
     }
+
 
     static async getTauxEffectif(Effectif, uuidCompagnie) {
         const allReductions = await this.getReductionGroups();
@@ -3227,6 +3259,8 @@ class AppStorage {
                 break;
             }
         }
+
+        console.log(tauxEffectif)
 
         // Retourner le taux effectif trouvé
         return tauxEffectif;
@@ -3258,36 +3292,32 @@ class AppStorage {
     }
 
     // Tarification Accident
-    // static async getTarificationAccidents() {
-    //     const  tarifications = await this.getData('tarificationaccidents') || [];
-    //     const  compagnies = await this.getData('compagnies') || [];
-    //     const  activites = await this.getData('tarificateuraccidents') || [];
-
-    //     console.log(tarifications)
-    //     // return this.getData('tarificationaccidents') || [];
-    // }
-
     static async getTarificationAccidents() {
         const tarifications = await this.getData('tarificationaccidents') || [];
         const compagnies = await this.getData('compagnies') || [];
         const tarificateuraccidents = await this.getData('tarificateuraccidents') || [];
+        const prospects = await this.getData('prospects') || [];
+        const activite = await this.getData('activites') || [];
 
-        // Joindre les données des clients, apporteurs et compagnies aux contrats
+        // console.log(tarifications);
+
+        // Joindre les données des compagnies, prospects, et activités aux tarifications
         const contratsAvecDonnees = tarifications.map(tarification => {
             const compagnie = compagnies.find(compagnie => compagnie.uuidCompagnie === tarification.uuidCompagnie);
-            const tarificateuraccident = tarificateuraccidents.find(tarificateuraccident => tarificateuraccident.uuidTarificateurAccident === tarification.activite);
+            const prospect = prospects.find(prospect => prospect.uuidProspect === tarification.uuidProspect);
+            const activiteData = activite.find(activiteItem => activiteItem.uuidActivite === tarification.uuidActivite);
 
             return {
                 ...tarification,
                 compagnie,
-                tarificateuraccident
+                prospect,
+                activite: activiteData
             };
         });
 
-        return contratsAvecDonnees
-
-
+        return contratsAvecDonnees;
     }
+
 
     static async getTarificationAccidentByuuid(uuidTarificationAccident) {
         const allTarificationss = await this.getData('tarificationaccidents') || [];
@@ -3303,20 +3333,20 @@ class AppStorage {
             }
 
             const compagnies = await this.getData('compagnies') || [];
-            const tarificateuraccidents = await this.getData('tarificateuraccidents') || [];
+            const activites = await this.getData('activites') || [];
+            const prospects = await this.getData('prospects') || [];
 
-            // Recherche des compagnies et tarificateurs
+            // Recherche de la compagnie, de l'activité et du prospect associés à la tarification
             const compagnie = compagnies.find(comp => comp.uuidCompagnie === tarification.uuidCompagnie);
-            const tarificateuraccident = tarificateuraccidents.find(tarif => tarif.uuidTarificateurAccident === tarification.activite);
+            const prospect = prospects.find(prospect => prospect.uuidProspect === tarification.uuidProspect);
+            const activite = activites.find(act => act.uuidActivite === tarification.uuidActivite);
 
-            // Extraction de la propriété "activite" de l'objet "tarificateuraccident"
-            const activite = tarificateuraccident ? tarificateuraccident.activite : null;
-
-            // Construction de l'objet avec les données de tarification, compagnie et activite
+            // Construction de l'objet avec les données de tarification, compagnie, activité et prospect
             const contratAvecDonnees = {
                 ...tarification,
                 compagnie,
-                activite
+                activite,
+                prospect
             };
 
             return contratAvecDonnees;
@@ -3325,7 +3355,6 @@ class AppStorage {
             throw error;
         }
     }
-
 
 
 

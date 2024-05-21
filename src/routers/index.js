@@ -61,7 +61,8 @@ import detailsapporteur from "../pages/apporteur/detailsApporteur.vue";
 import listeaccident from "../pages/accident/listeaccident.vue";
 import createaccident from "../pages/accident/createaccident.vue";
 import listecode from "../pages/accident/listecode.vue";
-import moduleaccident from "../pages/module/moduleaccident.vue"
+import moduleaccident from "../pages/module/moduleaccident.vue";
+import addtarification from "../pages/accident/addtarification.vue";
 
 // Fonction de vérification
 function isPageValid(route) {
@@ -427,6 +428,12 @@ const routes = [
     path: '/moduleaccident',
     name: 'moduleaccident',
     component: moduleaccident,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/addtarification',
+    name: 'addtarification',
+    component: addtarification,
     meta: { requiresAuth: true }
   },
 ];

@@ -80,14 +80,36 @@
                               <span class="text-danger">*</span></label
                             >
                           </div>
-                          <div class="col-lg-9">
+
+                          <div class="col-lg-6">
                             <div class="input-block mb-3">
-                              <input
+                              <Multiselect
                                 v-model="form.nom"
-                                type="text"
-                                placeholder="Nom & prénom"
-                                class="form-control"
-                              />
+                                :options="prospects"
+                                :searchable="true"
+                                name="police"
+                                :custom-label="
+                                  ({ uuidProspect, nom_prospect }) =>
+                                    `${uuidProspect} - [${nom_prospect}]`
+                                "
+                                valueProp="uuidProspect"
+                                placeholder="Choisir un prospect"
+                                label="nom_prospect"
+                                track-by="nom_prospect"
+                              ></Multiselect>
+                             
+                            </div>
+                          </div>
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <button
+                                type="button"
+                                class="btn btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#add_prospect"
+                              >
+                                Ajouter
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -98,15 +120,14 @@
                           <div class="col-lg-9">
                             <Multiselect
                               v-model="form.accident_id"
-                              :options="accidents"
+                              :options="activites"
                               @change="optionActivite"
                               :searchable="true"
-                              name="police"
                               :custom-label="
-                                ({ uuidTarificateurAccident, activite }) =>
-                                  `${uuidTarificateurAccident} - [${activite}]`
+                                ({ uuidActivite, activite }) =>
+                                  `${uuidActivite} - [${activite}]`
                               "
-                              valueProp="uuidTarificateurAccident"
+                              valueProp="uuidActivite"
                               placeholder="Choisir une activité"
                               label="activite"
                               track-by="activite"
@@ -440,6 +461,7 @@
           </div>
         </div>
       </div>
+      <addProspect></addProspect>
       <!-- /Page Content -->
     </div>
   </div>
@@ -452,6 +474,7 @@ import AppStorage from "../../db/AppStorage";
 import { v4 as uuidv4 } from "uuid";
 import { validateChoiceForm } from "../../utils/helpers/formValidation";
 import { createToaster } from "@meforma/vue-toaster";
+import addProspect from "./../prospect/addProspect.vue";
 const toaster = createToaster({
   /* options */
 });
@@ -462,6 +485,7 @@ export default {
     Header,
     Sidebar,
     Multiselect,
+    addProspect,
   },
   data() {
     return {
@@ -469,6 +493,13 @@ export default {
         compagnie_id: "",
         accident_id: "",
       },
+
+      montants: [
+        { uuidFraisMedical: "cent", montant: "100000" },
+        { uuidFraisMedical: "deuxCent", montant: "200000" },
+        { uuidFraisMedical: "quatreCent", montant: "400000" },
+        { uuidFraisMedical: "cinqCent", montant: "500000" },
+      ],
 
       montant_id: "",
       deces: "",
@@ -492,13 +523,15 @@ export default {
       effectifValue: "",
       compagnies: [],
       accidents: [],
-      montants: [],
+      activites: [],
+      prospects: [],
       errors: {},
     };
   },
   created() {
     this.getCompagnie();
-    this.getMontant();
+    this.getProspect();
+    this.getActivite();
     this.getTarificationAccident();
     this.calculatePrimeReduite();
   },
@@ -517,16 +550,37 @@ export default {
       this.show = false;
     },
 
-    // onDecesChange() {
-    //   const montant_id = this.montant_id;
-    //   this.optionFrais(montant_id);
-    // },
+    async onDecesChange() {
+      const montant_id = this.montant_id;
+      const option = montant_id || this.montant_id;
+      if (option) {
+        // Vérifie si l'option des frais médicaux est sélectionnée
+        const deces = this.deces;
+        const ipt = this.ipt;
 
-    // // Méthode appelée lorsque la valeur de 'ipt' change
-    // onIptChange() {
-    //   const montant_id = this.montant_id;
-    //   this.optionFrais(montant_id);
-    // },
+        // Vérifie si les champs 'deces' et 'ipt' sont remplis
+        if (deces !== "" && ipt !== "") {
+          // Les champs sont remplis, effectuer les calculs
+          await this.optionFrais(option);
+        }
+      }
+    },
+
+    async onIptChange() {
+      const montant_id = this.montant_id;
+      const option = montant_id || this.montant_id;
+      if (option) {
+        // Vérifie si l'option des frais médicaux est sélectionnée
+        const deces = this.deces;
+        const ipt = this.ipt;
+
+        // Vérifie si les champs 'deces' et 'ipt' sont remplis
+        if (deces !== "" && ipt !== "") {
+          // Les champs sont remplis, effectuer les calculs
+          await this.optionFrais(option);
+        }
+      }
+    },
 
     async calculerNombreJours(debut, fin) {
       // Convertir les chaînes de date en objets Date
@@ -660,6 +714,7 @@ export default {
     },
 
     async optionFrais(option) {
+      // console.log(option);
       const id_compagnie = this.form.compagnie_id;
       const id_activite = this.form.accident_id;
       const deces = this.deces;
@@ -730,7 +785,13 @@ export default {
         const nombreIptEntier = parseFloat(nombreIpt);
         const tauxIptNombre = parseFloat(tauxIpt);
         const tauxFraisNombre = parseFloat(tauxFrais);
-        console.log(nombreDecesEntier,tauxDecesNombre,nombreIptEntier,tauxIptNombre,tauxFraisNombre)
+        // console.log(
+        //   nombreDecesEntier,
+        //   tauxDecesNombre,
+        //   nombreIptEntier,
+        //   tauxIptNombre,
+        //   tauxFraisNombre
+        // );
 
         // Vérifiez si les valeurs sont positives
         if (nombreDecesEntier >= 0 && tauxDecesNombre >= 0) {
@@ -752,9 +813,20 @@ export default {
       }
     },
 
+    async getProspect() {
+      AppStorage.getProspects().then((result) => {
+        this.prospects = result;
+      });
+    },
+
     async getCompagnie() {
       AppStorage.getCompagnies().then((result) => {
         this.compagnies = result;
+      });
+    },
+    async getActivite() {
+      AppStorage.getActivites().then((result) => {
+        this.activites = result;
       });
     },
 
@@ -771,7 +843,6 @@ export default {
     },
 
     async storeAccident() {
-
       const uuid = uuidv4();
       const userId = parseInt(AppStorage.getId(), 10);
       const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
@@ -784,8 +855,8 @@ export default {
         {
           uuidTarificationAccident: uuid,
           uuidCompagnie: this.form.compagnie_id,
-          nom_complet: this.form.nom,
-          activite: this.form.accident_id,
+          uuidProspect: this.form.nom,
+          uuidActivite: this.form.accident_id,
           effectif: this.effectifValue,
           duree: this.nombreJours,
           deces: this.deces,

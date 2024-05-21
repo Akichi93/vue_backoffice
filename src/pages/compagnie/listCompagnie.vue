@@ -110,6 +110,7 @@ import deleteCompagnie from "./deleteCompagnie.vue";
 import pagination from "laravel-vue-pagination";
 import compagniexport from "../../components/export/compagniexport.vue";
 import AppStorage from "../../db/AppStorage.js";
+import switchService from "../../services/switchService";
 export default {
   name: "compagnie",
   components: {
@@ -137,14 +138,12 @@ export default {
   methods: {
 
     async getCompagnies() {
-      AppStorage.getCompagnies().then((result) => {
-        this.compagnies = result;
-      });
+      this.compagnies = await switchService.getCompagnies();
     },
 
     async editCompagnie(uuidCompagnie) {
       try {
-        this.compagnietoedit = await AppStorage.getCompagnieByUuid(uuidCompagnie);
+        this.compagnietoedit = await switchService.getCompagnieByUuid(uuidCompagnie);
       } catch (error) {
         console.log(error);
       }
@@ -158,20 +157,16 @@ export default {
 
 
 
-    searchtask() {
+   async searchtask() {
       if (this.q.length > 3) {
-        AppStorage.searchCompagniesByName(this.q).then((result) => {
-          this.compagnies = result;
-        });
+        this.compagnies = await switchService.searchCompagnieByName(this.q);
       } else {
         this.getCompagnies();
       }
     },
 
-    refresh() {
-      AppStorage.getCompagnies().then((result) => {
-        this.compagnies = result;
-      });
+    async refresh() {
+      this.compagnies = await switchService.getCompagnies();
     },
   },
 };
