@@ -1,21 +1,13 @@
 // GraveDataAPI.js
-// const API_BASE_URL = 'https://fl4ir.loca.lt/api/auth/';
+
 import { apiUrl } from "../utils/constants/apiUrl";
 import AppStorage from "./AppStorage";
-import axios from "axios";
+import AxiosService from "../services/AxiosService";  // Import the AxiosService
 
 export default {
     async getGraveBranchesData() {
-        const token = AppStorage.getToken();
         try {
-            const response = await fetch(apiUrl.getbranche, {
-                headers: {
-                    Authorization: "Bearer " + token,
-                    "x-access-token": token,
-                }
-            });
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getbranche);
             await AppStorage.updateSyncIndexedDB("branches", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des branches:', error);
@@ -24,20 +16,8 @@ export default {
     },
 
     async getGraveProspectsData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-
-            const response = await axios.get(apiUrl.getprospect, { headers });
-
-
-            const newData = response.data;
-
+            const newData = await AxiosService.get(apiUrl.getprospect);
             await AppStorage.updateSyncIndexedDB("prospects", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des prospects:', error);
@@ -46,17 +26,8 @@ export default {
     },
 
     async getGraveClientsData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-            const response = await axios.get(apiUrl.getclient, { headers });
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getclient);
             await AppStorage.updateSyncIndexedDB("clients", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des clients:', error);
@@ -65,18 +36,8 @@ export default {
     },
 
     async getGraveCompagniesData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-            const response = await axios.get(apiUrl.getcompagnie, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getcompagnie);
             await AppStorage.updateSyncIndexedDB("compagnies", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des compagnies:', error);
@@ -85,18 +46,8 @@ export default {
     },
 
     async getGraveTauxCompagniesData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-            const response = await axios.get(apiUrl.gettauxcompagnie, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.gettauxcompagnie);
             await AppStorage.updateSyncIndexedDB("tauxcompagnies", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des taux compagnies:', error);
@@ -105,17 +56,8 @@ export default {
     },
 
     async getGraveApporteursData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-            const response = await axios.get(apiUrl.getapporteur, { headers });
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getapporteur);
             await AppStorage.updateSyncIndexedDB("apporteurs", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des apporteurs:', error);
@@ -124,18 +66,8 @@ export default {
     },
 
     async getGraveTauxApporteursData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-            const response = await axios.get(apiUrl.gettauxapporteur, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.gettauxapporteur);
             await AppStorage.updateSyncIndexedDB("tauxapporteurs", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des taux apporteurs:', error);
@@ -144,19 +76,8 @@ export default {
     },
 
     async getGraveContratsData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-            const response = await axios.get(apiUrl.getcontrat, { headers });
-
-
-            const newData = response.data;
-
+            const newData = await AxiosService.get(apiUrl.getcontrat);
             await AppStorage.updateSyncIndexedDB("contrats", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des contrats:', error);
@@ -165,18 +86,8 @@ export default {
     },
 
     async getGraveAvenantsData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-            const response = await axios.get(apiUrl.getavenant, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getavenant);
             await AppStorage.updateSyncIndexedDB("avenants", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des avenants:', error);
@@ -185,19 +96,8 @@ export default {
     },
 
     async getGraveAutomobilesData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-
-            const response = await axios.get(apiUrl.getautomobile, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getautomobile);
             await AppStorage.updateSyncIndexedDB("automobiles", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des automobiles:', error);
@@ -206,20 +106,8 @@ export default {
     },
 
     async getGraveGarantiesData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-            const response = await axios.get(apiUrl.getgarantie, { headers });
-
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des garanties.');
-            // }
-            const newData = await response.json();
+            const newData = await AxiosService.get(apiUrl.getgarantie);
             await AppStorage.updateSyncIndexedDB("garanties", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des garanties:', error);
@@ -228,20 +116,8 @@ export default {
     },
 
     async getGraveSinistresData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-            const response = await axios.get(apiUrl.getsinistre, { headers });
-
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des garanties.');
-            // }
-            const newData = await response.json();
+            const newData = await AxiosService.get(apiUrl.getsinistre);
             await AppStorage.updateSyncIndexedDB("sinistres", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des sinistres:', error);
@@ -250,43 +126,18 @@ export default {
     },
 
     async getGraveReglementsData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-            const response = await axios.get(apiUrl.getreglement, { headers });
-
-            // if (!response.ok) {
-            //     throw new Error('Erreur lors de la récupération des données graves des garanties.');
-            // }
-            const newData = await response.json();
+            const newData = await AxiosService.get(apiUrl.getreglement);
             await AppStorage.updateSyncIndexedDB("reglements", newData);
         } catch (error) {
-            console.error('Erreur lors de la récupération des données graves des reglements:', error);
+            console.error('Erreur lors de la récupération des données graves des règlements:', error);
             throw error;
         }
     },
 
-
-
     async getGraveCategoriesData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-
-            const response = await axios.get(apiUrl.getcategorie, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getcategorie);
             await AppStorage.updateSyncIndexedDB("categories", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des categories:', error);
@@ -295,19 +146,8 @@ export default {
     },
 
     async getGraveMarquesData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-
-            const response = await axios.get(apiUrl.getmarque, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getmarque);
             await AppStorage.updateSyncIndexedDB("marques", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des marques:', error);
@@ -316,19 +156,8 @@ export default {
     },
 
     async getGraveGenresData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-
-            const response = await axios.get(apiUrl.getgenre, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getgenre);
             await AppStorage.updateSyncIndexedDB("genres", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des genres:', error);
@@ -337,19 +166,8 @@ export default {
     },
 
     async getGraveCouleursData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-
-            const response = await axios.get(apiUrl.getcouleur, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getcouleur);
             await AppStorage.updateSyncIndexedDB("couleurs", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des couleurs:', error);
@@ -358,19 +176,8 @@ export default {
     },
 
     async getGraveEnergiesData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-
-            const response = await axios.get(apiUrl.getenergie, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getenergie);
             await AppStorage.updateSyncIndexedDB("energies", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des energies:', error);
@@ -379,47 +186,40 @@ export default {
     },
 
     async getGraveReductionGroupsData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-
-            const response = await axios.get(apiUrl.getreductiongroup, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getreductiongroup);
             await AppStorage.updateSyncIndexedDB("reductiongroups", newData);
         } catch (error) {
-            console.error('Erreur lors de la récupération des données graves des energies:', error);
+            console.error('Erreur lors de la récupération des données graves des groups de réduction:', error);
             throw error;
         }
     },
 
     async getGraveAssuranceTemporairesData() {
-        const token = AppStorage.getToken();
-
-        const headers = {
-            Authorization: "Bearer " + token,
-            "x-access-token": token,
-        };
-
         try {
-
-            const response = await axios.get(apiUrl.getassurancetemporaire, { headers });
-
-
-            const newData = response.data;
+            const newData = await AxiosService.get(apiUrl.getassurancetemporaire);
             await AppStorage.updateSyncIndexedDB("assurancetemporaires", newData);
         } catch (error) {
-            console.error('Erreur lors de la récupération des données graves des energies:', error);
+            console.error('Erreur lors de la récupération des données graves des assurances temporaires:', error);
             throw error;
         }
     },
 
+    async getGraveActivitesData() {
+        try {
+            const newData = await AxiosService.get(apiUrl.getactivite);
+            await AppStorage.updateSyncIndexedDB("activites", newData);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données graves des assurances temporaires:', error);
+            throw error;
+        }
+    },
 
+    async getGraveTarificateurAccidentsData() {
 
+    },
+
+    async getGraveTarificationAccidentsData() {
+
+    }
 };

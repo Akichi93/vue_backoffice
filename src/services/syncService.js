@@ -38,9 +38,8 @@ const SyncService = {
             'energies',
             'reductiongroups',
             'assurancetemporaires',
-            'fraismedicals',
+            'activites',
             'tarificateuraccidents',
-            'tarificateurfrais',
             'tarificationaccidents',
         ];
 
@@ -127,14 +126,11 @@ const SyncService = {
             case 'getassurancetemporaires':
                 queue = await AppStorage.getAssuranceTemporaires();
                 break;
-            case 'fraismedicals':
-                queue = await AppStorage.getFraisMedicals();
+            case 'activites':
+                queue = await AppStorage.getGraveActivitesData();
                 break;
             case 'tarificateuraccidents':
                 queue = await AppStorage.getTarificateurAccidents();
-                break;
-            case 'tarificateurfrais':
-                queue = await AppStorage.getTarificateurFrais();
                 break;
             case 'tarificationaccidents':
                 queue = await AppStorage.getTarificationAccidents();
@@ -230,6 +226,22 @@ const SyncService = {
                     case 'energies':
                         await DataAPI.getGraveEnergiesData();
                         break;
+                    case 'reductiongroups':
+                        await DataAPI.getGraveReductionGroupsData();
+                        break;
+                    case 'assurancetemporaires':
+                        await DataAPI.getGraveAssuranceTemporairesData();
+                        break;
+                    case 'activites':
+                        await DataAPI.getGraveActivitesData();
+                        break;
+                    case 'tarificateuraccidents':
+                        await DataAPI.getGraveTarificateurAccidentsData();
+                        break;
+                    case 'tarificationaccidents':
+                        await DataAPI.getGraveTarificationAccidentsData();
+                        break;
+
                     default:
                         console.warn(`La méthode de récupération des données graves pour ${table} n'est pas définie.`);
                         break;

@@ -531,6 +531,10 @@ class OfflineService {
             throw new Error(error);
         }
     }
+
+    async storeCompagnie(){
+        
+    }
 }
 
 // export default OfflineService;

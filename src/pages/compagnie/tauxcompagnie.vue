@@ -168,24 +168,20 @@ export default {
     async searchtask() {
       if (this.q.length > 3) {
         const uuidCompagnie = this.$route.params.uuidCompagnie;
-        this.tauxCompagnies = await switchService.searchTauxCompagnieByNomBranche(this.q,uuidCompagnie)
-
-        // AppStorage.searchTauxCompagnieByNomBranche(this.q, uuidCompagnie).then(
-        //   (result) => {
-        //     this.tauxCompagnies = result;
-        //   }
-        // );
+        this.tauxCompagnies =
+          await switchService.searchTauxCompagnieByNomBranche(
+            this.q,
+            uuidCompagnie
+          );
       } else {
         this.fetchData();
       }
     },
 
-    refresh() {
+    async refresh() {
       const uuidCompagnie = this.$route.params.uuidCompagnie;
-      AppStorage.getTauxCompagniesByIdCompagnie(uuidCompagnie).then(
-        (result) => {
-          this.tauxCompagnies = result;
-        }
+      this.tauxCompagnies = await switchService.getTauxCompagnies(
+        uuidCompagnie
       );
     },
   },

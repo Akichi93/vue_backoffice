@@ -57,6 +57,7 @@ const apiUrl = {
     gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
     gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
     gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
+    getactivite: createApiUrl('getactivites'),
 };
 
 // Export des fonctions et données

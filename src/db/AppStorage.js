@@ -93,8 +93,6 @@ class AppStorage {
         await tx.complete;
     }
 
-
-
     static async updateDataInIndexedDB(key, newData) {
         const db = await openDB(this.dbName, 1);
 
@@ -107,8 +105,6 @@ class AppStorage {
         // Terminer la transaction
         await tx.complete;
     }
-
-
 
     static async updateSyncIndexedDB(key, newData) {
         try {
@@ -139,9 +135,6 @@ class AppStorage {
             throw error;
         }
     }
-
-
-
 
     static async clearData(key) {
         const db = await openDB(this.dbName, 1, {

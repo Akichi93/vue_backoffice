@@ -581,7 +581,7 @@ class switchService {
     async searchTauxCompagnieByNomBranche(name, uuid) {
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.searchTauxApporteurByNomBranche(name, uuid);
+                return await offlineService.searchTauxCompagnieByNomBranche(name, uuid);
             } else if (this.currentMode === "Ligne") {
                 // return await onlineService.storeBranche(nomBranche, entrepriseId);
             } else {

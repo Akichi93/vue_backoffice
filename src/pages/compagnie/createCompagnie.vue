@@ -299,26 +299,20 @@ export default {
     },
     async getBranche() {
       this.branches = await switchService.getBranches();
-      // AppStorage.getBranches().then((result) => {
-      //   this.branches = result;
-      // });
     },
 
     async getAdresse() {
       this.localisations = await switchService.getAdresses();
-      // AppStorage.getLocalisations().then((result) => {
-      //   this.localisations = result;
-      // });
     },
 
     async storeCompagnie() {
       this.errors = validateCompagnieForm(this.form);
 
       if (Object.keys(this.errors).length > 0) {
-        // Afficher un message d'erreur
-        toaster.error(`Veuillez remplir les champs`, {
+        toaster.error(`Veuillez remplir tous les champs`, {
           position: "top-right",
         });
+        return;
       }
 
       if (Object.keys(this.errors).length === 0) {
