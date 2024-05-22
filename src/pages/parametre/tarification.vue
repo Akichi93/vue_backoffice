@@ -63,7 +63,7 @@
   
           if (response.status === 200) {
             // this.fetchData(); // Assuming fetchData() updates enterprise data after editing
-            toaster.success("Nouvelle entreprise enregistrée", {
+            toaster.success("Nouvelle tarification enregistrée", {
               position: "top-right",
             });
           }
