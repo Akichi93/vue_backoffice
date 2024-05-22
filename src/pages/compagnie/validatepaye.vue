@@ -53,19 +53,6 @@
         toaster.success(`Avenant payer`, {
           position: "top-right",
         });
-  
-        // axios
-        //   .post("/api/auth/soldeAvenant", {
-        //     id_avenant: this.avenantoedit.id_avenant,
-        //   })
-        //   .then((response) => {
-        //     this.$emit('avenant-solder', response)
-        //     if (response.status === 200) {
-        //       toaster.success(`Avenant solde`, {
-        //         position: "top-right",
-        //       });
-        //     }
-        //   });
       },
   
     }

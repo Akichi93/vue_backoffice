@@ -512,7 +512,7 @@ class switchService {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
         } catch (error) {
-            console.error("Error storing branch:", error);
+            console.error("Error storing compagnie:", error);
             throw error;
         }
     }
@@ -589,6 +589,21 @@ class switchService {
             }
         } catch (error) {
             console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async storeCompagnie(form, userId, entrepriseId, unique,donnees,datas) {
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.storeCompagnie(form, userId, entrepriseId, unique,donnees,datas);
+            } else if (this.currentMode === "Ligne") {
+                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing compagnie:", error);
             throw error;
         }
     }

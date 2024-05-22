@@ -315,208 +315,33 @@ export default {
         return;
       }
 
-      if (Object.keys(this.errors).length === 0) {
-        if (this.unique) {
-          const uuid = uuidv4();
+      const unique = this.unique;
+      const userId = parseInt(AppStorage.getId(), 10);
+      const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+      let donnees = this.extractValues(this.branches);
+      let datas = this.extractUuidBranches(this.branches);
+      
 
-          const userId = parseInt(AppStorage.getId(), 10);
-          const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+      await switchService.storeCompagnie(
+        this.form,
+        userId,
+        entrepriseId,
+        unique,
+        donnees,
+        datas
+      );
 
-          // Obtenir la date du jour au format YYYYMMDD
-          let today = new Date();
-          let year = today.getFullYear();
-          let month = (today.getMonth() + 1).toString().padStart(2, "0");
-          let day = today.getDate().toString().padStart(2, "0");
-
-          let dateDuJour = year + month + day;
-
-          // Supposons que $nom est votre variable contenant le nom du client
-          let nom = this.form.nom_compagnie;
-
-          // Prendre les deux premiers caractères du nom
-          let deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
-
-          // Générer le numéro de client en ajoutant "CL-" à la date du jour
-          let codeCompagnie = "CO-" + deuxPremiersCaracteres + dateDuJour;
-
-          // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
-          const newCompagnieData = [
-            {
-              nom_compagnie: this.form.nom_compagnie,
-              adresse_compagnie: this.form.adresse_compagnie,
-              email_compagnie: this.form.email_compagnie,
-              postal_compagnie: this.form.postal_compagnie,
-              contact_compagnie: this.form.contact_compagnie,
-              postal_compagnie: this.form.postal_compagnie,
-              sync: 0,
-              id_entreprise: entrepriseId,
-              user_id: userId,
-              uuidCompagnie: uuid,
-              code_compagnie: codeCompagnie,
-              supprimer_compagnie: 0,
-            },
-          ];
-
-          // Ajouter la nouvelle donnée dans IndexedDB
-          await AppStorage.storeDataInIndexedDB("compagnies", newCompagnieData);
-
-          const branchesMap = await AppStorage.getBranches();
-
-          // Convertir l'objet en tableau de paires clé-valeur
-          const entries = Object.entries(branchesMap);
-
-          for (const [key, value] of entries) {
-            // Générer un UUID unique pour uuidTauxcompagnie
-            const uuidTauxcompagnie = uuidv4();
-
-            let newTauxCompagnie = [
-              {
-                uuidTauxCompagnie: uuidTauxcompagnie,
-                uuidCompagnie: uuid,
-                sync: 0,
-                tauxcomp: this.unique,
-                nom_branche: value.nom_branche,
-                id_entreprise: entrepriseId,
-                uuidBranche: value.uuidBranche,
-              },
-            ];
-
-            await AppStorage.storeDataInIndexedDB(
-              "tauxcompagnies",
-              newTauxCompagnie
-            );
-          }
-        }
-
-        toaster.success(`Compagnie ajouté`, {
-          position: "top-right",
-        });
-
-        this.$router.push("/listcompagnie");
-      } else {
-        const uuid = uuidv4();
-
-        const userId = parseInt(AppStorage.getId(), 10);
-        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
-
-        let test = JSON.parse(JSON.stringify(this.branches));
-        let donnees = [];
-
-        for (let i = 0; i < Object.keys(test).length; i++) {
-          donnees.push(test[i]["value"]);
-        }
-
-        let testing = JSON.parse(JSON.stringify(this.branches));
-        let datas = [];
-
-        for (let i = 0; i < Object.keys(testing).length; i++) {
-          datas.push(testing[i]["uuidBranche"]);
-        }
-
-        // Obtenir la date du jour au format YYYYMMDD
-        let today = new Date();
-        let year = today.getFullYear();
-        let month = (today.getMonth() + 1).toString().padStart(2, "0");
-        let day = today.getDate().toString().padStart(2, "0");
-
-        let dateDuJour = year + month + day;
-
-        // Supposons que $nom est votre variable contenant le nom du client
-        let nom = this.form.nom_compagnie;
-
-        // Prendre les deux premiers caractères du nom
-        let deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase(); // Mettre en majuscules
-
-        // Générer le numéro de client en ajoutant "CL-" à la date du jour
-        let codeCompagnie = "CO-" + deuxPremiersCaracteres + dateDuJour;
-
-        // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
-        const newCompagnieData = [
-          {
-            nom_compagnie: this.form.nom_compagnie,
-            adresse_compagnie: this.form.adresse_compagnie,
-            email_compagnie: this.form.email_compagnie,
-            postal_compagnie: this.form.postal_compagnie,
-            contact_compagnie: this.form.contact_compagnie,
-            postal_compagnie: this.form.postal_compagnie,
-            sync: 0,
-            id_entreprise: entrepriseId,
-            user_id: userId,
-            uuidCompagnie: uuid,
-            code_compagnie: codeCompagnie,
-            supprimer_compagnie: 0,
-          },
-        ];
-
-        // Ajouter la nouvelle donnée dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("compagnies", newCompagnieData);
-
-        const branchesMap = await AppStorage.getBranches();
-        // console.log(branchesMap)
-
-        for (let i = 0; i < datas.length; i++) {
-          // const nom_branche = branchesMap[datas[i]];
-
-          const dataItem = datas[i];
-          const branch = branchesMap.find(
-            (branch) => branch.uuidBranche === dataItem
-          );
-          const nom_branche = branch.nom_branche;
-
-          // Générer un UUID unique pour uuidTauxcompagnie
-          const uuidTauxcompagnie = uuidv4();
-
-          let newTauxCompagnie = [
-            {
-              uuidTauxCompagnie: uuidTauxcompagnie,
-              uuidCompagnie: uuid,
-              sync: 0,
-              tauxcomp: donnees[i],
-              nom_branche: nom_branche,
-              id_entreprise: entrepriseId,
-              uuidBranche: datas[i],
-            },
-          ];
-
-          await AppStorage.storeDataInIndexedDB(
-            "tauxcompagnies",
-            newTauxCompagnie
-          );
-        }
-
-        toaster.success(`Compagnie ajouté`, {
-          position: "top-right",
-        });
-
-        this.$router.push("/listcompagnie");
-      }
-
-      // }
-      // }
+      toaster.success("Compagnie ajouté", { position: "top-right" });
+      this.$router.push("/listcompagnie");
     },
 
-    // fetchCompagnies
-    // async fetchCompagnies() {
-    //   const token = AppStorage.getToken();
+    extractValues(branches) {
+      return branches.map((branch) => branch["value"]);
+    },
 
-    //   // Configurez les en-têtes de la requête
-    //   const headers = {
-    //     Authorization: "Bearer " + token,
-    //     "x-access-token": token,
-    //   };
-
-    //   try {
-    //     const response = await axios.get(apiUrl.getcompagnie, { headers });
-
-    //     // Vous pouvez traiter les données comme vous le souhaitez
-    //     const compagnies = response.data;
-
-    //     // Retourner les compagnies pour une utilisation éventuelle
-    //     return compagnies;
-    //   } catch (error) {
-    //     console.error("Erreur lors de la récupération des clients sur le serveur", error);
-    //   }
-    // },
+    extractUuidBranches(branches) {
+      return branches.map((branch) => branch["uuidBranche"]);
+    },
 
     handleClientsChange(localisations) {
       this.localisations = localisations;

@@ -44,6 +44,7 @@
                     <th>Situation géographique</th>
                     <th>Statut</th>
                     <th>Action</th>
+                    <th>Validation</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -78,6 +79,16 @@
                         ></a>
                       </td>
                       <td v-if="entreprise.statut == 1">PAS D'ACTION</td>
+                      <td>
+                        <a
+                          href="#"
+                          data-bs-toggle="modal"
+                          @click="getEntreprise(entreprise.id_entreprise)"
+                          title="Valider"
+                          data-bs-target="#validate_tarification"
+                          ><i class="fas fa-check"></i
+                        ></a>
+                      </td>
                     </tr>
                   </template>
                 </tbody>
@@ -90,6 +101,9 @@
       <validateentreprise
         v-bind:entreprisetoedit="entreprisetoedit"
       ></validateentreprise>
+      <Tarification
+        v-bind:entreprisetoedit="entreprisetoedit"
+      ></Tarification>
     </div>
   </div>
 </template>
@@ -101,6 +115,7 @@ import { getEntreprisesList } from "../../services/entrepriseservice";
 import validateentreprise from "./validateentreprise.vue";
 import Multiselect from "@vueform/multiselect";
 import { createToaster } from "@meforma/vue-toaster";
+import Tarification from "./tarification.vue";
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
@@ -111,6 +126,7 @@ export default {
     Header,
     Sidebar,
     validateentreprise,
+    Tarification
   },
   data() {
     return {

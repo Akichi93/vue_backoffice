@@ -435,7 +435,7 @@ class OfflineService {
         return updatedTauxApporteurs;
     }
 
-    async updateApporteur(apporteurtoedit,uuidApporteurToUpdate) {
+    async updateApporteur(apporteurtoedit, uuidApporteurToUpdate) {
 
         const nouvellesInfos = {
             nom_apporteur: apporteurtoedit.nom_apporteur,
@@ -456,7 +456,7 @@ class OfflineService {
         return updatedApporteurs;
     }
 
-    async getInfoApporteur(uuid){
+    async getInfoApporteur(uuid) {
         try {
             return await AppStorage.getAvenantsByUUIDApporteur(uuid);
         } catch (error) {
@@ -464,7 +464,7 @@ class OfflineService {
         }
     }
 
-    async getSommeCommissionsApporteur(uuid){
+    async getSommeCommissionsApporteur(uuid) {
         try {
             return await AppStorage.getSommeCommissionsApporteur(uuid);
         } catch (error) {
@@ -472,11 +472,11 @@ class OfflineService {
         }
     }
 
-    async getAdresse(){
+    async getAdresse() {
         return await AppStorage.getLocalisations();
     }
 
-    async getProfession(){
+    async getProfession() {
         return await AppStorage.getProfessions();
     }
 
@@ -532,8 +532,77 @@ class OfflineService {
         }
     }
 
-    async storeCompagnie(){
+    async storeCompagnie(form, userId, entrepriseId, unique,donnees,datas) {
         
+        const uuid = uuidv4();
+        // Get today's date in YYYYMMDD format
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = (today.getMonth() + 1).toString().padStart(2, "0");
+        let day = today.getDate().toString().padStart(2, "0");
+        let dateDuJour = `${year}${month}${day}`;
+
+        // Get the first two characters of the company name
+        let nom = form.nom_compagnie;
+        let deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase();
+        let codeCompagnie = `CO-${deuxPremiersCaracteres}${dateDuJour}`;
+
+        const newCompagnieData = [
+            {
+                nom_compagnie: form.nom_compagnie,
+                adresse_compagnie: form.adresse_compagnie,
+                email_compagnie: form.email_compagnie,
+                postal_compagnie: form.postal_compagnie,
+                contact_compagnie: form.contact_compagnie,
+                sync: 0,
+                id_entreprise: entrepriseId,
+                user_id: userId,
+                uuidCompagnie: uuid,
+                code_compagnie: codeCompagnie,
+                supprimer_compagnie: 0,
+            },
+        ];
+
+        // Add the new data to IndexedDB
+        await AppStorage.storeDataInIndexedDB("compagnies", newCompagnieData);
+
+        const branchesMap = await AppStorage.getBranches();
+        let tauxCompagnies = [];
+
+        if (unique) {
+            for (const [key, value] of Object.entries(branchesMap)) {
+                tauxCompagnies.push({
+                    uuidTauxCompagnie: uuidv4(),
+                    uuidCompagnie: uuid,
+                    sync: 0,
+                    tauxcomp: unique,
+                    nom_branche: value.nom_branche,
+                    id_entreprise: entrepriseId,
+                    uuidBranche: value.uuidBranche,
+                });
+            }
+        } else {
+
+            for (let i = 0; i < datas.length; i++) {
+                const branch = branchesMap.find((b) => b.uuidBranche === datas[i]);
+                tauxCompagnies.push({
+                    uuidTauxCompagnie: uuidv4(),
+                    uuidCompagnie: uuid,
+                    sync: 0,
+                    tauxcomp: donnees[i],
+                    nom_branche: branch.nom_branche,
+                    id_entreprise: entrepriseId,
+                    uuidBranche: datas[i],
+                });
+            }
+        }
+
+        for (const tauxCompagnie of tauxCompagnies) {
+            await AppStorage.storeDataInIndexedDB("tauxcompagnies", [
+                tauxCompagnie,
+            ]);
+        }
+
     }
 }
 

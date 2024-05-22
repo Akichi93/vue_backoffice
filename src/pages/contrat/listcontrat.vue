@@ -143,38 +143,14 @@ export default {
       } catch (error) {
         console.log(error);
       }
-      // axios
-      //   .get("/api/auth/editContrat/" + id_contrat)
-      //   .then((response) => {
-      //     this.contrattoedit = response.data;
-      //     // this.form.id_contrat = response.data.id_contrat;
-      //   })
-      //   .catch((error) => console.log(error));
     },
 
     async getContrat() {
-      // const response = await fetch(
-      //   "/api/check-internet-connection"
-      // );
-      // const data = await response.json();
-
-      // this.isConnected = data.connected;
-      // if (this.isConnected) {
-      //   getContratsExport().then((result) => {
-      //     // Mettre à jour IndexedDB avec les contrats récupérés
-      //     AppStorage.storeDataInIndexedDB("contrats", result.data);
-
-      //     AppStorage.getContrats().then((result) => {
-      //       this.contrats = result;
-      //     });
-
-
-      //   });
-      // } else {
+     
       AppStorage.getContrats().then((result) => {
         this.contrats = result;
       });
-      // }
+      
     },
     getRoleconnect() {
       getRoleActif().then((result) => {
