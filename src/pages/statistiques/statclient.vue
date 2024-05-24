@@ -72,13 +72,13 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import pagination from "laravel-vue-pagination";
+// import pagination from "laravel-vue-pagination";
 export default {
   name: "statclient",
   components: {
     Header,
     Sidebar,
-    pagination
+    // pagination
   },
   data() {
     return {

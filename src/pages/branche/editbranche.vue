@@ -31,6 +31,7 @@
 <script>
 import AppStorage from "../../db/AppStorage.js";
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from '../../services/switchService.js';
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
@@ -43,14 +44,16 @@ export default {
    async brancheUpdate() {
     const uuidBrancheToUpdate = this.branchetoedit.uuidBranche;
 
-      const nouvellesInfos = {
-        nom_branche: this.branchetoedit.nom_branche,
-        sync: 0,
-      };
+      // const nouvellesInfos = {
+      //   nom_branche: this.branchetoedit.nom_branche,
+      //   sync: 0,
+      // };
+      await switchService.updateBranche(uuidBrancheToUpdate, this.branchetoedit)
+      
 
-      await AppStorage.updateBranche(uuidBrancheToUpdate, nouvellesInfos);
+      // await AppStorage.updateBranche(uuidBrancheToUpdate, this.branchetoedit);
 
-      const updatedBranches = await AppStorage.getBranches();
+      // const updatedBranches = await AppStorage.getBranches();
 
       // Émettre un événement avec les compagnues mis à jour
       this.$emit("branche-updated", updatedBranches);
@@ -58,23 +61,6 @@ export default {
       toaster.success(`Branche modifié avec succès`, {
         position: "top-right",
       });
-      
-      // const entrepriseId = AppStorage.getEntreprise();
-
-      // axios.patch("/api/auth/updateBranche/" + this.branchetoedit.id_branche, {
-      //   nom_branche: this.branchetoedit.nom_branche,
-      //   id_entreprise: entrepriseId,
-        
-      // })
-      //   .then((response) => {
-      //     this.$emit('task-updated', response)
-      //     toaster.success(`Branche modifié avec succès`, {
-      //       position: "top-right",
-      //     });
-      //   })
-      //   .catch((error) => {
-      //     console.log(error)
-      //   });
     }
   },
 }

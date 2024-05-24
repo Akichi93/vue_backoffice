@@ -466,7 +466,8 @@
     </div>
   </div>
 </template>
-  <script>
+
+<script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import Multiselect from "@vueform/multiselect";
@@ -535,6 +536,7 @@ export default {
     this.getTarificationAccident();
     this.calculatePrimeReduite();
   },
+  
 
   methods: {
     async viewForm() {
@@ -757,7 +759,8 @@ export default {
       }
 
       const PrimeReduite = this.PrimeReduite;
-      if (PrimeReduite != null) {
+      if (PrimeReduite != null) { 
+        
         this.PrimeNetteAnnuelle = await this.calculatePrimeNetteAnnuelle(
           PrimeReduite
         );

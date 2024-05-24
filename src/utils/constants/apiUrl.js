@@ -21,7 +21,10 @@ const apiUrl = {
     postbrancheprospect: createApiUrl('postbrancheprospect'),
     getavenant: createApiUrl('getavenants'),
     getbranche: createApiUrl('getbranches'),
-    postbranche: createApiUrl('postbranche'),
+    postbranche: createApiUrl('postbranches'),
+    seteditbranche: (uuidBranche) => `${base_url}/api/auth/editbranche/${uuidBranche}`,
+    setupdatebranche: (uuidBranche) => `${base_url}/api/auth/updatebranche/${uuidBranche}`,
+    setdeletbranche: (uuidBranche) => `${base_url}/api/auth/deletebranche/${uuidBranche}`,   
     getclient: createApiUrl('getclients'),
     postclient: createApiUrl('postclient'),
     getlocalisation: createApiUrl('getlocalisations'),
@@ -58,7 +61,14 @@ const apiUrl = {
     gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
     gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
     getactivite: createApiUrl('getactivites'),
+    // getactivite: createApiUrl('getactivites'),
+    
 };
+
+// function seteditbranche (uuidBranche) {
+//     var data = `${base_url}/editbranche/${uuidBranche}`;
+//     return data;
+// }
 
 // Export des fonctions et données
 export { createApiUrl, apiUrl };

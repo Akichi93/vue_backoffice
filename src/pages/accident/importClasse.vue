@@ -16,7 +16,58 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-md-12">
-                
+                <div class="section">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Classe</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    step="0.01"
+                    min="0"
+                    max="1000"
+                    
+                  />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Activité</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Pourcentage</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    step="0.01"
+                    min="0"
+                    max="1000"
+                   
+                  />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Compagnie</label>
+                  <compagniecomponent
+                    :placeholder="'selectionnez la compagnie'"
+                   
+                  ></compagniecomponent>
+                </div>
+              </div>
+            </div>
+          </div>
               </div>
             </div>
   

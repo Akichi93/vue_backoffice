@@ -107,7 +107,7 @@ import { getRoleActif } from "../../services/roleservice";
 import searchbranche from "../../components/search/searchbranche.vue";
 import editCompagnie from "./editCompagnie.vue";
 import deleteCompagnie from "./deleteCompagnie.vue";
-import pagination from "laravel-vue-pagination";
+// import pagination from "laravel-vue-pagination";
 import compagniexport from "../../components/export/compagniexport.vue";
 import AppStorage from "../../db/AppStorage.js";
 import switchService from "../../services/switchService";
@@ -119,7 +119,7 @@ export default {
     searchbranche,
     editCompagnie,
     deleteCompagnie,
-    pagination,
+    // pagination,
     compagniexport,
   },
   data() {

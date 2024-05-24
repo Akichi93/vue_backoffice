@@ -123,11 +123,11 @@ const SyncService = {
             case 'reductiongroups':
                 queue = await AppStorage.getReductionGroups();
                 break;
-            case 'getassurancetemporaires':
+            case 'assurancetemporaires':
                 queue = await AppStorage.getAssuranceTemporaires();
                 break;
             case 'activites':
-                queue = await AppStorage.getGraveActivitesData();
+                queue = await AppStorage.getActivites();
                 break;
             case 'tarificateuraccidents':
                 queue = await AppStorage.getTarificateurAccidents();

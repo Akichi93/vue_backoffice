@@ -27,7 +27,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getBranches();
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.getBranches();
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -48,6 +48,38 @@ class switchService {
             }
         } catch (error) {
             console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async getBrancheByUuid(uuid) {
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getBrancheByUuid(uuid);
+            } else if (this.currentMode === "Ligne") {
+                const response = await onlineService.getBrancheByUuid(uuid);
+                return response.data;
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async updateBranche(prospectoedit, uuidBrancheToUpdate) {
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateBranche(prospectoedit, uuidBrancheToUpdate);
+            } else if (this.currentMode === "Ligne") {
+                const response = await onlineService.updateBranche(prospectoedit, uuidBrancheToUpdate);
+                return response.data;
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error update Branche:", error);
             throw error;
         }
     }
@@ -307,10 +339,10 @@ class switchService {
         }
     }
 
-    async updateApporteur(apporteurtoedit,uuidApporteurToUpdate) {
+    async updateApporteur(apporteurtoedit, uuidApporteurToUpdate) {
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.updateApporteur(apporteurtoedit,uuidApporteurToUpdate);
+                return await offlineService.updateApporteur(apporteurtoedit, uuidApporteurToUpdate);
             } else if (this.currentMode === "Ligne") {
                 // return await onlineService.storeBranche(nomBranche, entrepriseId);
             } else {
@@ -320,7 +352,7 @@ class switchService {
             console.error("Error storing branch:", error);
             throw error;
         }
-    }  
+    }
 
     async searchApporteursByName(name) {
         try {
@@ -532,7 +564,7 @@ class switchService {
         }
     }
 
-    
+
     async getTauxCompagnies(uuid) {
         try {
             if (this.currentMode === "Local") {
@@ -593,10 +625,10 @@ class switchService {
         }
     }
 
-    async storeCompagnie(form, userId, entrepriseId, unique,donnees,datas) {
+    async storeCompagnie(form, userId, entrepriseId, unique, donnees, datas) {
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.storeCompagnie(form, userId, entrepriseId, unique,donnees,datas);
+                return await offlineService.storeCompagnie(form, userId, entrepriseId, unique, donnees, datas);
             } else if (this.currentMode === "Ligne") {
                 // return await onlineService.storeBranche(nomBranche, entrepriseId);
             } else {

@@ -5,6 +5,7 @@
 <script>
 import { getbrancheExport } from "../../services/brancheService";
 import AppStorage from "../../db/AppStorage";
+import switchService from "../../services/switchService";
 export default {
   created() {
     this.getBranche();

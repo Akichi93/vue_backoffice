@@ -119,7 +119,7 @@
 
             <deletecontrat v-bind:contrattoedit="contrattoedit"></deletecontrat>
 
-            <pagination
+            <!-- <pagination
               align="center"
               :data="contrats"
               :limit="5"
@@ -127,7 +127,7 @@
               :last_page="contrats.last_page"
               @pagination-change-page="getContrat"
             >
-            </pagination>
+            </pagination> -->
           </div>
         </div>
       </div>
@@ -140,14 +140,14 @@ import Sidebar from "../../layout/Sidebar.vue";
 import { getContratsList } from "../../services/contratService";
 import { getRoleActif } from "../../services/roleservice";
 import deletecontrat from "../contrat/deletecontrat.vue";
-import pagination from "laravel-vue-pagination";
+// import pagination from "laravel-vue-pagination";
 import contratexport from "../../components/export/contratexport.vue";
 export default {
   components: {
     Header,
     Sidebar,
     deletecontrat,
-    pagination,
+    // pagination,
     contratexport,
   },
   data() {

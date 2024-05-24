@@ -18,6 +18,7 @@ class OfflineService {
             uuidBranche: uuid,
             nom_branche: nomBranche,
             id_entreprise: entrepriseId,
+            supprimer_branche: 0,
             sync: 0,
         }];
 
@@ -40,7 +41,7 @@ class OfflineService {
         }
     }
 
-    async updateBranche() {
+    async updateBranche(branchetoedit,uuidProspectToUpdate) {
 
     }
 

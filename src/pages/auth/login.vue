@@ -62,7 +62,7 @@
 <script>
 import axios from "axios";
 import User from "../../db/User";
-import Online from '../../db/Online'
+import Online from "../../db/Online";
 import { apiUrl } from "../../utils/constants/apiUrl";
 import { createToaster } from "@meforma/vue-toaster";
 const toaster = createToaster({
@@ -87,8 +87,7 @@ export default {
           if (mode === "Local") {
             User.responseAfterLogin(res);
             this.$router.push({ name: "localstorage" });
-          } 
-          else {
+          } else {
             Online.responseAfterLogin(res);
             this.$router.push({ name: "dashboard" });
           }

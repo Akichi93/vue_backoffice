@@ -159,7 +159,7 @@
   </div>
 </template>
 <script>
-import pagination from "laravel-vue-pagination";
+// import pagination from "laravel-vue-pagination";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { getProspectsExport } from "../../services/prospectService";
@@ -176,7 +176,7 @@ export default {
   components: {
     Header,
     Sidebar,
-    pagination,
+    // pagination,
     admettreProspect,
     deleteProspect,
     editProspect,

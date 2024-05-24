@@ -74,10 +74,10 @@ class AppStorage {
             // Gestion des conflits : fusionner les données existantes avec les nouvelles données
             if (Array.isArray(existingData) && Array.isArray(data)) {
                 const mergedData = existingData.concat(data);
-                // dataEncrypted = LocalService.encrypte(mergedData)
+               
 
                 await store.put(mergedData, key);
-                // await store.put(dataEncrypted, key);
+               
                 console.log(`Données fusionnées à apiData dans IndexedDB avec succès`);
             } else {
                 console.error('Les données existantes ou les nouvelles données ne sont pas au format de tableau.');

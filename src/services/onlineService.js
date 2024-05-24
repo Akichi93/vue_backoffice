@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import AppStorage from "../db/AppStorage.js";
 import { apiUrl } from '../utils/constants/apiUrl.js';
 import AxiosService from './AxiosService.js'; // Importer AxiosService
+import axios from 'axios';
 
 class OnlineService {
     // constructor() {
@@ -14,6 +15,17 @@ class OnlineService {
     //         "x-access-token": this.token,
     //     };
     // }
+
+    async getBranches() {
+        try {
+            const response = await AxiosService.get(apiUrl.getbranche);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
 
     async storeBranche(nomBranche, entrepriseId) {
         const uuid = uuidv4();
@@ -31,6 +43,32 @@ class OnlineService {
         } catch (error) {
             console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
             return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async getBrancheByUuid(uuid) {
+        try {
+            const response = axios.get(apiUrl.seteditbranche(uuid))
+            return response;
+            // axios.get("/api/auth/sinistres/edit/" + id_sinistre)
+        } catch (error) {
+            console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async updateBranche(branchetoedit, uuidProspectToUpdate) {
+        console
+        try {
+            const nouvellesInfos = {
+                nom_branche: branchetoedit.nom_branche,
+                sync: 1,
+            };
+            const response = AxiosService.post(apiUrl.setupdatebranche(uuidProspectToUpdate), nouvellesInfos)
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour de la branche:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
         }
     }
 

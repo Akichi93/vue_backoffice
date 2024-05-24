@@ -88,10 +88,10 @@ import { getRoleActif } from "../../services/roleservice";
 import editbranche from "./editbranche.vue";
 import deletebranche from "./deletebranche.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
-import pagination from "laravel-vue-pagination";
+// import pagination from "laravel-vue-pagination";
 import brancheexport from "../../components/export/brancheexport.vue";
 import AppStorage from "../../db/AppStorage.js";
-import switchService from '../../services/switchService';
+import switchService from "../../services/switchService";
 export default {
   data() {
     return {
@@ -116,7 +116,8 @@ export default {
 
     async editbranche(uuidBranche) {
       try {
-        this.branchetoedit = await AppStorage.getBrancheByUuid(uuidBranche);
+        // this.branchetoedit = await AppStorage.getBrancheByUuid(uuidBranche);
+        this.branchetoedit = await switchService.getBrancheByUuid(uuidBranche);
       } catch (error) {
         console.log(error);
       }
@@ -144,7 +145,7 @@ export default {
     Sidebar,
     editbranche,
     deletebranche,
-    pagination,
+    // pagination,
     searchbranche,
     brancheexport
   },

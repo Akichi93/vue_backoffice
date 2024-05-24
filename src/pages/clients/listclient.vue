@@ -108,7 +108,7 @@ import addclient from "./addclient.vue";
 import { getClientSelect } from "../../services/clientService";
 import editclient from "./editclient.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
-import pagination from "laravel-vue-pagination";
+// import pagination from "laravel-vue-pagination";
 import clientexport from "../../components/export/clientexport.vue";
 import AppStorage from "../../db/AppStorage.js";
 import switchService from "../../services/switchService";
@@ -120,7 +120,7 @@ export default {
     addclient,
     editclient,
     searchbranche,
-    pagination,
+    // pagination,
     clientexport,
   },
   name: "listclient",
