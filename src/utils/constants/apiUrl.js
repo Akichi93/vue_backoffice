@@ -8,25 +8,7 @@ function createApiUrl(endpoint) {
 // Objet contenant toutes les URLs d'API
 const apiUrl = {
     authentification: createApiUrl('login'),
-    postcontrat: createApiUrl('postcontrat'),
-    getcontrat: createApiUrl('getcontrats'),
-    postapporteur: createApiUrl('postapporteur'),
-    getapporteur: createApiUrl('getapporteurs'),
-    gettauxapporteur: createApiUrl('gettauxapporteurs'),
-    postcompagnie: createApiUrl('postcompagnie'),
-    gettauxcompagnie: createApiUrl('gettauxcompagnies'),
-    getcompagnie: createApiUrl('getcompagnies'),
-    getprospect: createApiUrl('getprospects'),
-    postprospect: createApiUrl('postprospect'),
-    postbrancheprospect: createApiUrl('postbrancheprospect'),
-    getavenant: createApiUrl('getavenants'),
-    getbranche: createApiUrl('getbranches'),
-    postbranche: createApiUrl('postbranches'),
-    seteditbranche: (uuidBranche) => `${base_url}/api/auth/editbranche/${uuidBranche}`,
-    setupdatebranche: (uuidBranche) => `${base_url}/api/auth/updatebranche/${uuidBranche}`,
-    setdeletbranche: (uuidBranche) => `${base_url}/api/auth/deletebranche/${uuidBranche}`,   
-    getclient: createApiUrl('getclients'),
-    postclient: createApiUrl('postclient'),
+
     getlocalisation: createApiUrl('getlocalisations'),
     postlocalisation: createApiUrl('postlocalisations'),
     getprofession: createApiUrl('getprofessions'),
@@ -39,6 +21,60 @@ const apiUrl = {
     postcouleur: createApiUrl('postcouleurs'),
     getgenre: createApiUrl('getgenres'),
     postgenre: createApiUrl('postgenres'),
+
+    getbranche: createApiUrl('getbranches'),
+    postbranche: createApiUrl('postbranches'),
+    seteditbranche: (uuidBranche) => `${base_url}/api/auth/editbranche/${uuidBranche}`,
+    setupdatebranche: (uuidBranche) => `${base_url}/api/auth/updatebranche/${uuidBranche}`,
+    setdeletebranche: (uuidBranche) => `${base_url}/api/auth/deletebranche/${uuidBranche}`,
+
+    getprospect: createApiUrl('getprospects'),
+    postprospect: createApiUrl('postprospect'),
+    seteditprospect: (uuidProspect) => `${base_url}/api/auth/editprospect/${uuidProspect}`,
+    setupdateprospect: (uuidProspect) => `${base_url}/api/auth/updateprospect/${uuidProspect}`,
+    setetatprospect: (uuidProspect) => `${base_url}/api/auth/etatprospect/${uuidProspect}`,
+    setdeleteprospect: (uuidProspect) => `${base_url}/api/auth/deleteprospect/${uuidProspect}`,
+    setnameprospect: (uuidProspect) => `${base_url}/api/auth/getnameprospect/${uuidProspect}`,
+    setbranchediffprospect: (uuidProspect) => `${base_url}/api/auth/getbranchediffprospect/${uuidProspect}`, 
+    setbrancheprospect: (uuidProspect) => `${base_url}/api/auth/getbrancheprospect/${uuidProspect}`, 
+    validateprospect: createApiUrl('validateprospect'),
+    postbrancheprospect: createApiUrl('postbrancheprospect'),
+    getnameprospect: createApiUrl('validateprospect'),
+
+
+    getclient: createApiUrl('getclients'),
+    postclient: createApiUrl('postclient'),
+    seteditclient: (uuidClient) => `${base_url}/api/auth/editclient/${uuidClient}`,
+    setupdateclient: (uuidClient) => `${base_url}/api/auth/updateclient/${uuidClient}`,
+
+    getapporteur: createApiUrl('getapporteurs'),
+    postapporteur: createApiUrl('postapporteur'),
+    seteditapporteur: (uuidApporteur) => `${base_url}/api/auth/editapporteur/${uuidApporteur}`,
+    setupdateapporteur: (uuidApporteur) => `${base_url}/api/auth/updateapporteur/${uuidApporteur}`,
+    settauxapporteur: (uuidApporteur) => `${base_url}/api/auth/gettauxapporteur/${uuidApporteur}`,
+    setnamepporteur: (uuidApporteur) => `${base_url}/api/auth/getnameapporteur/${uuidApporteur}`,
+    setedittauxapporteur: (uuidTauxApporteur) => `${base_url}/api/auth/edittauxapporteur/${uuidTauxApporteur}`,
+    setupdatetauxapporteur: (uuidTauxApporteur) => `${base_url}/api/auth/updatetauxapporteur/${uuidTauxApporteur}`,
+    setinfoapporteur: (uuidTauxApporteur) => `${base_url}/api/auth/infoapporteur/${uuidTauxApporteur}`,
+    setsommecommissionapporteur: (uuidApporteur) => `${base_url}/api/auth/getsommecommissionapporteur/${uuidApporteur}`,
+    setsommecommissionsapporteurpayer: (uuidApporteur) => `${base_url}/api/auth/getsommecommissionsapporteurpayer/${uuidApporteur}`, 
+    setavenantbyuuid: (uuidAvenant) => `${base_url}/api/auth/getavenantbyuuid/${uuidAvenant}`, 
+    gettauxapporteur: createApiUrl('gettauxapporteurs'),
+
+    getcompagnie: createApiUrl('getcompagnies'),
+    postcompagnie: createApiUrl('postcompagnie'),
+    gettauxcompagnie: createApiUrl('gettauxcompagnies'),
+   
+
+    postcontrat: createApiUrl('postcontrat'),
+    getcontrat: createApiUrl('getcontrats'),
+    
+  
+
+    getavenant: createApiUrl('getavenants'),
+
+
+
     statistiques: createApiUrl('stat/'),
     year: createApiUrl('year'),
     retrievebranche: createApiUrl('retrievebranche'),
@@ -51,7 +87,7 @@ const apiUrl = {
     getreglement: createApiUrl('getreglements'),
     postreglement: createApiUrl('postreglements'),
     postfileavenant: createApiUrl('postfileavenants'),
-    setetatprospect: (uuidProspect) => `${base_url}/etatProspect/${uuidProspect}`,
+
     getuser: createApiUrl('utilisateurs'),
     setedituser: (id) => `${base_url}/utilisateurs/edit/${id}`,
     getreductiongroup: createApiUrl('getreductiongroups'),
@@ -62,7 +98,7 @@ const apiUrl = {
     gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
     getactivite: createApiUrl('getactivites'),
     // getactivite: createApiUrl('getactivites'),
-    
+
 };
 
 // function seteditbranche (uuidBranche) {

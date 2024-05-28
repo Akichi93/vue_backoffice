@@ -6,17 +6,28 @@
           <div class="form-header">
             <h3>Supprimer branche</h3>
             <p>
-              Voulez vous supprimer la branche <b>{{ branchetoedit.nom_branche }}</b> ?
+              Voulez vous supprimer la branche
+              <b>{{ branchetoedit.nom_branche }}</b> ?
             </p>
           </div>
           <div class="modal-btn delete-action">
             <div class="row">
               <div class="col-6">
-                <a href="javascript:void(0);" class="btn btn-primary continue-btn" data-bs-dismiss="modal"
-                  @click.prevent="brancheDelete">supprimer</a>
+                <a
+                  href="javascript:void(0);"
+                  class="btn btn-primary continue-btn"
+                  data-bs-dismiss="modal"
+                  @click.prevent="brancheDelete"
+                  >supprimer</a
+                >
               </div>
               <div class="col-6">
-                <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary cancel-btn">Annuler</a>
+                <a
+                  href="javascript:void(0);"
+                  data-bs-dismiss="modal"
+                  class="btn btn-primary cancel-btn"
+                  >Annuler</a
+                >
               </div>
             </div>
           </div>
@@ -42,20 +53,26 @@ export default {
     };
   },
   methods: {
-    brancheDelete() {
-      axios
-        .patch("/api/auth/deleteBranche/" + this.branchetoedit.id_branche, {
-          nom_branche: this.branchetoedit.nom_branche,
-        })
-        .then((response) => {
-          this.$emit("task-delete", response);
-          toaster.success(`Branche supprimé avec succès`, {
-            position: "top-right",
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    async brancheDelete() {
+      const uuidBrancheToUpdate = this.branchetoedit.uuidBranche;
+
+      const updatedBranches = await switchService.deleteBranche(
+        uuidBrancheToUpdate
+      );
+
+      // axios
+        // .patch("/api/auth/deleteBranche/" + this.branchetoedit.id_branche, {
+        //   nom_branche: this.branchetoedit.nom_branche,
+        // })
+        // .then((response) => {
+        //   this.$emit("task-delete", response);
+        //   toaster.success(`Branche supprimé avec succès`, {
+        //     position: "top-right",
+        //   });
+        // })
+        // .catch((error) => {
+        //   console.log(error);
+        // });
     },
   },
 };

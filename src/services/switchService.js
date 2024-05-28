@@ -12,7 +12,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getAdresses();
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.storeBranche(nomBranche, entrepriseId);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -68,12 +68,45 @@ class switchService {
         }
     }
 
-    async updateBranche(prospectoedit, uuidBrancheToUpdate) {
+    async updateBranche(branchetoedit, uuidBrancheToUpdate) {
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.updateBranche(prospectoedit, uuidBrancheToUpdate);
+                return await offlineService.updateBranche(branchetoedit, uuidBrancheToUpdate);
             } else if (this.currentMode === "Ligne") {
-                const response = await onlineService.updateBranche(prospectoedit, uuidBrancheToUpdate);
+                const response = await onlineService.updateBranche(branchetoedit, uuidBrancheToUpdate);
+                return response.data;
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error update Branche:", error);
+            throw error;
+        }
+    }
+
+    async deleteBranche(uuidBrancheToUpdate) {
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.deleteBranche(uuidBrancheToUpdate);
+            } else if (this.currentMode === "Ligne") {
+                const response = await onlineService.deleteBranche(uuidBrancheToUpdate);
+                return response.data;
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error update Branche:", error);
+            throw error;
+        }
+    }
+
+
+    async deleteBranche() {
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateBranche(branchetoedit, uuidBrancheToUpdate);
+            } else if (this.currentMode === "Ligne") {
+                const response = await onlineService.updateBranche(branchetoedit, uuidBrancheToUpdate);
                 return response.data;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
@@ -89,7 +122,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.storeProspect(formData, userId, entrepriseId);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.storeProspect(formData, userId, entrepriseId);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -104,7 +137,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.ChangeEtat(uuidProspectToUpdate, nouveauStatut, nouveauSyncState);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.ChangeEtat(uuidProspectToUpdate, nouveauStatut, nouveauSyncState);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -134,7 +167,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.changeProspect(uuidProspectToUpdate, newState, newSyncState, prospectoedit, entrepriseId, userId, numeroClient);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.changeProspect(uuidProspectToUpdate, newState, newSyncState, prospectoedit, entrepriseId, userId, numeroClient);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -149,7 +182,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.deleteProspect(uuidProspectToUpdate, newDelete, newSyncState);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.deleteProspect(uuidProspectToUpdate, newDelete, newSyncState);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -159,12 +192,59 @@ class switchService {
         }
     }
 
+    async getNameProspectParUUID(uuidProspect) {
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getNameProspectParUUID(uuidProspect);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getNameProspectParUUID(uuidProspect);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async getDifferenceOfBranches(uuidProspect) {
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getDifferenceOfBranches(uuidProspect);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getDifferenceOfBranches(uuidProspect);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async getBrancheProspectsByuuidProspect(uuidProspect) {
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getBrancheProspectsByuuidProspect(uuidProspect);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getBrancheProspectsByuuidProspect(uuidProspect);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+
+
     async addProspectBranche(form, userId, entrepriseId, uuidProspect) {
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.addProspectBranche(form, userId, entrepriseId, uuidProspect);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.addProspectBranche(form, userId, entrepriseId, uuidProspect);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -179,7 +259,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getProspects();
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.getProspects();
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -194,7 +274,8 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getProspectByUuid(uuid);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                const response = await onlineService.getProspectByUuid(uuid);
+                return response.data;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -219,12 +300,14 @@ class switchService {
         }
     }
 
+    // Clients
+
     async storeClient(form, entrepriseId, userId, numeroClient) {
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeClient(form, entrepriseId, userId, numeroClient);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.storeClient(form, entrepriseId, userId, numeroClient);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -254,7 +337,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getClients();
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.getClients();
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -269,7 +352,8 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getClientByUuid(uuid);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                const response = await onlineService.getClientByUuid(uuid);
+                return response.data;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -294,12 +378,13 @@ class switchService {
         }
     }
 
+    //Apporteurs
     async getApporteurs() {
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getApporteurs();
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.getApporteurs();
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -314,7 +399,8 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getApporteurByUuid(uuid);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                const response = await onlineService.getApporteurByUuid(uuid);
+                return response.data;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -329,7 +415,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.storeApporteur(form, userId, entrepriseId, codeApporteur, unique, donnees, datas);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.storeApporteur(form, userId, entrepriseId, codeApporteur, unique, donnees, datas);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -344,7 +430,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.updateApporteur(apporteurtoedit, uuidApporteurToUpdate);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.updateApporteur(apporteurtoedit, uuidApporteurToUpdate);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -374,7 +460,8 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getTauxApporteurs(uuid);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                const response = await onlineService.getTauxApporteurs(uuid);
+                return response.data;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -389,7 +476,8 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getNameApporteur(uuid);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                const response = await onlineService.getNameApporteur(uuid);
+                return response.data.nom_apporteur;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -404,7 +492,8 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getTauxApporteurByUuid(uuid);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                const response = await onlineService.getTauxApporteurByUuid(uuid);
+                return response.data;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -429,12 +518,27 @@ class switchService {
         }
     }
 
-    async updateTauxApporteur(uuidTauxApporteurUpdate, newTaux, newSyncState) {
+    async updateTauxApporteur(uuidTauxApporteurUpdate, newTaux, newSyncState,uuidApporteur) {
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.updateTauxApporteur(uuidTauxApporteurUpdate, newTaux, newSyncState);
+                return await offlineService.updateTauxApporteur(uuidTauxApporteurUpdate, newTaux, newSyncState,uuidApporteur);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.updateTauxApporteur(uuidTauxApporteurUpdate, newTaux, newSyncState,uuidApporteur);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async getAvenantByUuid(uuidAvenant){
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getAvenantByUuid(uuidAvenant);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getAvenantByUuid(uuidAvenant);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -458,13 +562,13 @@ class switchService {
             throw error;
         }
     }
-
+ 
     async getInfoApporteur(uuid) {
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getInfoApporteur(uuid);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.getInfoApporteur(uuid);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -479,7 +583,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getSommeCommissionsApporteur(uuid);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.getSommeCommissionsApporteur(uuid);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -489,12 +593,28 @@ class switchService {
         }
     }
 
+    async getSommeCommissionsApporteurPayer(uuid){
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getSommeCommissionsApporteurPayer(uuid);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getSommeCommissionsApporteurPayer(uuid);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+    
+
     async getAdresse() {
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.getAdresse();
+                return await offlineService.getAdresses();
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.getAdresse();
+                return await onlineService.getAdresses();
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }

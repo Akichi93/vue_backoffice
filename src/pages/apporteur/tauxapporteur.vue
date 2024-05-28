@@ -130,6 +130,7 @@ export default {
         this.tauxApporteurs = await switchService.getTauxApporteurs(
           uuidApporteur
         );
+        
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
       }

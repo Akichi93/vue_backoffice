@@ -33,12 +33,6 @@
                   class="form-control"
                 >
                 </Multiselect>
-                <p
-                  style="color: red"
-                  class="text-red"
-                  v-if="errors.branche_id"
-                  v-text="errors.branche_id"
-                ></p>
               </div>
             </div>
 
@@ -87,7 +81,8 @@ import AppStorage from "../../db/AppStorage";
 import Multiselect from "@vueform/multiselect";
 import { validateBrancheProspectForm } from "../../utils/helpers/formValidation";
 import { createToaster } from "@meforma/vue-toaster";
-import offlineService from '../../services/offlineService';
+import offlineService from "../../services/offlineService";
+import switchService from "../../services/switchService";
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
@@ -109,9 +104,11 @@ export default {
   },
   methods: {
     async getbranche() {
-      AppStorage.getDifferenceOfBranches().then((result) => {
-        this.branches = result;
-      });
+      const uuidProspect = this.$route.params.uuidProspect;
+      this.branches = await switchService.getDifferenceOfBranches(uuidProspect);
+      // AppStorage.getDifferenceOfBranches(uuidProspect).then((result) => {
+      //   this.branches = result;
+      // });
     },
 
     async addProspectBranche() {
@@ -129,7 +126,8 @@ export default {
       const uuidProspect = this.$route.params.uuidProspect;
 
       try {
-      const updatedBrancheProspects =  await offlineService.addProspectBranche(
+
+        const updatedBrancheProspects = await switchService.addProspectBranche(
           this.form,
           userId,
           entrepriseId,

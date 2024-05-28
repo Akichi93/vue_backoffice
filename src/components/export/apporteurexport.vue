@@ -5,6 +5,7 @@
 <script>
 import { getApporteursExport } from "../../services/apporteurService";
 import AppStorage from "../../db/AppStorage";
+import switchService from "../../services/switchService";
 export default {
   created() {
     this.getApporteur();

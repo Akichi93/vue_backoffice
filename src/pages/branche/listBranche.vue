@@ -112,11 +112,8 @@ export default {
       this.branches = await switchService.getBranches();
     },
 
-   
-
     async editbranche(uuidBranche) {
       try {
-        // this.branchetoedit = await AppStorage.getBrancheByUuid(uuidBranche);
         this.branchetoedit = await switchService.getBrancheByUuid(uuidBranche);
       } catch (error) {
         console.log(error);

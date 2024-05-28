@@ -485,15 +485,16 @@ class AppStorage {
             return { ...prospect, branche };
         });
 
-        console.log(prospectsWithBranche);
+        // console.log(prospectsWithBranche);
 
         return prospectsWithBranche;
     }
 
 
-    static async getDifferenceOfBranches() {
+    static async getDifferenceOfBranches(uuidProspect) {
         const branches = await this.getBranches();
-        const brancheprospects = await this.getData('brancheprospects') || [];
+        // const brancheprospects = await this.getData('brancheprospects') || [];
+        const brancheprospects = await this.getBrancheProspectsByuuidProspect(uuidProspect);
 
         // Exclure les branches présentes dans brancheprospects
         const branchesDifference = branches.filter(branch => !brancheprospects.includes(branch));

@@ -8,7 +8,7 @@
             <p>Vous êtes sur le point d'admettre le prospect comme client?</p>
           </div>
           <div class="modal-btn delete-action">
-            <input type="hidden" class="form-control" v-model="prospectoedit.id_prospect" />
+            <!-- <input type="hidden" class="form-control" v-model="prospectoedit.id_prospect" /> -->
             <input type="hidden" class="form-control" v-model="prospectoedit.nom_prospect" />
             <input type="hidden" class="form-control" v-model="prospectoedit.civilite" />
             <input type="hidden" class="form-control" v-model="prospectoedit.postal_prospect" />

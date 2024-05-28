@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import AppStorage from "../db/AppStorage.js";
 class OfflineService {
 
+    //Form
     async getAdresses() {
         return await AppStorage.getLocalisations();
     }
@@ -10,6 +11,11 @@ class OfflineService {
         return await AppStorage.getBranches();
     }
 
+    async getProfession() {
+        return await AppStorage.getProfessions();
+    }
+
+    //Branche
     async storeBranche(nomBranche, entrepriseId) {
         const uuid = uuidv4();
 
@@ -41,9 +47,25 @@ class OfflineService {
         }
     }
 
-    async updateBranche(branchetoedit,uuidProspectToUpdate) {
+    async updateBranche(branchetoedit, uuidBrancheToUpdate) {
+
+        const nouvellesInfos = {
+            nom_branche: branchetoedit.nom_branche,
+            sync: 0,
+        };
+
+        await AppStorage.updateBranche(uuidBrancheToUpdate, nouvellesInfos);
+
+        const updatedBranches = await AppStorage.getBranches();
+
+        return updatedBranches;
+    }
+
+    async deleteBranche() {
 
     }
+
+    // Prospect
 
     async storeProspect(formData, userId, entrepriseId) {
         const uuid = uuidv4();
@@ -153,6 +175,14 @@ class OfflineService {
         }
     }
 
+    async getNameProspectParUUID(uuidProspect) {
+        return await AppStorage.getNameProspectParUUID(uuidProspect);
+    }
+
+    async getDifferenceOfBranches(uuidProspect) {
+        return AppStorage.getDifferenceOfBranches(uuidProspect)
+    }
+
     async addProspectBranche(form, userId, entrepriseId, uuidProspect) {
         const uuid = uuidv4();
 
@@ -180,6 +210,10 @@ class OfflineService {
 
     }
 
+    async getBrancheProspectsByuuidProspect(uuidProspect) {
+        return AppStorage.getBrancheProspectsByuuidProspect(uuidProspect);
+    }
+
     async getProspects() {
         return await AppStorage.getProspects();
     }
@@ -198,6 +232,13 @@ class OfflineService {
         } catch (error) {
             throw new Error(error);
         }
+    }
+
+
+    // Client
+
+    async getClients() {
+        return await AppStorage.getClients();
     }
 
     async storeClient(form, entrepriseId, userId, numeroClient) {
@@ -246,10 +287,6 @@ class OfflineService {
 
         return updatedClients;
 
-    }
-
-    async getClients() {
-        return await AppStorage.getClients();
     }
 
     async getClientByUuid(uuid) {
@@ -318,7 +355,7 @@ class OfflineService {
                         uuidTauxApporteur: uuidTauxcompagnie,
                         uuidApporteur: uuid,
                         sync: 0,
-                        taux: this.unique,
+                        taux: unique,
                         nom_branche: value.nom_branche,
                         id_entreprise: entrepriseId,
                         uuidBranche: value.uuidBranche,
@@ -436,6 +473,11 @@ class OfflineService {
         return updatedTauxApporteurs;
     }
 
+    async getAvenantByUuid(uuidAvenant) {
+        return await AppStorage.getAvenantByUuid(uuidAvenant);
+
+    }
+
     async updateApporteur(apporteurtoedit, uuidApporteurToUpdate) {
 
         const nouvellesInfos = {
@@ -473,13 +515,19 @@ class OfflineService {
         }
     }
 
-    async getAdresse() {
-        return await AppStorage.getLocalisations();
+    async getSommeCommissionsApporteurPayer(uuid) {
+        try {
+            return await AppStorage.getSommeCommissionsApporteurPayer(uuid);
+            // await AppStorage.getSommeCommissionsApporteurPayer(uuidApporteur)
+        } catch (error) {
+            throw new Error(error);
+        }
     }
+    // async getAdresse() {
+    //     return await AppStorage.getLocalisations();
+    // }
 
-    async getProfession() {
-        return await AppStorage.getProfessions();
-    }
+
 
     async getCompagnies() {
         return await AppStorage.getCompagnies();
@@ -533,8 +581,8 @@ class OfflineService {
         }
     }
 
-    async storeCompagnie(form, userId, entrepriseId, unique,donnees,datas) {
-        
+    async storeCompagnie(form, userId, entrepriseId, unique, donnees, datas) {
+
         const uuid = uuidv4();
         // Get today's date in YYYYMMDD format
         let today = new Date();

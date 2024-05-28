@@ -44,6 +44,7 @@ export default {
       // Nouvel état du prospect
       const newTaux = this.tauxtoedit.taux;
       const newSyncState = 0;
+      const uuidApporteur = this.$route.params.uuidApporteur;
 
       try {
         // await AppStorage.updateTauxApporteurByUuid(uuidTauxApporteurUpdate, newTaux, newSyncState);
@@ -51,7 +52,7 @@ export default {
       
         // const updatedTauxApporteurs = await AppStorage.getTauxApporteursByIdApporteur(uuidTauxApporteurUpdate);
 
-        const updatedTauxApporteurs = await switchService.updateTauxApporteur(uuidTauxApporteurUpdate,newTaux,newSyncState)
+        const updatedTauxApporteurs = await switchService.updateTauxApporteur(uuidTauxApporteurUpdate,newTaux,newSyncState,uuidApporteur)
 
         // Émettre un événement avec les prospects mis à jour
         this.$emit("tauxapporteur-update", updatedTauxApporteurs);

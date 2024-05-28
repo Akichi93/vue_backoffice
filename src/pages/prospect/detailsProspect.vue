@@ -95,6 +95,7 @@ import Sidebar from "../../layout/Sidebar.vue";
 import editprospectbranche from "../prospect/editprospectbranche.vue";
 import addprospectbranche from "../prospect/addprospectbranche.vue";
 import AppStorage from "../../db/AppStorage";
+import switchService from "../../services/switchService";
 export default {
   name: "detailsprospect",
   components: {
@@ -118,9 +119,7 @@ export default {
       const uuidProspect = this.$route.params.uuidProspect;
 
       try {
-        const names = await AppStorage.getNameProspectParUUID(uuidProspect);
-
-        this.names = names;
+        this.names = await switchService.getNameProspectParUUID(uuidProspect);
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
       }
@@ -128,19 +127,31 @@ export default {
 
     async fetchData() {
       const uuidProspect = this.$route.params.uuidProspect;
-      AppStorage.getBrancheProspectsByuuidProspect(uuidProspect).then((result) => {
-        console.log(result)
-        this.prospects = result;
-      });
+
+      this.prospects = await switchService.getBrancheProspectsByuuidProspect(
+        uuidProspect
+      );
+
+      // AppStorage.getBrancheProspectsByuuidProspect(uuidProspect).then(
+      //   (result) => {
+      //     console.log(result);
+      //     this.prospects = result;
+      //   }
+      // );
     },
 
-
-
-    refresh() {
+    async refresh() {
       const uuidProspect = this.$route.params.uuidProspect;
-      AppStorage.getBrancheProspectsByuuidProspect(uuidProspect).then((result) => {
-        this.prospects = result;
-      });
+
+      this.prospects = await switchService.getBrancheProspectsByuuidProspect(
+        uuidProspect
+      );
+
+      // AppStorage.getBrancheProspectsByuuidProspect(uuidProspect).then(
+      //   (result) => {
+      //     this.prospects = result;
+      //   }
+      // );
     },
   },
 };

@@ -371,7 +371,7 @@ export default {
     },
 
     async getAdresse() {
-      this.localisations = await switchService.getAdresses();
+      this.localisations = await switchService.getAdresse();
     },
 
     async getBranche() {

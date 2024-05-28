@@ -132,6 +132,7 @@
                 </tbody>
               </table>
             </div>
+            
             <admettreProspect
               v-bind:prospectoedit="prospectoedit"
               @prospect-admettre="refresh"
@@ -186,7 +187,7 @@ export default {
   data() {
     return {
       value: null,
-      prospects: {},
+      prospects: [],
       prospectoedit: "",
       q: "",
       roleactif: "",
@@ -210,10 +211,7 @@ export default {
 
     async editProspect(uuidProspect) {
       try {
-        this.prospectoedit = await switchService.getProspectByUuid(
-          uuidProspect
-        );
-        // this.prospectoedit = await AppStorage.getProspectByUuid(uuidProspect);
+        this.prospectoedit = await switchService.getProspectByUuid(uuidProspect);
       } catch (error) {
         console.log(error);
       }
