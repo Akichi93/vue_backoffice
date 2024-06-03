@@ -120,10 +120,12 @@ export default {
   methods: {
     async apporteurUpdate() {
       const uuidApporteurToUpdate = this.apporteurtoedit.uuidApporteur;
+      const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
       try {
         const updatedApporteurs = await switchService.updateApporteur(
           this.apporteurtoedit,
-          uuidApporteurToUpdate
+          uuidApporteurToUpdate,
+          entrepriseId
         );
 
         // Émettre un événement avec les compagnues mis à jour

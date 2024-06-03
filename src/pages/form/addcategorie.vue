@@ -4,7 +4,12 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Ajouter catégorie</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <button
+            type="button"
+            class="close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          >
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -14,16 +19,31 @@
               <div class="col-sm-12">
                 <div class="form-group">
                   <label>Nom de la categorie</label>
-                  <input type="text" id="client_nameName-field" class="form-control"
-                    placeholder="Entrez une nouvelle categorie" v-model="ajout_cat" />
+                  <input
+                    type="text"
+                    id="client_nameName-field"
+                    class="form-control"
+                    placeholder="Entrez une nouvelle categorie"
+                    v-model="ajout_cat"
+                  />
                 </div>
               </div>
             </div>
             <div class="submit-section">
-              <button type="button" class="btn btn-primary cancel-btn" data-bs-dismiss="modal" aria-label="Close">
+              <button
+                type="button"
+                class="btn btn-primary cancel-btn"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
                 Annuler
               </button>
-              <button type="button" class="btn btn-primary submit-btn" @click="storeCategorie" data-bs-dismiss="modal">
+              <button
+                type="button"
+                class="btn btn-primary submit-btn"
+                @click="storeCategorie"
+                data-bs-dismiss="modal"
+              >
                 Ajouter
               </button>
             </div>
@@ -34,9 +54,8 @@
   </div>
 </template>
 <script>
-import AppStorage from '../../db/AppStorage';
-import { v4 as uuidv4 } from 'uuid';
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from "../../services/switchService";
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
@@ -59,28 +78,13 @@ export default {
     },
     async storeCategorie() {
       if (this.validateForm()) {
-        const uuid = uuidv4();
-
-        const categorie = this.ajout_cat.toLocaleUpperCase()
-
-        const newCategorieData = [{
-          uuidCategorie: uuid,
-          categorie: categorie,
-          sync: 0,
-        }];
+        const categorie = this.ajout_cat;
+        const updatedLocalisations = await switchService.storeCategorie(categorie);
+        // Émettre un événement avec les prospects mis à jour
+        this.$emit("categorie-add", updatedLocalisations);
 
         // Réinitialiser le formulaire après l'affichage du toaster success
-        this.ajout_cat = '';
-
-
-        // Enregistré les contrats dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("categories", newCategorieData);
-
-        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-        const updatedCategories = await AppStorage.getCategories();
-
-        // Émettre un événement avec les prospects mis à jour
-        this.$emit("categorie-add", updatedCategories);
+        this.ajout_cat = "";
 
         toaster.success(`Energie ajouté avec succès`, {
           position: "top-right",

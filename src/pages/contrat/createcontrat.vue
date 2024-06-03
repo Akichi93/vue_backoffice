@@ -1067,7 +1067,6 @@
                     type="number"
                     class="form-control"
                     v-model="form.accessoires"
-                  
                   />
                   <p
                     style="color: red"
@@ -1231,6 +1230,7 @@ import {
 import { getCategoriesList } from "../../services/formService";
 
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from "../../services/switchService";
 const toaster = createToaster({
   /* options */
 });
@@ -1289,6 +1289,10 @@ export default {
         taxes_totales: 0,
       },
 
+      formData:{
+
+      },
+
       date_circulation: "",
       identification_proprietaire: "",
       adresse_proprietaire: "",
@@ -1311,7 +1315,7 @@ export default {
       entree_le: "",
       tierce: "",
 
-      cfga: 0,
+      cfga: null,
 
       prime_ttc: 0,
       commission: "",
@@ -1328,81 +1332,90 @@ export default {
     };
   },
   created() {
-    this.getBranche();
-    this.getClients();
-    this.getAdresse();
-    this.getCategorie();
-    this.getMarque();
-    this.getGenre();
-    this.getCouleur();
-    this.getEnergie();
+    this.initializeData();
   },
   computed: {
     primeTTC() {
-      // Calculer la prime TTC
       return (
         parseFloat(this.form.primes_nette) +
         parseFloat(this.form.accessoires) +
         parseFloat(this.form.frais_courtier) +
-        parseFloat(this.cfga) +
+        (this.cfga ?? 0) +
         parseFloat(this.form.taxes_totales)
       );
     },
   },
   methods: {
-   
-
+    async initializeData() {
+      await Promise.all([
+        this.getBranche(),
+        this.getClients(),
+        this.getAdresse(),
+        this.getCategorie(),
+        this.getMarque(),
+        this.getGenre(),
+        this.getCouleur(),
+        this.getEnergie(),
+      ]);
+    },
     async getBranche() {
-      AppStorage.getBranches().then((result) => {
-        this.branches = result;
-      });
+      try {
+        this.branches = await switchService.getBranches();
+      } catch (error) {
+        console.error("Error fetching branches:", error);
+      }
     },
-
     async getClients() {
-      AppStorage.getClients().then((result) => {
-        this.clients = result;
-      });
+      try {
+        this.clients = await switchService.getClients();
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      }
     },
-
     async getAdresse() {
-      AppStorage.getLocalisations().then((result) => {
-        this.localisations = result;
-      });
+      try {
+        this.localisations = await switchService.getAdresse();
+      } catch (error) {
+        console.error("Error fetching address:", error);
+      }
     },
 
     async getCategorie() {
-      AppStorage.getCategories().then((result) => {
-        this.categories = result;
-      });
+      try {
+        this.categories = await switchService.getCategorie();
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
     },
-
     async getMarque() {
-      AppStorage.getMarques().then((result) => {
-        this.marques = result;
-      });
+      try {
+        this.marques = await switchService.getMarque();
+      } catch (error) {
+        console.error("Error fetching marques:", error);
+      }
     },
-
     async getGenre() {
-      AppStorage.getGenres().then((result) => {
-        this.genres = result;
-      });
+      try {
+        this.genres = await switchService.getGenre();
+      } catch (error) {
+        console.error("Error fetching genres:", error);
+      }
     },
 
     async getCouleur() {
-      AppStorage.getCouleurs().then((result) => {
-        this.couleurs = result;
-      });
+      try {
+        this.couleurs = await switchService.getCouleur();
+      } catch (error) {
+        console.error("Error fetching couleurs:", error);
+      }
     },
-
     async getEnergie() {
-      AppStorage.getEnergies().then((result) => {
-        this.energies = result;
-      });
+      try {
+        this.energies = await switchService.getEnergie();
+      } catch (error) {
+        console.error("Error fetching energies:", error);
+      }
     },
-
-    // calculate() {
-
-    // },
 
     onChange(event) {
       // console.log(event.target.value);
@@ -1413,11 +1426,13 @@ export default {
       // Récupérer les identifiants de la branche
       const id_branche = this.form.branche_id.uuidBranche;
 
+      const optional = option;
+
       try {
         // Utiliser la méthode pour obtenir le taux en fonction de l'id de la branche et de l'option sélectionnée
-        const taux = await AppStorage.getTauxParIdBrancheEtCompagnie(
+        const taux = await switchService.getTauxParIdBrancheEtCompagnie(
           id_branche,
-          option
+          optional
         );
 
         // Faire quelque chose avec le taux récupéré
@@ -1442,11 +1457,13 @@ export default {
       // Récupérer les identifiants de la branche
       const id_branche = this.form.branche_id.uuidBranche;
 
+      const option = optional;
+
       try {
         // Utiliser la méthode pour obtenir le taux en fonction de l'id de la branche et de l'option sélectionnée
-        const taux = await AppStorage.getTauxParIdBrancheEtApporteur(
+        const taux = await switchService.getTauxParIdBrancheEtApporteur(
           id_branche,
-          optional
+          option
         );
 
         // Faire quelque chose avec le taux récupéré
@@ -1465,123 +1482,6 @@ export default {
       }
     },
 
-    // async checkInternetConnection() {
-    //   const response = await fetch("/api/check-internet-connection");
-    //   const data = await response.json();
-    //   return data.connected;
-    // },
-
-    async storeContrat() {
-      // const isConnected = await this.checkInternetConnection();
-
-      // if (isConnected) {
-      //   await this.storeContratOnline();
-      // } else {
-      await this.storeContratOffline();
-      // }
-    },
-
-    // async storeContratOnline() {
-    //   try {
-    //     const uuid = require('uuid').v4();
-    //     const userId = parseInt(AppStorage.getId(), 10);
-    //     const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
-
-    //     const response = await axios.post(apiUrl.postcontrat, {
-    //       id: userId,
-    //       uuidContrat: uuid,
-    //       id_entreprise: entrepriseId,
-    //       id_branche: this.branche_id.uuidBranche,
-    //       branche: this.branche_id.nom_branche,
-    //       id_client: this.client_id,
-    //       id_compagnie: this.compagnie_id,
-    //       id_apporteur: this.apporteur_id,
-    //       numero_police: this.numero_police,
-    //       effet_police: this.effet_police,
-    //       heure_police: this.heure_police,
-    //       expire_le: this.expire_le,
-    //       souscrit_le: this.souscrit_le,
-    //       reconduction: this.reconduction,
-    //       //Automobile
-    //       numero_immatriculation: this.numero_immatriculation,
-    //       date_circulation: this.date_circulation,
-    //       identification_proprietaire: this.identification_proprietaire,
-    //       adresse_proprietaire: this.adresse_proprietaire,
-    //       zone: this.zone,
-    //       categorie_id: this.categorie_id,
-    //       marque_id: this.marque_id,
-    //       genre_id: this.genre_id,
-    //       type: this.type,
-    //       carosserie: this.carosserie,
-    //       couleur_id: this.couleur_id,
-    //       energie_id: this.energie_id,
-    //       place: this.place,
-    //       puissance: this.puissance,
-    //       charge: this.charge,
-    //       valeur_neuf: this.valeur_neuf,
-    //       valeur_venale: this.valeur_venale,
-    //       categorie_socio_pro: this.categorie_socio_pro,
-    //       permis: this.permis,
-    //       option: this.option_garantie,
-    //       entree: this.entree_le,
-    //       garantie: this.typegarantie,
-    //       tierce: this.tierce,
-    //       prime_nette: this.primes_nette,
-    //       accessoires: this.accessoires,
-    //       frais_courtier: this.frais_courtier,
-    //       cfga: this.cfga,
-    //       taxes_totales: this.taxes_totales,
-    //       commission_courtier:
-    //         this.primes_nette * this.tauxcomp.tauxcomp * 0.01,
-    //       commission_apporteur:
-    //         this.primes_nette *
-    //         this.taux.taux *
-    //         0.01 *
-    //         this.tauxcomp.tauxcomp *
-    //         0.01,
-    //       gestion: this.gestion,
-    //       primes_ttc:
-    //         this.primes_nette +
-    //         this.frais_courtier +
-    //         this.accessoires +
-    //         this.cfga +
-    //         this.taxes_totales,
-    //     });
-
-    //     const updatedContrats = await this.fetchContrats();
-
-    //     if (response.status === 200) {
-    //       toaster.success(`Contrat ajouté avec succès`, { position: "top-right" });
-    //       this.contrats = response.data;
-    //       this.$router.push("/listcontrat");
-    //     }
-
-    //     // Mettre à jour IndexedDB avec les contrats récupérés après comparaison
-    //     AppStorage.getContrats().then((existingContrats) => {
-    //       if (existingContrats && updatedContrats) {
-    //         // Comparaison des nouvelles contrats avec ceux déjà existants
-    //         const newContrats = updatedContrats.filter((compagnie) => {
-    //           return !existingContrats.some((existingContrat) => existingContrat.id_contrat === compagnie.id_contrat);
-    //         });
-
-    //         // Insérer uniquement les nouvelles contrats dans IndexedDB
-    //         if (newContrats.length > 0) {
-    //           AppStorage.storeDataInIndexedDB('contrats', newContrats);
-    //         }
-    //       }
-    //     });
-
-    //     // Mettre à jour IndexedDB avec l'avenant récupéré
-
-    //     const newAvenant = response.data;
-
-    //     AppStorage.storeDataInIndexedDB('avenants', newAvenant);
-
-    //   } catch (error) {
-    //     this.handleStoreContratError(error);
-    //   }
-    // },
-
     handleInput() {
       this.calulateCommissionApporteur = calculateCommissionApporteur({
         tauxcomp: this.tauxcomp.tauxcomp,
@@ -1592,10 +1492,7 @@ export default {
         tauxcomp: this.tauxcomp.tauxcomp,
         primes_nette: this.form.primes_nette,
       });
-
-     
     },
-
 
     getFormattedDate() {
       const today = new Date();
@@ -1610,244 +1507,43 @@ export default {
       return "AV-" + dateDuJour;
     },
 
-    async storeContratOffline() {
+    async storeContrat() {
       try {
         this.errors = validateContratForm(this.form);
 
         if (Object.keys(this.errors).length > 0) {
-          // Afficher un message d'erreur
-          toaster.error(`Veuillez remplir les champs`, {
+          toaster.error(`Veuillez remplir tous les champs`, {
             position: "top-right",
           });
+          return;
         }
 
-        if (Object.keys(this.errors).length === 0) {
-          const uuid = uuidv4();
-          const userId = parseInt(AppStorage.getId(), 10);
-          const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+        const uuid = uuidv4();
+        const userId = parseInt(AppStorage.getId(), 10);
+        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
 
-          const clientName = await AppStorage.getClientNameByUUID(
-            this.form.client_id
-          );
-          const clientCode = await AppStorage.getClientCodeByUUID(
-            this.form.client_id
-          );
-          const compagnieName = await AppStorage.getCompagnieNameByUUID(
-            this.form.compagnie_id
-          );
-          const apporteurName = await AppStorage.getApporteurNameByUUID(
-            this.form.apporteur_id
-          );
+        const commission_courtier = this.calulateCommissionCompagnie;
+        const commission_apporteur = this.calulateCommissionApporteur;
 
-          const newContratData = [
-            {
-              id: userId,
-              uuidContrat: uuid,
-              id_entreprise: entrepriseId,
-              uuidBranche: this.form.branche_id.uuidBranche,
-              nom_branche: this.form.branche_id.nom_branche,
-              uuidClient: this.form.client_id,
-              nom_client: clientName,
-              numero_client: clientCode,
-              nom_compagnie: compagnieName,
-              nom_apporteur: apporteurName,
-              uuidCompagnie: this.form.compagnie_id,
-              uuidApporteur: this.form.apporteur_id,
-              numero_police: this.form.numero_police,
-              effet_police: this.form.effet_police,
-              heure_police: this.form.heure_police,
-              expire_le: this.form.expire_le,
-              souscrit_le: this.form.souscrit_le,
-              reconduction: this.form.reconduction,
-              prime_nette: this.form.primes_nette,
-              accessoires: this.form.accessoires,
-              frais_courtier: this.form.frais_courtier,
-              cfga: this.cfga,
-              taxes_totales: this.form.taxes_totales,
-              commission_courtier: this.calulateCommissionCompagnie,
-              commission_apporteur: this.calulateCommissionApporteur,
-              gestion: this.gestion,
-              primes_ttc:
-                this.form.primes_nette +
-                this.form.frais_courtier +
-                this.form.accessoires +
-                this.cfga +
-                this.form.taxes_totales,
-              sync: 0,
-              solde: 0,
-              reverse: 0,
-              supprimer_contrat: 0,
-            },
-          ];
+        let totalPrimeTtc =
+          this.form.primes_nette +
+          this.form.frais_courtier +
+          this.form.accessoires +
+          this.cfga ?? 0 +
+          this.form.taxes_totales;
 
-          // Enregistré les contrats dans IndexedDB
-          await AppStorage.storeDataInIndexedDB("contrats", newContratData);
+        await switchService.storeContrat(
+          this.form,
+          userId,
+          entrepriseId,
+          commission_courtier,
+          commission_apporteur,
+          totalPrimeTtc
+        );
 
-          // Enregistré les avenants dans IndexedDB
-          let type = "Terme";
+        toaster.success(`Contrat ajouté`, { position: "top-right" });
 
-          const [annee, mois, day] = this.form.souscrit_le.split("-");
-
-          let codeAvenant = this.generateCodevenant();
-
-          let totalPrimeTtc =
-            this.form.primes_nette +
-            this.form.frais_courtier +
-            this.form.accessoires +
-            this.cfga +
-            this.form.taxes_totales;
-
-          const calculateCommission = () => {
-            return (
-              this.form.primes_nette *
-              this.taux.taux *
-              0.01 *
-              this.tauxcomp.tauxcomp *
-              0.01
-            );
-          };
-
-          const calculateCommissionCourtier = () => {
-            return this.form.primes_nette * this.tauxcomp.tauxcomp * 0.01;
-          };
-
-          const uuidAvenant = uuidv4();
-
-          const newAvenantsData = [
-            {
-              id: userId,
-              uuidContrat: uuid,
-              annee: annee,
-              mois: mois,
-              type: "Terme",
-              nom_client: clientName,
-              nom_branche: this.form.branche_id.nom_branche,
-              // nom_compagnie: compagnieName,
-              // numero_police: this.form.numero_police,
-              prime_ttc: totalPrimeTtc,
-              retrocession: 0,
-              commission: calculateCommission(),
-              commission_courtier: calculateCommissionCourtier(),
-              prise_charge: 0,
-              ristourne: 0,
-              prime_nette: this.form.primes_nette,
-              date_emission: this.form.souscrit_le,
-              date_debut: this.form.effet_police,
-              date_fin: this.form.expire_le,
-              accessoires: this.form.accessoires,
-              frais_courtier: this.form.frais_courtier,
-              cfga: this.cfga,
-              taxes_totales: this.form.taxes_totales,
-              code_avenant: codeAvenant,
-              uuidAvenant: uuidAvenant,
-              uuidApporteur: this.form.apporteur_id,
-              uuidCompagnie: this.form.compagnie_id,
-              uuidClient: this.form.client_id,
-              sync: 0,
-              solder: 0,
-              reverser: 0,
-              payer_apporteur: 0,
-              payer_courtier: 0,
-              supprimer_avenant: 0,
-              id_entreprise: entrepriseId,
-            },
-          ];
-
-          // Enregistré les avenants dans IndexedDB
-          await AppStorage.storeDataInIndexedDB("avenants", newAvenantsData);
-
-          if (
-            this.form.branche_id.nom_branche == "AUTOMOBILE" ||
-            this.form.branche_id.nom_branche == "MOTO" ||
-            this.form.branche_id.nom_branche == "MOTO" ||
-            this.form.branche_id.nom_branche == "AUTOMOBILE HORS TPV" ||
-            this.form.branche_id.nom_branche == "AUTOMOBILE TPV"
-          ) {
-            const uuidAutomobile = uuidv4();
-
-            const newAutomobileData = [
-              {
-                uuidAutomobile: uuidAutomobile,
-                uuidContrat: uuid,
-                numero_immatriculation: this.form.numero_immatriculation,
-                date_circulation: this.date_circulation,
-                identification_proprietaire: this.identification_proprietaire,
-                adresse_proprietaire: this.adresse_proprietaire,
-                zone: this.zone,
-                categorie: this.categorie_id,
-                marque: this.marque_id,
-                genre: this.genre_id,
-                type: this.type,
-                carosserie: this.carosserie,
-                couleur: this.couleur_id,
-                energie: this.energie_id,
-                place: this.place,
-                puissance: this.puissance,
-                charge: this.charge,
-                valeur_neuf: this.valeur_neuf,
-                valeur_venale: this.valeur_venale,
-                categorie_socio_pro: this.categorie_socio_pro,
-                permis: this.permis,
-                // option: this.option_garantie,
-                entree: this.entree_le,
-                tierce: this.tierce,
-                // prime_nette: this.form.primes_nette,
-                // accessoires: this.form.accessoires,
-                // frais_courtier: this.form.frais_courtier,
-                // cfga: this.cfga,
-                // taxes_totales: this.form.taxes_totales,
-                // commission_courtier: calculateCommissionCourtier(),
-                // commission_apporteur: calculateCommission(),
-                // gestion: this.gestion,
-                // primes_ttc: totalPrimeTtc,
-                sync: 0,
-                supprimer_automobile: 0,
-                id_entreprise: entrepriseId,
-                id: userId,
-              },
-            ];
-
-            await AppStorage.storeDataInIndexedDB(
-              "automobiles",
-              newAutomobileData
-            );
-
-            let test = JSON.parse(JSON.stringify(this.typegarantie));
-            let donnees = [];
-
-            for (let i = 0; i < Object.keys(test).length; i++) {
-              donnees.push(test[i]);
-            }
-
-            for (let i = 0; i < donnees.length; i++) {
-              // Générer un UUID unique
-              const uuidGarantie = uuidv4();
-
-              const newGarantieData = [
-                {
-                  uuidGarantie: uuidGarantie,
-                  uuidAutomobile: uuidAutomobile,
-                  nom_garantie: donnees[i],
-                  sync: 0,
-                  id_entreprise: entrepriseId,
-                },
-              ];
-
-              await AppStorage.storeDataInIndexedDB(
-                "garanties",
-                newGarantieData
-              );
-            }
-          }
-
-          // const result = await switchMode.storeContrat();
-          // if(result){
-
-          // }
-          toaster.success(`Contrat ajouté`, { position: "top-right" });
-
-          this.$router.push("/listcontrat");
-        }
+        // this.$router.push("/listcontrat");
       } catch (error) {
         console.error("Error storing contract offline:", error);
       }
@@ -2048,50 +1744,33 @@ export default {
       alert(this.event.target.value);
     },
 
-    refresh() {
-      // Récupérer les clients depuis IndexedDB après l'ajout d'un nouveau client
-      AppStorage.getClients().then((result) => {
-        this.clients = result;
-      });
+    async refresh() {
+      this.clients = await switchService.getClients();
     },
 
-    handleClientsChange() {
-      AppStorage.getLocalisations().then((result) => {
-        this.localisations = result;
-      });
+    async handleClientsChange() {
+      this.localisations = await switchService.getAdresse();
     },
 
-    handleCategorieChange() {
-      AppStorage.getCategories().then((result) => {
-        this.categories = result;
-      });
+    async handleCategorieChange() {
+      this.categories = await switchService.getCategorie();
     },
 
-    handleMarqueChange() {
-      AppStorage.getMarques().then((result) => {
-        this.marques = result;
-      });
+    async handleMarqueChange() {
+      this.marques = await switchService.getMarque();
     },
 
-    handleGenreChange() {
-      AppStorage.getGenres().then((result) => {
-        this.genres = result;
-      });
+    async handleGenreChange() {
+      this.genres = await switchService.getGenre();
     },
 
-    handleCouleurChange() {
-      AppStorage.getCouleurs().then((result) => {
-        this.couleurs = result;
-      });
+    async handleCouleurChange() {
+      this.couleurs = await switchService.getCouleur();
     },
 
-    handleEnergieChange() {
-      AppStorage.getEnergies().then((result) => {
-        this.energies = result;
-      });
+    async handleEnergieChange() {
+      this.energies = await switchService.getEnergie();
     },
   },
 };
 </script>
-
-<!-- <style src="@vueform/multiselect/themes/default.css"></style> -->

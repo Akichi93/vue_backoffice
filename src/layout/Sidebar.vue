@@ -101,6 +101,7 @@ export default {
     return {
       isHovered: false,
       roleactif: AppStorage.getRole(),
+      mode: AppStorage.getMode(),
       isConnected: false,
     };
   },
@@ -132,25 +133,29 @@ export default {
   methods: {
     async checkConnection() {
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+        if (this.mode == "Local") {
+          // Then use it in your fetch request
+          const response = await fetch(
+            `${apiUrl}/api/check-internet-connection`
+          );
+          // Make an API request to your endpoint
+          // const response = await fetch(
+          //   "https://fl4ir.loca.lt/api/check-internet-connection"
+          // );
 
-        // Then use it in your fetch request
-        const response = await fetch(`${apiUrl}/api/check-internet-connection`);
-        // Make an API request to your endpoint
-        // const response = await fetch(
-        //   "https://fl4ir.loca.lt/api/check-internet-connection"
-        // );
+          const data = await response.json();
 
-        const data = await response.json();
+          this.isConnected = data.connected;
 
-        this.isConnected = data.connected;
+          // Check if the response status is okay (e.g., 200)
+          const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-        // Check if the response status is okay (e.g., 200)
-        if (this.isConnected) {
-          // Execute checkAndSyncData service
-          await syncservice.checkAndSyncData(); // Assuming syncservice is an async function that returns a promise
-        } else {
-          console.log("Pas de connexion internet ");
+          if (this.isConnected) {
+            // Execute checkAndSyncData service
+            await syncservice.checkAndSyncData(); // Assuming syncservice is an async function that returns a promise
+          } else {
+            console.log("Pas de connexion internet ");
+          }
         }
       } catch (error) {
         // Handle errors, e.g., network issues or server errors

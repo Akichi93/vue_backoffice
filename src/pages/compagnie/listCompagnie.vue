@@ -90,9 +90,9 @@
             <editCompagnie v-bind:compagnietoedit="compagnietoedit" @compagnie-updated="refresh"></editCompagnie>
             <deleteCompagnie v-bind:compagnietoedit="compagnietoedit" @compagnie-delete="refresh"></deleteCompagnie>
 
-            <pagination align="center" :data="compagnies" :limit="5" :current_page="compagnies.current_page"
+            <!-- <pagination align="center" :data="compagnies" :limit="5" :current_page="compagnies.current_page"
               :last_page="compagnies.last_page" @pagination-change-page="getCompagnies">
-            </pagination>
+            </pagination> -->
           </div>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default {
   },
   created() {
     this.getCompagnies();
-    this.getRoleconnect();
+    // this.getRoleconnect();
   },
   methods: {
 
@@ -149,11 +149,11 @@ export default {
       }
     },
 
-    getRoleconnect() {
-      getRoleActif().then((result) => {
-        this.roleactif = result;
-      });
-    },
+    // getRoleconnect() {
+    //   getRoleActif().then((result) => {
+    //     this.roleactif = result;
+    //   });
+    // },
 
 
 

@@ -74,10 +74,10 @@ class AppStorage {
             // Gestion des conflits : fusionner les données existantes avec les nouvelles données
             if (Array.isArray(existingData) && Array.isArray(data)) {
                 const mergedData = existingData.concat(data);
-               
+
 
                 await store.put(mergedData, key);
-               
+
                 console.log(`Données fusionnées à apiData dans IndexedDB avec succès`);
             } else {
                 console.error('Les données existantes ou les nouvelles données ne sont pas au format de tableau.');
@@ -190,6 +190,15 @@ class AppStorage {
     }
 
     static async getClients() {
+        const allClients = await this.getData('clients') || [];
+
+        const clients = allClients.filter(client => client.supprimer_client == 0);
+
+        return clients;
+        // return this.getData('clients') || [];
+    }
+
+    static async getClientsToSync() {
         return this.getData('clients') || [];
     }
 
@@ -269,6 +278,11 @@ class AppStorage {
         const prospects = allProspects.filter(prospect => prospect.supprimer_prospect == 0);
 
         return prospects;
+    }
+
+
+    static async getProspectsToSync() {
+        return this.getData('prospects') || [];
     }
 
     static async searchProspectsByName(name) {

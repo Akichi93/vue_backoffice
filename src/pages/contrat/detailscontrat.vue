@@ -490,6 +490,7 @@ import addgarantie from "./addGarantie.vue";
 import AppStorage from "../../db/AppStorage.js";
 import { formatDate, formatDateTime } from "../../utils/helpers/dateFormat";
 import { formatNumberWithThousandsSeparator } from "../../utils/helpers/thousandSeparator";
+import switchService from "../../services/switchService";
 export default {
   components: {
     Header,
@@ -529,11 +530,12 @@ export default {
     },
     formatDate,
     formatDateTime,
+    
     async fetchDataContrat() {
       const uuidContrat = this.$route.params.uuidContrat;
 
       try {
-        const infos = await AppStorage.getInfoContratByUuid(uuidContrat);
+        const infos = await switchService.getInfoContratByUuid(uuidContrat);
 
         this.infos = infos;
       } catch (error) {
@@ -545,7 +547,7 @@ export default {
       const uuidContrat = this.$route.params.uuidContrat;
 
       // Await the resolution of the Promise
-      const sommes = await AppStorage.getAvenantsSommeByUuid(uuidContrat);
+      const sommes = await switchService.getAvenantsSommeByUuid(uuidContrat);
 
       // Assign the result to the component data if needed
       this.sommes = sommes;
@@ -554,7 +556,7 @@ export default {
     async fetchDataAvenant() {
       const uuidContrat = this.$route.params.uuidContrat;
 
-      const avenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
+      const avenants = await switchService.getAvenantsByUuidContrat(uuidContrat);
 
       this.avenants = avenants;
     },
@@ -563,7 +565,7 @@ export default {
       try {
         const uuidContrat = this.$route.params.uuidContrat;
 
-        const automobiles = await AppStorage.getAutomobileByUuidContrat(
+        const automobiles = await switchService.getAutomobileByUuidContrat(
           uuidContrat
         );
 

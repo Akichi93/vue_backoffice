@@ -137,6 +137,7 @@ export default {
         const tauxCompagnies = await switchService.getTauxCompagnies(
           uuidCompagnie
         );
+        
 
         this.tauxCompagnies = tauxCompagnies;
       } catch (error) {

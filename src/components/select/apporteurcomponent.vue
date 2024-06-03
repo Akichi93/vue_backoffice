@@ -16,7 +16,7 @@
 </template>
   <script>
 import Multiselect from "@vueform/multiselect";
-import AppStorage from '../../db/AppStorage.js';
+import switchService from "../../services/switchService";
 
 export default {
   name: "clientcomponent",
@@ -26,17 +26,17 @@ export default {
       apporteurs: [],
     };
   },
+  mounted() {
+    this.getApporteur();
+  },
   created() {
     this.getApporteur();
   },
 
   methods: {
-    getApporteur() {
-     AppStorage.getApporteurs().then((result) => {
-        this.apporteurs = result;
-      });
+    async getApporteur() {
+      this.apporteurs = await switchService.getApporteurs();
     },
-    
   },
   components: { Multiselect },
 };

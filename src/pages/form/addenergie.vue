@@ -34,9 +34,8 @@
   </div>
 </template>
 <script>
-import AppStorage from '../../db/AppStorage';
-import { v4 as uuidv4 } from 'uuid';
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from '../../services/switchService';
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
@@ -59,28 +58,16 @@ export default {
     },
     async storeEnergie() {
       if (this.validateForm()) {
-        const uuid = uuidv4();
 
-        const energie = this.ajout_energie.toLocaleUpperCase()
-
-        const newEnergieData = [{
-          uuidEnergie: uuid,
-          energie: energie,
-          sync: 0,
-        }];
+        const energie = this.ajout_energie;
+        const updatedEnergies = await switchService.storeEnergie(energie);
+        
 
         // Réinitialiser le formulaire après l'affichage du toaster success
+       
+        this.$emit("energie-add", updatedEnergies);
+
         this.ajout_energie = '';
-
-
-        // Enregistré les contrats dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("energies", newEnergieData);
-
-        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-        const updatedMarques = await AppStorage.getEnergies();
-
-        // Émettre un événement avec les prospects mis à jour
-        this.$emit("energie-add", updatedMarques);
 
         toaster.success(`Energie ajouté avec succès`, {
           position: "top-right",

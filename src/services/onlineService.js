@@ -28,6 +28,171 @@ class OnlineService {
         }
     }
 
+    async storeAdresse(adresse) {
+        const uuid = uuidv4();
+
+        const newLocalisationData = {
+            uuidLocalisation: uuid,
+            nom_ville: adresse,
+        };
+
+        try {
+            const response = await axios.post(apiUrl.postlocalisation, newLocalisationData);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async getMarque() {
+        try {
+            const response = await axios.get(apiUrl.getmarque);
+
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async storeMarque(marque){
+        const uuid = uuidv4();
+
+        const newMarqueData = {
+            uuidMarque: uuid,
+            marque: marque,
+          };
+
+        try {
+            const response = await axios.post(apiUrl.postmarque, newMarqueData);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de l'ajout du genre:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async getGenre() {
+        try {
+            const response = await axios.get(apiUrl.getgenre);
+
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async storeGenre(genre) {
+        const uuid = uuidv4();
+
+        const newGenreData = {
+            uuidGenre: uuid,
+            genre: genre
+        };
+
+        try {
+            const response = await axios.post(apiUrl.postgenre, newGenreData);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de l'ajout du genre:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async getCategorie() {
+        try {
+            const response = await axios.get(apiUrl.getcategorie);
+
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async storeCategorie(categorie) {
+        const uuid = uuidv4();
+
+
+        const newCategorieData = {
+            uuidCategorie: uuid,
+            categorie: categorie,
+        };
+
+        try {
+            const response = await axios.post(apiUrl.postcategorie, newCategorieData);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async getCouleur() {
+        try {
+            const response = await axios.get(apiUrl.getcouleur);
+
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des couleurs:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async storeCouleur(categorie) {
+        const uuid = uuidv4();
+
+        const newCouleurData = {
+            uuidCouleur: uuid,
+            couleur: categorie,
+        };
+
+        try {
+            const response = await axios.post(apiUrl.postcouleur, newCouleurData);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async getEnergie() {
+        try {
+            const response = await axios.get(apiUrl.getenergie);
+
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des energies:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async storeEnergie(energie) {
+        const uuid = uuidv4();
+
+        const newEnergieData = {
+            uuidEnergie: uuid,
+            energie: energie,
+        };
+
+        try {
+            const response = await axios.post(apiUrl.postenergie, newEnergieData);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+
     async getProfession() {
         try {
             const response = await axios.get(apiUrl.getprofession);
@@ -526,6 +691,297 @@ class OnlineService {
         } catch (error) {
             console.error("Erreur lors de la mise à jour du client:", error);
             return { success: false, error: "Erreur lors de la mise à jour du client" };
+        }
+    }
+
+    // Compagnies
+    async storeCompagnie(form, userId, entrepriseId, unique, donnees, datas) {
+        const uuid = uuidv4();
+
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = (today.getMonth() + 1).toString().padStart(2, "0");
+        let day = today.getDate().toString().padStart(2, "0");
+        let dateDuJour = `${year}${month}${day}`;
+
+        // Get the first two characters of the company name
+        let nom = form.nom_compagnie;
+        let deuxPremiersCaracteres = nom.substring(0, 2).toUpperCase();
+        let codeCompagnie = `CO-${deuxPremiersCaracteres}${dateDuJour}`;
+
+        const newCompagnieData =
+        {
+            nom_compagnie: form.nom_compagnie,
+            adresse_compagnie: form.adresse_compagnie,
+            email_compagnie: form.email_compagnie,
+            postal_compagnie: form.postal_compagnie,
+            contact_compagnie: form.contact_compagnie,
+            sync: 0,
+            id_entreprise: entrepriseId,
+            id: userId,
+            uuidCompagnie: uuid,
+            code_compagnie: codeCompagnie,
+            supprimer_compagnie: 0,
+            unique: unique,
+            accidents: donnees,
+            ids: datas,
+        };
+
+        try {
+            await axios.post(apiUrl.postcompagnie, newCompagnieData);
+            return { success: true, uuid };
+        } catch (error) {
+            console.error("Erreur lors du stockage du prospect :", error);
+            throw new Error("Échec du stockage du prospect");
+        }
+    }
+
+    async getCompagnies() {
+        try {
+            const response = await AxiosService.get(apiUrl.getcompagnie);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async searchCompagniesByName(name) {
+        try {
+            const response = await AxiosService.get(apiUrl.getcompagniesearch(name));
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du client:", error);
+            return { success: false, error: "Erreur lors de la mise à jour du client" };
+        }
+    }
+
+    async getCompagnieByUuid(uuid) {
+        try {
+            const response = await axios.get(apiUrl.seteditcompagnie(uuid));
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du client:", error);
+            return { success: false, error: "Erreur lors de la mise à jour du client" };
+        }
+    }
+
+    async updateCompagnie(compagnietoedit, uuidCompagnieToUpdate, entrepriseId) {
+        const nouvellesInfos = {
+            nom_compagnie: compagnietoedit.nom_apporteur,
+            adresse_compagnie: compagnietoedit.adresse_compagnie,
+            email_compagnie: compagnietoedit.email_compagnie,
+            postal_compagnie: compagnietoedit.postal_compagnie,
+            contact_compagnie: compagnietoedit.contact_compagnie,
+            id_entreprise: entrepriseId,
+        };
+
+        try {
+            const response = await axios.post(apiUrl.setupdatecompagnie(uuidCompagnieToUpdate), nouvellesInfos);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du client:", error);
+            return { success: false, error: "Erreur lors de la mise à jour du client" };
+        }
+    }
+
+    async getTauxCompagnies(uuid) {
+        try {
+            const response = AxiosService.get(apiUrl.settauxcompagnie(uuid))
+            return response;
+
+        } catch (error) {
+            console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async getNameCompagnie(uuid) {
+        try {
+            const response = axios.get(apiUrl.setnamecompagnie(uuid))
+            return response;
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération du nom de la compagnie:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async getTauxCompagnieByUuid(uuid) {
+        try {
+            const response = axios.get(apiUrl.setedittauxcompagnie(uuid))
+            return response;
+
+        } catch (error) {
+            console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async getContrats() {
+        try {
+            const response = AxiosService.get(apiUrl.getcontrat)
+            return response;
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des contrats:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async getContratByUuid(uuid) {
+        try {
+            const response = axios.get(apiUrl.seteditcontrat(uuid))
+            return response;
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des contrats:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async getInfoContratByUuid(uuid) {
+        try {
+            const response = axios.get(apiUrl.setinfocontrat(uuid))
+            return response;
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des contrats:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async getAvenantsSommeByUuid(uuid) {
+        try {
+            const response = axios.get(apiUrl.setinfoavenantcontrat(uuid))
+            return response;
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des contrats:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async getAvenantsByUuidContrat(uuid) {
+        try {
+            const response = axios.get(apiUrl.setavenantcontrat(uuid))
+            return response;
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des contrats:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async getAutomobileByUuidContrat(uuid) {
+        try {
+            const response = axios.get(apiUrl.setinfovehicule(uuid))
+            return response;
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des contrats:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc) {
+        const uuid = uuidv4();
+
+        const uuidAutomobile = uuidv4();
+        const uuidAvenant = uuidv4();
+
+        const newContratData =
+        {
+            id: userId,
+            uuidContrat: uuid,
+            id_entreprise: entrepriseId,
+            uuidBranche: form.branche_id.uuidBranche,
+            nom_branche: form.branche_id.nom_branche,
+            uuidClient: form.client_id,
+            uuidCompagnie: form.compagnie_id,
+            uuidApporteur: form.apporteur_id,
+            numero_police: form.numero_police,
+            effet_police: form.effet_police,
+            heure_police: form.heure_police,
+            expire_le: form.expire_le,
+            souscrit_le: form.souscrit_le,
+            reconduction: form.reconduction,
+            prime_nette: form.primes_nette,
+            accessoires: form.accessoires,
+            frais_courtier: form.frais_courtier,
+            cfga: this.cfga,
+            taxes_totales: form.taxes_totales,
+            commission_courtier: commission_courtier,
+            commission_apporteur: commission_apporteur,
+            gestion: this.gestion,
+            primes_ttc: totalPrimeTtc,
+            sync: 0,
+            solde: 0,
+            reverse: 0,
+            supprimer_contrat: 0,
+
+            uuidAutomobile: uuidAutomobile,
+            uuidAvenant: uuidAvenant,
+            numero_immatriculation: form.numero_immatriculation,
+            date_circulation: this.date_circulation,
+            identification_proprietaire: this.identification_proprietaire,
+            adresse_proprietaire: this.adresse_proprietaire,
+            zone: this.zone,
+            categorie: this.categorie_id,
+            marque: this.marque_id,
+            genre: this.genre_id,
+            type: this.type,
+            carosserie: this.carosserie,
+            couleur: this.couleur_id,
+            energie: this.energie_id,
+            place: this.place,
+            puissance: this.puissance,
+            charge: this.charge,
+            valeur_neuf: this.valeur_neuf,
+            valeur_venale: this.valeur_venale,
+            categorie_socio_pro: this.categorie_socio_pro,
+            permis: this.permis,
+            entree: this.entree_le,
+            tierce: this.tierce,
+        };
+
+        try {
+            const response = await axios.post(apiUrl.postcontrat, newContratData);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du client:", error);
+            return { success: false, error: "Erreur lors de la mise à jour du client" };
+        }
+    }
+
+    async getTauxParIdBrancheEtCompagnie(id_branche, option) {
+        const nouvellesInfos = {
+            branche: id_branche,
+            compagnie: option,
+        };
+        try {
+            const response = await axios.get(apiUrl.gettauxbranchecompagnie, { params: nouvellesInfos });
+            console.log(response);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la récupération du taux pour la branche et la compagnie:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async getTauxParIdBrancheEtApporteur(id_branche, optional) {
+        const nouvellesInfos = {
+            branche: id_branche,
+            apporteur: optional,
+        };
+        try {
+            const response = await axios.get(apiUrl.gettauxbrancheapporteur, { params: nouvellesInfos });
+            console.log(response);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la récupération du taux pour la branche et la compagnie:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
         }
     }
 

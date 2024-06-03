@@ -28,16 +28,25 @@
           <div class="col-md-8"></div>
           <div class="col-md-4">
             <div class="add-emp-section">
-              <router-link to="/createcontrat" class="btn btn-success btn-add-emp" style="width: auto"><i
-                  class="fas fa-plus"></i> Ajouter contrat</router-link>
+              <router-link
+                to="/createcontrat"
+                class="btn btn-success btn-add-emp"
+                style="width: auto"
+                ><i class="fas fa-plus"></i> Ajouter contrat</router-link
+              >
             </div>
           </div>
         </div>
 
         <div class="row">
           <div class="col-row">
-            <input type="text" class="form-control" placeholder="Rechercher un contrat" v-model="q"
-              @keyup="searchtask" />
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Rechercher un contrat"
+              v-model="q"
+              @keyup="searchtask"
+            />
           </div>
           <div class="col-md-12" style="display: flex; justify-content: end">
             <contratexport></contratexport>
@@ -65,23 +74,37 @@
                     <td v-text="formatDate(contrat.effet_police)"></td>
                     <td v-text="formatDate(contrat.expire_le)"></td>
                     <td class="text-end ico-sec d-flex justify-content-end">
-                      <router-link :to="{
-              name: 'detailscontrat',
-              params: { uuidContrat: contrat.uuidContrat },
-            }"><i class="fas fa-info"></i></router-link>
+                      <router-link
+                        :to="{
+                          name: 'detailscontrat',
+                          params: { uuidContrat: contrat.uuidContrat },
+                        }"
+                        ><i class="fas fa-info"></i
+                      ></router-link>
 
-                      <router-link :to="{
-              name: 'avenants',
-              params: { uuidContrat: contrat.uuidContrat },
-            }"><i class="fas fa-paper-plane"></i></router-link>
+                      <router-link
+                        :to="{
+                          name: 'avenants',
+                          params: { uuidContrat: contrat.uuidContrat },
+                        }"
+                        ><i class="fas fa-paper-plane"></i
+                      ></router-link>
 
-                      <router-link :to="{
-              name: 'editcontrat',
-              params: { uuidContrat: contrat.uuidContrat },
-            }"><i class="fas fa-pen"></i></router-link>
+                      <router-link
+                        :to="{
+                          name: 'editcontrat',
+                          params: { uuidContrat: contrat.uuidContrat },
+                        }"
+                        ><i class="fas fa-pen"></i
+                      ></router-link>
 
-                      <a href="#" @click="editContrat(contrat.uuidContrat)" data-bs-toggle="modal"
-                        data-bs-target="#delete_contrat" title="Supprimer"><i class="fas fa-trash-alt"></i>
+                      <a
+                        href="#"
+                        @click="editContrat(contrat.uuidContrat)"
+                        data-bs-toggle="modal"
+                        data-bs-target="#delete_contrat"
+                        title="Supprimer"
+                        ><i class="fas fa-trash-alt"></i>
                       </a>
                     </td>
                   </tr>
@@ -89,7 +112,10 @@
               </table>
             </div>
 
-            <deletecontrat v-bind:contrattoedit="contrattoedit" @delete-contrat="refresh"></deletecontrat>
+            <deletecontrat
+              v-bind:contrattoedit="contrattoedit"
+              @delete-contrat="refresh"
+            ></deletecontrat>
 
             <!-- <pagination align="center" :data="contrats" :limit="5" :current_page="contrats.current_page"
               :last_page="contrats.last_page" @pagination-change-page="getContrat">
@@ -104,13 +130,13 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { getContratsExport } from "../../services/contratService";
 import { getRoleActif } from "../../services/roleservice";
 import deletecontrat from "../contrat/deletecontrat.vue";
 // import pagination from "laravel-vue-pagination";
 import contratexport from "../../components/export/contratexport.vue";
 import AppStorage from "../../db/AppStorage.js";
-import { formatDate, formatDateTime } from '../../utils/helpers/dateFormat';
+import { formatDate, formatDateTime } from "../../utils/helpers/dateFormat";
+import switchService from "../../services/switchService";
 export default {
   components: {
     Header,
@@ -139,18 +165,15 @@ export default {
     formatDateTime,
     async editContrat(uuidContrat) {
       try {
-        this.contrattoedit = await AppStorage.getContratByUuid(uuidContrat);
+        this.contrattoedit = await switchService.getContratByUuid(uuidContrat);
+        console.log(this.contrattoedit);
       } catch (error) {
         console.log(error);
       }
     },
 
     async getContrat() {
-     
-      AppStorage.getContrats().then((result) => {
-        this.contrats = result;
-      });
-      
+      this.contrats = await switchService.getContrats();
     },
     getRoleconnect() {
       getRoleActif().then((result) => {
@@ -185,19 +208,16 @@ export default {
       if (this.q.length > 3) {
         AppStorage.searchContratsByName(this.q).then((result) => {
           this.contrats = result;
-          console.log(result)
+          console.log(result);
         });
       } else {
         this.getContrat();
       }
     },
 
-    refresh() {
-      // Récupérer les clients depuis IndexedDB après l'ajout d'un nouveau client
-      AppStorage.getContrats().then((result) => {
-        this.contrats = result;
-      });
-    }
+    async refresh() {
+      this.contrats = await switchService.getContrats();
+    },
   },
 };
 </script>

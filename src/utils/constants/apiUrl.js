@@ -35,8 +35,8 @@ const apiUrl = {
     setetatprospect: (uuidProspect) => `${base_url}/api/auth/etatprospect/${uuidProspect}`,
     setdeleteprospect: (uuidProspect) => `${base_url}/api/auth/deleteprospect/${uuidProspect}`,
     setnameprospect: (uuidProspect) => `${base_url}/api/auth/getnameprospect/${uuidProspect}`,
-    setbranchediffprospect: (uuidProspect) => `${base_url}/api/auth/getbranchediffprospect/${uuidProspect}`, 
-    setbrancheprospect: (uuidProspect) => `${base_url}/api/auth/getbrancheprospect/${uuidProspect}`, 
+    setbranchediffprospect: (uuidProspect) => `${base_url}/api/auth/getbranchediffprospect/${uuidProspect}`,
+    setbrancheprospect: (uuidProspect) => `${base_url}/api/auth/getbrancheprospect/${uuidProspect}`,
     validateprospect: createApiUrl('validateprospect'),
     postbrancheprospect: createApiUrl('postbrancheprospect'),
     getnameprospect: createApiUrl('validateprospect'),
@@ -48,6 +48,7 @@ const apiUrl = {
     setupdateclient: (uuidClient) => `${base_url}/api/auth/updateclient/${uuidClient}`,
 
     getapporteur: createApiUrl('getapporteurs'),
+    getapporteursearch: (q) => `${base_url}/api/auth/apporteurlist/${q}`,
     postapporteur: createApiUrl('postapporteur'),
     seteditapporteur: (uuidApporteur) => `${base_url}/api/auth/editapporteur/${uuidApporteur}`,
     setupdateapporteur: (uuidApporteur) => `${base_url}/api/auth/updateapporteur/${uuidApporteur}`,
@@ -57,19 +58,36 @@ const apiUrl = {
     setupdatetauxapporteur: (uuidTauxApporteur) => `${base_url}/api/auth/updatetauxapporteur/${uuidTauxApporteur}`,
     setinfoapporteur: (uuidTauxApporteur) => `${base_url}/api/auth/infoapporteur/${uuidTauxApporteur}`,
     setsommecommissionapporteur: (uuidApporteur) => `${base_url}/api/auth/getsommecommissionapporteur/${uuidApporteur}`,
-    setsommecommissionsapporteurpayer: (uuidApporteur) => `${base_url}/api/auth/getsommecommissionsapporteurpayer/${uuidApporteur}`, 
-    setavenantbyuuid: (uuidAvenant) => `${base_url}/api/auth/getavenantbyuuid/${uuidAvenant}`, 
+    setsommecommissionsapporteurpayer: (uuidApporteur) => `${base_url}/api/auth/getsommecommissionsapporteurpayer/${uuidApporteur}`,
+    setavenantbyuuid: (uuidAvenant) => `${base_url}/api/auth/getavenantbyuuid/${uuidAvenant}`,
     gettauxapporteur: createApiUrl('gettauxapporteurs'),
 
     getcompagnie: createApiUrl('getcompagnies'),
+    getcompagniesearch: (q) => `${base_url}/api/auth/compagnielist/${q}`,
+    seteditcompagnie: (uuidCompagnie) => `${base_url}/api/auth/editcompagnie/${uuidCompagnie}`,
+    setupdatecompagnie: (uuidCompagnie) => `${base_url}/api/auth/updatecompagnie/${uuidCompagnie}`,
+    settauxcompagnie: (uuidCompagnie) => `${base_url}/api/auth/gettauxcompagnie/${uuidCompagnie}`,
+    setnamecompagnie: (uuidCompagnie) => `${base_url}/api/auth/getnamecompagnie/${uuidCompagnie}`,
+    setedittauxcompagnie: (uuidTauxCompagnie) => `${base_url}/api/auth/edittauxcompagnie/${uuidTauxCompagnie}`,
     postcompagnie: createApiUrl('postcompagnie'),
     gettauxcompagnie: createApiUrl('gettauxcompagnies'),
-   
+
+
+    refresh : createApiUrl('refresh'),
+
 
     postcontrat: createApiUrl('postcontrat'),
+    postautomobile: createApiUrl('postautomobile'),
     getcontrat: createApiUrl('getcontrats'),
-    
-  
+    gettauxbranchecompagnie: createApiUrl('gettauxbranchecompagnie'), 
+    gettauxbrancheapporteur: createApiUrl('gettauxbrancheapporteur'),
+    seteditcontrat: (uuidContrat) => `${base_url}/api/auth/editcontrat/${uuidContrat}`, 
+    setinfocontrat: (uuidContrat) => `${base_url}/api/auth/getinfocontrat/${uuidContrat}`, 
+    setinfoavenantcontrat: (uuidContrat) => `${base_url}/api/auth/getinfoavenantcontrat/${uuidContrat}`, 
+    setavenantcontrat: (uuidContrat) => `${base_url}/api/auth/getavenantcontrat/${uuidContrat}`,
+    setinfovehicule: (uuidContrat) => `${base_url}/api/auth/getinfovehicules/${uuidContrat}`,
+ 
+
 
     getavenant: createApiUrl('getavenants'),
 

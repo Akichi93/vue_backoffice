@@ -37,6 +37,7 @@
 import AppStorage from '../../db/AppStorage';
 import { v4 as uuidv4 } from 'uuid';
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from '../../services/switchService';
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
@@ -59,60 +60,18 @@ export default {
     },
     async storeCouleur() {
       if (this.validateForm()) {
-        const uuid = uuidv4();
-
-        const couleur = this.ajout_couleur.toLocaleUpperCase()
-
-        const newCouleurData = [{
-          uuidCouleur: uuid,
-          couleur: couleur,
-          sync: 0,
-        }];
-
-        // Réinitialiser le formulaire après l'affichage du toaster success
-        this.ajout_couleur = '';
-
-
-        // Enregistré les contrats dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("couleurs", newCouleurData);
-
-        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-        const updatedCouleurs = await AppStorage.getCouleurs();
-
+        const couleur = this.ajout_couleur;
+        const updatedCouleurs = await switchService.storeCouleur(couleur);
+     
         // Émettre un événement avec les prospects mis à jour
         this.$emit("couleur-add", updatedCouleurs);
+
+        this.ajout_couleur = '';
 
         toaster.success(`Couleur ajouté avec succès`, {
           position: "top-right",
         });
       }
-
-      // axios
-      //   .post("/api/auth/postCouleurs", {
-      //     ajout_couleur: this.ajout_couleur,
-      //   })
-      //   .then((response) => {
-      //     this.$emit("couleur-add", response.data);
-
-      //     if (response.status === 200) {
-      //       toaster.success(`Couleur ajouté avec succès`, {
-      //         position: "top-right",
-      //       });
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     // console.log(error.response.headers);
-      //     //   if (error.response.status === 422) {
-      //     //     this.errors = error.response.data.errors;
-      //     //     // console.log("Message non enregisté")
-      //     //   } else if (error.request) {
-      //     //     // The request was made but no response was received
-      //     //     console.log(error.request);
-      //     //   } else {
-      //     //     // Something happened in setting up the request that triggered an Error
-      //     //     console.log("Error", error.message);
-      //     //   }
-      //   });
     },
   },
 };

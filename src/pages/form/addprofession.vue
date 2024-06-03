@@ -47,6 +47,7 @@
         }
       },
       storeMarque() {
+        
         axios
           .post("/api/auth/postProfessions", {
             ajout_profession: this.ajout_profession,

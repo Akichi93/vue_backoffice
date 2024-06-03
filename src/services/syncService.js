@@ -70,10 +70,10 @@ const SyncService = {
                 queue = await AppStorage.getBranchesToSync();
                 break;
             case 'prospects':
-                queue = await AppStorage.getProspects();
+                queue = await AppStorage.getProspectsToSync();
                 break;
             case 'clients':
-                queue = await AppStorage.getClients();
+                queue = await AppStorage.getClientsToSync();
                 break;
             case 'compagnies':
                 queue = await AppStorage.getCompagniesToSync();
