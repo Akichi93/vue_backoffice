@@ -1,15 +1,22 @@
-import AppStorage from "../db/AppStorage";
 import offlineService from "./offlineService";
 import onlineService from "./onlineService";
 
 class switchService {
+    currentMode = '';
     constructor() {
-        this.currentMode = AppStorage.getMode();
+        // Initialisation
+
+        // console.log(this.currentMode)
+    }
+
+    refreshMode() {
+        this.currentMode = localStorage.getItem('mode') ?? '';
     }
 
 
 
     async getBranches() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getBranches();
@@ -25,6 +32,7 @@ class switchService {
     }
 
     async getMarque() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getMarque();
@@ -39,7 +47,8 @@ class switchService {
         }
     }
 
-    async storeMarque(marque){
+    async storeMarque(marque) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeMarque(marque);
@@ -55,6 +64,7 @@ class switchService {
     }
 
     async getGenre() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getGenre();
@@ -69,7 +79,8 @@ class switchService {
         }
     }
 
-    async storeGenre(genre){
+    async storeGenre(genre) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getGenre(genre);
@@ -85,6 +96,7 @@ class switchService {
     }
 
     async getCategorie() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getCategorie();
@@ -100,6 +112,7 @@ class switchService {
     }
 
     async storeCategorie(categorie) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeCategorie(categorie);
@@ -115,6 +128,7 @@ class switchService {
     }
 
     async getCouleur() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getCouleur();
@@ -130,6 +144,7 @@ class switchService {
     }
 
     async storeEnergie(couleur) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeEnergie(couleur);
@@ -145,6 +160,7 @@ class switchService {
     }
 
     async getEnergie() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getEnergie();
@@ -160,6 +176,7 @@ class switchService {
     }
 
     async storeCouleur(energie) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeEnergie(energie);
@@ -175,6 +192,7 @@ class switchService {
     }
 
     async storeBranche(nomBranche, entrepriseId) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeBranche(nomBranche, entrepriseId);
@@ -190,6 +208,7 @@ class switchService {
     }
 
     async getBrancheByUuid(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getBrancheByUuid(uuid);
@@ -206,6 +225,7 @@ class switchService {
     }
 
     async updateBranche(branchetoedit, uuidBrancheToUpdate) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.updateBranche(branchetoedit, uuidBrancheToUpdate);
@@ -222,6 +242,7 @@ class switchService {
     }
 
     async deleteBranche(uuidBrancheToUpdate) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.deleteBranche(uuidBrancheToUpdate);
@@ -239,6 +260,7 @@ class switchService {
 
 
     async deleteBranche() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.updateBranche(branchetoedit, uuidBrancheToUpdate);
@@ -255,6 +277,7 @@ class switchService {
     }
 
     async storeProspect(formData, userId, entrepriseId) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeProspect(formData, userId, entrepriseId);
@@ -270,6 +293,7 @@ class switchService {
     }
 
     async ChangeEtat(uuidProspectToUpdate, nouveauStatut, nouveauSyncState) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.ChangeEtat(uuidProspectToUpdate, nouveauStatut, nouveauSyncState);
@@ -285,6 +309,7 @@ class switchService {
     }
 
     async updateProspect(prospectoedit, uuidProspectToUpdate) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.updateProspect(prospectoedit, uuidProspectToUpdate);
@@ -300,6 +325,7 @@ class switchService {
     }
 
     async changeProspect(uuidProspectToUpdate, newState, newSyncState, prospectoedit, entrepriseId, userId, numeroClient) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.changeProspect(uuidProspectToUpdate, newState, newSyncState, prospectoedit, entrepriseId, userId, numeroClient);
@@ -315,6 +341,7 @@ class switchService {
     }
 
     async deleteProspect(uuidProspectToUpdate, newDelete, newSyncState) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.deleteProspect(uuidProspectToUpdate, newDelete, newSyncState);
@@ -330,6 +357,7 @@ class switchService {
     }
 
     async getNameProspectParUUID(uuidProspect) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getNameProspectParUUID(uuidProspect);
@@ -345,6 +373,7 @@ class switchService {
     }
 
     async getDifferenceOfBranches(uuidProspect) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getDifferenceOfBranches(uuidProspect);
@@ -360,6 +389,7 @@ class switchService {
     }
 
     async getBrancheProspectsByuuidProspect(uuidProspect) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getBrancheProspectsByuuidProspect(uuidProspect);
@@ -377,6 +407,7 @@ class switchService {
 
 
     async addProspectBranche(form, userId, entrepriseId, uuidProspect) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.addProspectBranche(form, userId, entrepriseId, uuidProspect);
@@ -392,6 +423,7 @@ class switchService {
     }
 
     async getProspects() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getProspects();
@@ -407,6 +439,7 @@ class switchService {
     }
 
     async getProspectByUuid(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getProspectByUuid(uuid);
@@ -423,6 +456,7 @@ class switchService {
     }
 
     async searchProspectsByName(name) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.searchProspectsByName(name);
@@ -440,6 +474,7 @@ class switchService {
     // Clients
 
     async storeClient(form, entrepriseId, userId, numeroClient) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeClient(form, entrepriseId, userId, numeroClient);
@@ -455,6 +490,7 @@ class switchService {
     }
 
     async updateClient(clientoedit, uuidClientToUpdate) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.updateClient(clientoedit, uuidClientToUpdate);
@@ -470,6 +506,7 @@ class switchService {
     }
 
     async getClients() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getClients();
@@ -485,6 +522,7 @@ class switchService {
     }
 
     async getClientNameByUUID() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getProspectByUuid(uuid);
@@ -498,6 +536,8 @@ class switchService {
     }
 
     async getClientByUuid(uuid) {
+        ù
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getClientByUuid(uuid);
@@ -514,6 +554,7 @@ class switchService {
     }
 
     async searchClientsByName(name) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.searchClientsByName(name);
@@ -530,6 +571,7 @@ class switchService {
 
     //Apporteurs
     async getApporteurs() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getApporteurs();
@@ -545,6 +587,7 @@ class switchService {
     }
 
     async getApporteurByUuid(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getApporteurByUuid(uuid);
@@ -561,6 +604,7 @@ class switchService {
     }
 
     async storeApporteur(form, userId, entrepriseId, codeApporteur, unique, donnees, datas) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeApporteur(form, userId, entrepriseId, codeApporteur, unique, donnees, datas);
@@ -576,6 +620,7 @@ class switchService {
     }
 
     async updateApporteur(apporteurtoedit, uuidApporteurToUpdate) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.updateApporteur(apporteurtoedit, uuidApporteurToUpdate);
@@ -591,6 +636,7 @@ class switchService {
     }
 
     async searchApporteursByName(name) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.searchApporteursByName(name);
@@ -606,6 +652,7 @@ class switchService {
     }
 
     async getTauxApporteurs(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getTauxApporteurs(uuid);
@@ -622,6 +669,7 @@ class switchService {
     }
 
     async getNameApporteur(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getNameApporteur(uuid);
@@ -638,6 +686,7 @@ class switchService {
     }
 
     async getTauxApporteurByUuid(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getTauxApporteurByUuid(uuid);
@@ -654,6 +703,7 @@ class switchService {
     }
 
     async searchTauxApporteurByNomBranche(name, uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.searchTauxApporteurByNomBranche(name, uuid);
@@ -669,6 +719,7 @@ class switchService {
     }
 
     async updateTauxApporteur(uuidTauxApporteurUpdate, newTaux, newSyncState, uuidApporteur) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.updateTauxApporteur(uuidTauxApporteurUpdate, newTaux, newSyncState, uuidApporteur);
@@ -684,6 +735,7 @@ class switchService {
     }
 
     async getAvenantByUuid(uuidAvenant) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getAvenantByUuid(uuidAvenant);
@@ -699,6 +751,7 @@ class switchService {
     }
 
     async updateApporteur(apporteurtoedit, uuidApporteurToUpdate) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.updateApporteur(apporteurtoedit, uuidApporteurToUpdate);
@@ -714,6 +767,7 @@ class switchService {
     }
 
     async getInfoApporteur(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getInfoApporteur(uuid);
@@ -729,6 +783,7 @@ class switchService {
     }
 
     async getSommeCommissionsApporteur(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getSommeCommissionsApporteur(uuid);
@@ -744,6 +799,7 @@ class switchService {
     }
 
     async getSommeCommissionsApporteurPayer(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getSommeCommissionsApporteurPayer(uuid);
@@ -760,6 +816,7 @@ class switchService {
 
 
     async getAdresse() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getAdresses();
@@ -775,6 +832,7 @@ class switchService {
     }
 
     async storeAdresse(adresse) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeAdresse(adresse);
@@ -790,6 +848,7 @@ class switchService {
     }
 
     async getProfession() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getProfession();
@@ -807,6 +866,7 @@ class switchService {
     // Compagnies
 
     async getCompagnies() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getCompagnies();
@@ -822,6 +882,7 @@ class switchService {
     }
 
     async getCompagnieByUuid(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getCompagnieByUuid(uuid);
@@ -838,6 +899,7 @@ class switchService {
     }
 
     async searchCompagnieByName(name) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.searchCompagniesByName(name);
@@ -854,6 +916,7 @@ class switchService {
 
 
     async getTauxCompagnies(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getTauxCompagnies(uuid);
@@ -871,6 +934,7 @@ class switchService {
     }
 
     async getNameCompagnie(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getNameCompagnie(uuid);
@@ -887,6 +951,7 @@ class switchService {
     }
 
     async getTauxCompagnieByUuid(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getTauxCompagnieByUuid(uuid);
@@ -905,6 +970,7 @@ class switchService {
     }
 
     async searchTauxCompagnieByNomBranche(name, uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.searchTauxCompagnieByNomBranche(name, uuid);
@@ -920,6 +986,7 @@ class switchService {
     }
 
     async storeCompagnie(form, userId, entrepriseId, unique, donnees, datas) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.storeCompagnie(form, userId, entrepriseId, unique, donnees, datas);
@@ -935,6 +1002,7 @@ class switchService {
     }
 
     async updateCompagnie(compagnietoedit, uuidCompagnieToUpdate, entrepriseId) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.updateCompagnie(compagnietoedit, uuidCompagnieToUpdate, entrepriseId);
@@ -950,6 +1018,7 @@ class switchService {
     }
 
     async getContrats() {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getContrats();
@@ -959,12 +1028,13 @@ class switchService {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
         } catch (error) {
-            console.error("Error storing branch:", error);
+            console.error("Erreur de la recupération des contrats:", error);
             throw error;
         }
     }
 
     async getContratByUuid(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getContratByUuid(uuid);
@@ -980,6 +1050,7 @@ class switchService {
     }
 
     async getInfoContratByUuid(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getInfoContratByUuid(uuid);
@@ -996,6 +1067,7 @@ class switchService {
     }
 
     async getAvenantsSommeByUuid(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getAvenantsSommeByUuid(uuid);
@@ -1012,6 +1084,7 @@ class switchService {
     }
 
     async getAvenantsByUuidContrat(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getAvenantsByUuidContrat(uuid);
@@ -1028,6 +1101,7 @@ class switchService {
     }
 
     async getAutomobileByUuidContrat(uuid) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getAutomobileByUuidContrat(uuid);
@@ -1043,12 +1117,13 @@ class switchService {
         }
     }
 
-    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc) {
+    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc);
+                return await offlineService.storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc);
+                return await onlineService.storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -1059,6 +1134,7 @@ class switchService {
     }
 
     async getTauxParIdBrancheEtCompagnie(id_branche, option) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getTauxParIdBrancheEtCompagnie(id_branche, option);
@@ -1074,6 +1150,7 @@ class switchService {
     }
 
     async getTauxParIdBrancheEtApporteur(id_branche, optional) {
+        this.refreshMode();
         try {
             if (this.currentMode === "Local") {
                 return await offlineService.getTauxParIdBrancheEtApporteur(id_branche, optional);
@@ -1087,6 +1164,24 @@ class switchService {
             throw error;
         }
     }
+
+    async storeAutomobile(form, userId, entrepriseId, uuidAutomobile, uuidContrat, contrat, typegaranties) {
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.storeAutomobile(form, userId, entrepriseId, uuidAutomobile, uuidContrat, contrat, typegaranties);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.storeAutomobile(form, userId, entrepriseId, uuidAutomobile, uuidContrat, contrat, typegaranties);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+
 }
 
 export default new switchService();

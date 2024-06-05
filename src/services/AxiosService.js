@@ -7,11 +7,9 @@ import router from '../routers';
 class AxiosService {
     constructor() {
         this.axiosService = axios.create({
-            // baseURL: 'http://your-laravel-api-url/api'
             headers: this.getHeaders(),
         });
 
-        // Intercepter les requêtes pour ajouter le token
         this.axiosService.interceptors.request.use(
             (config) => {
                 const token = AppStorage.getToken();
@@ -25,7 +23,6 @@ class AxiosService {
             }
         );
 
-        // Intercepter les réponses pour gérer les erreurs d'authentification
         this.axiosService.interceptors.response.use(
             response => response,
             async (error) => {
@@ -68,8 +65,14 @@ class AxiosService {
     async get(url, params = {}) {
         try {
             const response = await this.axiosService.get(url, { params });
-            return response.data;
+            if (response.status >= 200 && response.status < 400) {
+                return response.data;
+            } else {
+                //Suppression des données en localstorage et ensuite deconnecté la personne
+            }
+
         } catch (error) {
+            console.log(error)
             throw error;
         }
     }
@@ -83,6 +86,8 @@ class AxiosService {
         }
     }
 }
+
+
 
 
 export default new AxiosService();

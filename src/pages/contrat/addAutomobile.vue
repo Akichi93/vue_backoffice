@@ -815,16 +815,9 @@ import Multiselect from "@vueform/multiselect";
 import AppStorage from "../../db/AppStorage";
 import typecomponent from "../../components/select/typecomponent.vue";
 import { v4 as uuidv4 } from "uuid";
-// import {
-//   getAdresseList,
-//   getCategoriesList,
-//   getMarquesList,
-//   getGenresList,
-//   getCouleursList,
-//   getEnergiesList
-// } from "../../services/formService";
 
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from '../../services/switchService';
 const toaster = createToaster({
   /* options */
 });
@@ -955,29 +948,15 @@ export default {
 
     async storeCategorie() {
       if (this.validateFormCategorie()) {
-        const uuid = uuidv4();
-
-        const categorie = this.ajout_cat.toLocaleUpperCase();
-
-        const newCategorieData = [
-          {
-            uuidCategorie: uuid,
-            categorie: categorie,
-            sync: 0,
-          },
-        ];
+        const categorie = this.ajout_cat;
+        const updatedLocalisations = await switchService.storeCategorie(
+          categorie
+        );
+        // Émettre un événement avec les prospects mis à jour
+        this.$emit("categorie-add", updatedLocalisations);
 
         // Réinitialiser le formulaire après l'affichage du toaster success
         this.ajout_cat = "";
-
-        // Enregistré les contrats dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("categories", newCategorieData);
-
-        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-        const updatedCategories = await AppStorage.getCategories();
-
-        // Émettre un événement avec les prospects mis à jour
-        this.categories = updatedCategories;
 
         toaster.success(`Energie ajouté avec succès`, {
           position: "top-right",
@@ -991,29 +970,14 @@ export default {
 
     async storeMarque() {
       if (this.validateFormMarque()) {
-        const uuid = uuidv4();
+        const marque = this.ajout_marque;
+        const updatedMarques = await switchService.storeMarque(marque);
 
-        const marque = this.ajout_marque.toLocaleUpperCase();
-
-        const newMarqueData = [
-          {
-            uuidMarque: uuid,
-            marque: marque,
-            sync: 0,
-          },
-        ];
+        // Émettre un événement avec les prospects mis à jour
+        this.$emit("marque-add", updatedMarques);
 
         // Réinitialiser le formulaire après l'affichage du toaster success
         this.ajout_marque = "";
-
-        // Enregistré les contrats dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("marques", newMarqueData);
-
-        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-        const updatedMarques = await AppStorage.getMarques();
-
-        // Émettre un événement avec les prospects mis à jour
-        this.marques = updatedMarques;
 
         toaster.success(`Marque ajouté avec succès`, {
           position: "top-right",
@@ -1026,29 +990,12 @@ export default {
 
     async storeGenre() {
       if (this.validateFormGenre()) {
-        const uuid = uuidv4();
+        const genre = this.ajout_genre;
+        const updatedGenres = await switchService.storeGenre(genre);
 
-        const genre = this.ajout_genre.toLocaleUpperCase();
+        this.$emit("genre-add", updatedGenres);
 
-        const newGenreData = [
-          {
-            uuidGenre: uuid,
-            genre: genre,
-            sync: 0,
-          },
-        ];
-
-        // Réinitialiser le formulaire après l'affichage du toaster success
         this.ajout_genre = "";
-
-        // Enregistré les contrats dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("genres", newGenreData);
-
-        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-        const updatedGenres = await AppStorage.getGenres();
-
-        // Émettre un événement avec les prospects mis à jour
-        this.genres = updatedGenres;
 
         toaster.success(`Genre ajouté avec succès`, {
           position: "top-right",
@@ -1061,29 +1008,12 @@ export default {
 
     async storeEnergie() {
       if (this.validateFormEnergie()) {
-        const uuid = uuidv4();
+        const energie = this.ajout_energie;
+        const updatedEnergies = await switchService.storeEnergie(energie);
 
-        const energie = this.ajout_energie.toLocaleUpperCase();
+        this.$emit("energie-add", updatedEnergies);
 
-        const newEnergieData = [
-          {
-            uuidEnergie: uuid,
-            energie: energie,
-            sync: 0,
-          },
-        ];
-
-        // Réinitialiser le formulaire après l'affichage du toaster success
         this.ajout_energie = "";
-
-        // Enregistré les contrats dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("energies", newEnergieData);
-
-        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-        const updatedEnergies = await AppStorage.getEnergies();
-
-        // Émettre un événement avec les prospects mis à jour
-        this.energies = updatedEnergies;
 
         toaster.success(`Energie ajouté avec succès`, {
           position: "top-right",
@@ -1095,29 +1025,13 @@ export default {
 
     async storeCouleur() {
       if (this.validateFormCouleur()) {
-        const uuid = uuidv4();
-
-        const couleur = this.ajout_couleur.toLocaleUpperCase();
-
-        const newCouleurData = [
-          {
-            uuidCouleur: uuid,
-            couleur: couleur,
-            sync: 0,
-          },
-        ];
-
-        // Réinitialiser le formulaire après l'affichage du toaster success
-        this.ajout_couleur = "";
-
-        // Enregistré les contrats dans IndexedDB
-        await AppStorage.storeDataInIndexedDB("couleurs", newCouleurData);
-
-        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-        const updatedCouleurs = await AppStorage.getCouleurs();
+        const couleur = this.ajout_couleur;
+        const updatedCouleurs = await switchService.storeCouleur(couleur);
 
         // Émettre un événement avec les prospects mis à jour
-        this.couleurs = updatedCouleurs;
+        this.$emit("couleur-add", updatedCouleurs);
+
+        this.ajout_couleur = "";
 
         toaster.success(`Couleur ajouté avec succès`, {
           position: "top-right",
@@ -1127,52 +1041,36 @@ export default {
       this.showCouleur = false;
     },
 
-    getBranche() {
-      AppStorage.getBranches().then((result) => {
-        this.branches = result;
-      });
+    async getBranche() {
+      this.branches = await switchService.getBranches();
     },
 
-    getClients() {
-      AppStorage.getClients().then((result) => {
-        this.clients = result;
-      });
+    async getClients() {
+      this.clients = await switchService.getClients();
     },
 
-    getAdresse() {
-      AppStorage.getLocalisations().then((result) => {
-        this.localisations = result;
-      });
+    async getAdresse() {
+      this.localisations = await switchService.getAdresse();
     },
 
-    getCategorie() {
-      AppStorage.getCategories().then((result) => {
-        this.categories = result;
-      });
+    async getCategorie() {
+      this.categories = await switchService.getCategorie();
     },
 
-    getMarque() {
-      AppStorage.getMarques().then((result) => {
-        this.marques = result;
-      });
+    async getMarque() {
+      this.marques = await switchService.getMarque();
     },
 
-    getGenre() {
-      AppStorage.getGenres().then((result) => {
-        this.genres = result;
-      });
+    async getGenre() {
+      this.genres = await switchService.getGenre();
     },
 
-    getCouleur() {
-      AppStorage.getCouleurs().then((result) => {
-        this.couleurs = result;
-      });
+    async getCouleur() {
+      this.couleurs = await switchService.getCouleur();
     },
 
-    getEnergie() {
-      AppStorage.getEnergies().then((result) => {
-        this.energies = result;
-      });
+    async getEnergie() {
+      this.energies = await switchService.getEnergie();
     },
 
     async storeAutomobile() {
@@ -1182,78 +1080,81 @@ export default {
       const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
 
       const contrat = await AppStorage.getContratByUuid(uuidContrat);
+      let typegaranties = Object.values(this.typegarantie);
 
-      const newAutomobileData = [
-        {
-          uuidAutomobile: uuidAutomobile,
-          uuidContrat: uuidContrat,
-          numero_immatriculation: this.form.numero_immatriculation,
-          date_circulation: this.date_circulation,
-          identification_proprietaire: this.form.identification_proprietaire,
-          adresse_proprietaire: this.form.adresse_proprietaire,
-          zone: this.form.zone,
-          categorie: this.form.categorie_id,
-          marque: this.form.marque_id,
-          genre_id: this.form.genre_id,
-          type: this.form.type,
-          carosserie: this.form.carosserie,
-          couleur: this.form.couleur_id,
-          energie: this.form.energie_id,
-          place: this.form.place,
-          puissance: this.form.puissance,
-          charge: this.form.charge,
-          valeur_neuf: this.form.valeur_neuf,
-          valeur_venale: this.form.valeur_venale,
-          categorie_socio_pro: this.form.categorie_socio_pro,
-          permis: this.form.permis,
-          option: this.form.option_garantie,
-          entree: this.form.entree_le,
-          tierce: this.tierce,
-          prime_nette: contrat.prime_nette,
-          accessoires: contrat.prime_nette,
-          frais_courtier: contrat.frais_courtier,
-          cfga: contrat.cfga,
-          taxes_totales: contrat.taxes_totales,
-          commission_courtier: contrat.commission_courtier,
-          commission_apporteur: contrat.commission_apporteur,
-          gestion: contrat.gestion,
-          primes_ttc: contrat.primes_ttc,
-          sync: 0,
-          supprimer_automobile: 0,
-          id_entreprise: entrepriseId,
-        },
-      ];
+      await switchService.storeAutomobile(this.form,userId, entrepriseId, uuidAutomobile, uuidContrat, contrat,typegaranties)
 
-      await AppStorage.storeDataInIndexedDB("automobiles", newAutomobileData);
+      // const newAutomobileData = [
+      //   {
+      //     uuidAutomobile: uuidAutomobile,
+      //     uuidContrat: uuidContrat,
+      //     numero_immatriculation: this.form.numero_immatriculation,
+      //     date_circulation: this.date_circulation,
+      //     identification_proprietaire: this.form.identification_proprietaire,
+      //     adresse_proprietaire: this.form.adresse_proprietaire,
+      //     zone: this.form.zone,
+      //     categorie: this.form.categorie_id,
+      //     marque: this.form.marque_id,
+      //     genre_id: this.form.genre_id,
+      //     type: this.form.type,
+      //     carosserie: this.form.carosserie,
+      //     couleur: this.form.couleur_id,
+      //     energie: this.form.energie_id,
+      //     place: this.form.place,
+      //     puissance: this.form.puissance,
+      //     charge: this.form.charge,
+      //     valeur_neuf: this.form.valeur_neuf,
+      //     valeur_venale: this.form.valeur_venale,
+      //     categorie_socio_pro: this.form.categorie_socio_pro,
+      //     permis: this.form.permis,
+      //     option: this.form.option_garantie,
+      //     entree: this.form.entree_le,
+      //     tierce: this.tierce,
+      //     prime_nette: contrat.prime_nette,
+      //     accessoires: contrat.prime_nette,
+      //     frais_courtier: contrat.frais_courtier,
+      //     cfga: contrat.cfga,
+      //     taxes_totales: contrat.taxes_totales,
+      //     commission_courtier: contrat.commission_courtier,
+      //     commission_apporteur: contrat.commission_apporteur,
+      //     gestion: contrat.gestion,
+      //     primes_ttc: contrat.primes_ttc,
+      //     sync: 0,
+      //     supprimer_automobile: 0,
+      //     id_entreprise: entrepriseId,
+      //   },
+      // ];
 
-      let test = JSON.parse(JSON.stringify(this.typegarantie));
-      let donnees = [];
+      // await AppStorage.storeDataInIndexedDB("automobiles", newAutomobileData);
 
-      for (let i = 0; i < Object.keys(test).length; i++) {
-        donnees.push(test[i]);
-      }
+      // let test = JSON.parse(JSON.stringify(this.typegarantie));
+      // let donnees = [];
 
-      for (let i = 0; i < donnees.length; i++) {
-        // Générer un UUID unique
-        const uuidGarantie = uuidv4();
+      // for (let i = 0; i < Object.keys(test).length; i++) {
+      //   donnees.push(test[i]);
+      // }
 
-        const newGarantieData = [
-          {
-            uuidGarantie: uuidGarantie,
-            uuidAutomobile: uuidAutomobile,
-            nom_garantie: donnees[i],
-            sync: 0,
-            id_entreprise: entrepriseId,
-          },
-        ];
+      // for (let i = 0; i < donnees.length; i++) {
+      //   // Générer un UUID unique
+      //   const uuidGarantie = uuidv4();
 
-        await AppStorage.storeDataInIndexedDB("garanties", newGarantieData);
-      }
+      //   const newGarantieData = [
+      //     {
+      //       uuidGarantie: uuidGarantie,
+      //       uuidAutomobile: uuidAutomobile,
+      //       nom_garantie: donnees[i],
+      //       sync: 0,
+      //       id_entreprise: entrepriseId,
+      //     },
+      //   ];
 
-      // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-      const updatedAutomobiles = await AppStorage.getAutomobileByUuidContrat(
-        uuidContrat
-      );
+      //   await AppStorage.storeDataInIndexedDB("garanties", newGarantieData);
+      // }
+
+      // // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
+      // const updatedAutomobiles = await AppStorage.getAutomobileByUuidContrat(
+      //   uuidContrat
+      // );
 
       // Émettre un événement avec les prospects mis à jour
       this.$emit("automobile-add", updatedAutomobiles);
@@ -1262,60 +1163,7 @@ export default {
         position: "top-right",
       });
 
-      // axios
-      //   .post("/api/auth/postAutomobile", {
-      //     //Automobile
-      //     numero_immatriculation: this.numero_immatriculation,
-      //     date_circulation: this.date_circulation,
-      //     identification_proprietaire: this.identification_proprietaire,
-      //     adresse_proprietaire: this.adresse_proprietaire,
-      //     zone: this.zone,
-      //     categorie_id: this.categorie_id,
-      //     marque_id: this.marque_id,
-      //     genre_id: this.genre_id,
-      //     type: this.type,
-      //     carosserie: this.carosserie,
-      //     couleur_id: this.couleur_id,
-      //     energie_id: this.energie_id,
-      //     place: this.place,
-      //     puissance: this.puissance,
-      //     charge: this.charge,
-      //     valeur_neuf: this.valeur_neuf,
-      //     valeur_venale: this.valeur_venale,
-      //     categorie_socio_pro: this.categorie_socio_pro,
-      //     permis: this.permis,
-      //     option: this.option_garantie,
-      //     entree: this.entree_le,
-      //     garantie: this.typegarantie,
-      //     tierce: this.tierce,
-      //     id_contrat: this.$route.params.id_contrat,
-
-      //   })
-      //   .then((response) => {
-      //     // this.$emit('automobile-add', response);
-      //     // if (response.status === 200) {
-      //     toaster.success(`Véhicule ajouté avec succès`, {
-      //       position: "top-right",
-      //     });
-      //     // }
-      //   })
-      //   .catch((error) => {
-      //     // console.log(error.response.headers);
-
-      //     //   if (error.response.status === 422) {
-      //     //     toaster.error(`Veuillez remplir les champs indiqués`, {
-      //     //       position: "top-right",
-      //     //     });
-      //     //     this.errors = error.response.data.errors;
-      //     //     // console.log("Message non enregisté")
-      //     //   } else if (error.request) {
-      //     //     // The request was made but no response was received
-      //     //     console.log(error.request);
-      //     //   } else {
-      //     //     // Something happened in setting up the request that triggered an Error
-      //     //     console.log("Error", error.message);
-      //     //   }
-      //   });
+     
     },
   },
 };

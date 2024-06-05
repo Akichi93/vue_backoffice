@@ -57,13 +57,13 @@ class OnlineService {
         }
     }
 
-    async storeMarque(marque){
+    async storeMarque(marque) {
         const uuid = uuidv4();
 
         const newMarqueData = {
             uuidMarque: uuid,
             marque: marque,
-          };
+        };
 
         try {
             const response = await axios.post(apiUrl.postmarque, newMarqueData);
@@ -885,7 +885,7 @@ class OnlineService {
         }
     }
 
-    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc) {
+    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant) {
         const uuid = uuidv4();
 
         const uuidAutomobile = uuidv4();
@@ -916,11 +916,11 @@ class OnlineService {
             commission_apporteur: commission_apporteur,
             gestion: this.gestion,
             primes_ttc: totalPrimeTtc,
+            code_avenant: codeAvenant,
             sync: 0,
             solde: 0,
             reverse: 0,
             supprimer_contrat: 0,
-
             uuidAutomobile: uuidAutomobile,
             uuidAvenant: uuidAvenant,
             numero_immatriculation: form.numero_immatriculation,
@@ -944,6 +944,7 @@ class OnlineService {
             permis: this.permis,
             entree: this.entree_le,
             tierce: this.tierce,
+
         };
 
         try {
@@ -984,6 +985,60 @@ class OnlineService {
             return { success: false, error: "Erreur lors de la récupération" };
         }
     }
+
+    async storeAutomobile(form, userId, entrepriseId, uuidAutomobile, uuidContrat, contrat) {
+
+        const newAutomobileData =
+        {
+            uuidAutomobile: uuidAutomobile,
+            uuidContrat: uuidContrat,
+            numero_immatriculation: form.numero_immatriculation,
+            date_circulation: this.date_circulation,
+            identification_proprietaire: form.identification_proprietaire,
+            adresse_proprietaire: form.adresse_proprietaire,
+            zone: form.zone,
+            categorie: form.categorie_id,
+            marque: form.marque_id,
+            genre_id: form.genre_id,
+            type: form.type,
+            carosserie: form.carosserie,
+            couleur: form.couleur_id,
+            energie: form.energie_id,
+            place: form.place,
+            puissance: form.puissance,
+            charge: form.charge,
+            valeur_neuf: form.valeur_neuf,
+            valeur_venale: form.valeur_venale,
+            categorie_socio_pro: form.categorie_socio_pro,
+            permis: form.permis,
+            option: form.option_garantie,
+            entree: form.entree_le,
+            tierce: this.tierce,
+            prime_nette: contrat.prime_nette,
+            accessoires: contrat.prime_nette,
+            frais_courtier: contrat.frais_courtier,
+            cfga: contrat.cfga,
+            taxes_totales: contrat.taxes_totales,
+            commission_courtier: contrat.commission_courtier,
+            commission_apporteur: contrat.commission_apporteur,
+            gestion: contrat.gestion,
+            primes_ttc: contrat.primes_ttc,
+            sync: 0,
+            supprimer_automobile: 0,
+            id_entreprise: entrepriseId,
+            type_garanties: typegaranties
+        };
+
+        try {
+            const response = await axios.post(apiUrl.postautomobile, newAutomobileData);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du client:", error);
+            return { success: false, error: "Erreur lors de la mise à jour du client" };
+        }
+    }
+
+
 
 
 }

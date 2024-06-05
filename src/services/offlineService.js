@@ -39,15 +39,15 @@ class OfflineService {
         return await AppStorage.getMarques();
     }
 
-    async storeMarque(marque){
+    async storeMarque(marque) {
         const uuid = uuidv4();
 
         const marques = marque.toLocaleUpperCase()
 
         const newMarqueData = [{
-          uuidMarque: uuid,
-          marque: marques,
-          sync: 0,
+            uuidMarque: uuid,
+            marque: marques,
+            sync: 0,
         }];
 
         // Enregistré les contrats dans IndexedDB
@@ -63,15 +63,15 @@ class OfflineService {
         return await AppStorage.getGenres();
     }
 
-    async storeGenre(genre){
+    async storeGenre(genre) {
         const uuid = uuidv4();
 
         const genres = genre.toLocaleUpperCase()
 
         const newGenreData = [{
-          uuidGenre: uuid,
-          genre: genres,
-          sync: 0,
+            uuidGenre: uuid,
+            genre: genres,
+            sync: 0,
         }];
 
         // Enregistré les contrats dans IndexedDB
@@ -87,15 +87,15 @@ class OfflineService {
         return await AppStorage.getCategories();
     }
 
-    async storeCategorie(categorie){
+    async storeCategorie(categorie) {
         const uuid = uuidv4();
 
         const categories = categorie.toLocaleUpperCase()
 
         const newCategorieData = [{
-          uuidCategorie: uuid,
-          categorie: categories,
-          sync: 0,
+            uuidCategorie: uuid,
+            categorie: categories,
+            sync: 0,
         }];
 
 
@@ -112,14 +112,14 @@ class OfflineService {
         return await AppStorage.getCouleurs();
     }
 
-    async storeCouleur(couleur){
+    async storeCouleur(couleur) {
         const uuid = uuidv4();
 
         const couleurs = couleur.toLocaleUpperCase()
 
         const newCouleurData = [{
-          uuidCouleur: uuid,
-          couleur: couleurs,
+            uuidCouleur: uuid,
+            couleur: couleurs,
         }];
 
 
@@ -136,15 +136,15 @@ class OfflineService {
         return await AppStorage.getEnergies();
     }
 
-    async storeEnergie(energie){
+    async storeEnergie(energie) {
         const uuid = uuidv4();
 
         const energies = energie.toLocaleUpperCase()
 
         const newEnergieData = [{
-          uuidEnergie: uuid,
-          energie: energies,
-          sync: 0,
+            uuidEnergie: uuid,
+            energie: energies,
+            sync: 0,
         }];
 
         // Enregistré les contrats dans IndexedDB
@@ -833,7 +833,7 @@ class OfflineService {
         }
     }
 
-    async getAvenantsSommeByUuid() {
+    async getAvenantsSommeByUuid(uuid) {
         try {
             return await AppStorage.getAvenantsSommeByUuid(uuid);
         } catch (error) {
@@ -857,7 +857,7 @@ class OfflineService {
         }
     }
 
-    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc) {
+    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant) {
         const uuid = uuidv4();
         const clientName = await AppStorage.getClientNameByUUID(
             form.client_id
@@ -895,11 +895,11 @@ class OfflineService {
                 prime_nette: form.primes_nette,
                 accessoires: form.accessoires,
                 frais_courtier: form.frais_courtier,
-                cfga: cfga,
+                cfga: this.cfga,
                 taxes_totales: form.taxes_totales,
                 commission_courtier: commission_courtier,
                 commission_apporteur: commission_apporteur,
-                gestion: gestion,
+                gestion: this.gestion,
                 primes_ttc: totalPrimeTtc,
                 sync: 0,
                 solde: 0,
@@ -912,26 +912,21 @@ class OfflineService {
         await AppStorage.storeDataInIndexedDB("contrats", newContratData);
 
         // Enregistré les avenants dans IndexedDB
-        let type = "Terme";
+        const [annee, mois, day] = form.souscrit_le.split("-");
 
-        const [annee, mois, day] = this.form.souscrit_le.split("-");
+        // const calculateCommission = () => {
+        //     return (
+        //         form.primes_nette *
+        //         this.taux.taux *
+        //         0.01 *
+        //         this.tauxcomp.tauxcomp *
+        //         0.01
+        //     );
+        // };
 
-        let codeAvenant = this.generateCodevenant();
-
-
-        const calculateCommission = () => {
-            return (
-                form.primes_nette *
-                this.taux.taux *
-                0.01 *
-                this.tauxcomp.tauxcomp *
-                0.01
-            );
-        };
-
-        const calculateCommissionCourtier = () => {
-            return form.primes_nette * tauxcomp.tauxcomp * 0.01;
-        };
+        // const calculateCommissionCourtier = () => {
+        //     return form.primes_nette * tauxcomp.tauxcomp * 0.01;
+        // };
 
         const uuidAvenant = uuidv4();
 
@@ -946,8 +941,10 @@ class OfflineService {
                 nom_branche: form.branche_id.nom_branche,
                 prime_ttc: totalPrimeTtc,
                 retrocession: 0,
-                commission: calculateCommission(),
-                commission_courtier: calculateCommissionCourtier(),
+                // commission: calculateCommission,
+                commission: commission_apporteur,
+                // commission_courtier: calculateCommissionCourtier(),
+                commission_courtier: commission_courtier,
                 prise_charge: 0,
                 ristourne: 0,
                 prime_nette: form.primes_nette,
@@ -956,7 +953,7 @@ class OfflineService {
                 date_fin: form.expire_le,
                 accessoires: form.accessoires,
                 frais_courtier: form.frais_courtier,
-                cfga: cfga,
+                cfga: this.cfga,
                 taxes_totales: form.taxes_totales,
                 code_avenant: codeAvenant,
                 uuidAvenant: uuidAvenant,
@@ -1022,29 +1019,29 @@ class OfflineService {
                 newAutomobileData
             );
 
-            let test = JSON.parse(JSON.stringify(this.typegarantie));
-            let donnees = [];
+            // let test = JSON.parse(JSON.stringify(this.typegarantie));
+            // let donnees = [];
 
-            for (let i = 0; i < Object.keys(test).length; i++) {
-                donnees.push(test[i]);
-            }
+            // for (let i = 0; i < Object.keys(test).length; i++) {
+            //     donnees.push(test[i]);
+            // }
 
-            for (let i = 0; i < donnees.length; i++) {
-                // Générer un UUID unique
-                const uuidGarantie = uuidv4();
+            // for (let i = 0; i < donnees.length; i++) {
+            //     // Générer un UUID unique
+            //     const uuidGarantie = uuidv4();
 
-                const newGarantieData = [
-                    {
-                        uuidGarantie: uuidGarantie,
-                        uuidAutomobile: uuidAutomobile,
-                        nom_garantie: donnees[i],
-                        sync: 0,
-                        id_entreprise: entrepriseId,
-                    },
-                ];
+            //     const newGarantieData = [
+            //         {
+            //             uuidGarantie: uuidGarantie,
+            //             uuidAutomobile: uuidAutomobile,
+            //             nom_garantie: donnees[i],
+            //             sync: 0,
+            //             id_entreprise: entrepriseId,
+            //         },
+            //     ];
 
-                await AppStorage.storeDataInIndexedDB("garanties", newGarantieData);
-            }
+            //     await AppStorage.storeDataInIndexedDB("garanties", newGarantieData);
+            // }
         }
     }
 
@@ -1055,6 +1052,78 @@ class OfflineService {
     async getTauxParIdBrancheEtApporteur(id_branche, optional) {
         return await AppStorage.getTauxParIdBrancheEtApporteur(id_branche, optional);
     }
+
+    async storeAutomobile(form, userId, entrepriseId, uuidAutomobile, uuidContrat, contrat,typegaranties) {
+        // Create an array with the new automobile data
+        const newAutomobileData = [
+            {
+                uuidAutomobile: uuidAutomobile,
+                uuidContrat: uuidContrat,
+                numero_immatriculation: form.numero_immatriculation,
+                date_circulation: form.date_circulation, // Assuming this.date_circulation should be form.date_circulation
+                identification_proprietaire: form.identification_proprietaire,
+                adresse_proprietaire: form.adresse_proprietaire,
+                zone: form.zone,
+                categorie: form.categorie_id,
+                marque: form.marque_id,
+                genre_id: form.genre_id,
+                type: form.type,
+                carosserie: form.carosserie,
+                couleur: form.couleur_id,
+                energie: form.energie_id,
+                place: form.place,
+                puissance: form.puissance,
+                charge: form.charge,
+                valeur_neuf: form.valeur_neuf,
+                valeur_venale: form.valeur_venale,
+                categorie_socio_pro: form.categorie_socio_pro,
+                permis: form.permis,
+                option: form.option_garantie,
+                entree: form.entree_le,
+                tierce: form.tierce, // Assuming this.tierce should be form.tierce
+                prime_nette: contrat.prime_nette,
+                accessoires: contrat.prime_nette,
+                frais_courtier: contrat.frais_courtier,
+                cfga: contrat.cfga,
+                taxes_totales: contrat.taxes_totales,
+                commission_courtier: contrat.commission_courtier,
+                commission_apporteur: contrat.commission_apporteur,
+                gestion: contrat.gestion,
+                primes_ttc: contrat.primes_ttc,
+                sync: 0,
+                supprimer_automobile: 0,
+                id_entreprise: entrepriseId,
+            },
+        ];
+    
+        // Store the automobile data in IndexedDB
+        await AppStorage.storeDataInIndexedDB("automobiles", newAutomobileData);
+    
+        // Iterate over the typegarantie values and store each as a new guarantee record
+        for (let nom_garantie of typegaranties) {
+            const uuidGarantie = uuidv4(); // Generate a unique UUID for the guarantee
+    
+            const newGarantieData = [
+                {
+                    uuidGarantie: uuidGarantie,
+                    uuidAutomobile: uuidAutomobile,
+                    nom_garantie: nom_garantie,
+                    sync: 0,
+                    id_entreprise: entrepriseId,
+                },
+            ];
+    
+            // Store the guarantee data in IndexedDB
+            await AppStorage.storeDataInIndexedDB("garanties", newGarantieData);
+        }
+    
+        // Retrieve and return the updated list of automobiles associated with the contract
+        const updatedAutomobiles = await AppStorage.getAutomobileByUuidContrat(uuidContrat);
+        return updatedAutomobiles;
+    }
+    
+
+
 }
 
 // export default OfflineService;

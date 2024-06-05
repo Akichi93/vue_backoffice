@@ -473,7 +473,7 @@
           </div>
 
           <addautomobile @automobile-add="refresh"></addautomobile>
-          <addflotte></addflotte>
+          <addflotte @flotte-add="refreshAuto"></addflotte>
           <!-- <addgarantie></addgarantie> -->
         </div>
       </div>
@@ -548,6 +548,7 @@ export default {
 
       // Await the resolution of the Promise
       const sommes = await switchService.getAvenantsSommeByUuid(uuidContrat);
+      console.log(sommes)
 
       // Assign the result to the component data if needed
       this.sommes = sommes;
@@ -710,6 +711,10 @@ export default {
         this.autos = result;
       });
     },
+
+    refreshAuto(){
+      
+    }
   },
 };
 </script>

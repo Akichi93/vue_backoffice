@@ -1265,7 +1265,6 @@ export default {
       genres: [],
       couleurs: [],
       energies: [],
-
       form: {
         // Contrat form
         branche_id: "",
@@ -1278,19 +1277,13 @@ export default {
         heure_police: "",
         expire_le: "",
         reconduction: "",
-
         //Automobile
         numero_immatriculation: "",
-
         // Primes
         primes_nette: 0,
         frais_courtier: 0,
         accessoires: 0,
         taxes_totales: 0,
-      },
-
-      formData:{
-
       },
 
       date_circulation: "",
@@ -1314,9 +1307,7 @@ export default {
       option_garantie: "",
       entree_le: "",
       tierce: "",
-
-      cfga: null,
-
+      cfga: 0,
       prime_ttc: 0,
       commission: "",
       gestion: "",
@@ -1524,6 +1515,7 @@ export default {
 
         const commission_courtier = this.calulateCommissionCompagnie;
         const commission_apporteur = this.calulateCommissionApporteur;
+        let codeAvenant = this.generateCodevenant();
 
         let totalPrimeTtc =
           this.form.primes_nette +
@@ -1538,12 +1530,13 @@ export default {
           entrepriseId,
           commission_courtier,
           commission_apporteur,
-          totalPrimeTtc
+          totalPrimeTtc,
+          codeAvenant
         );
 
         toaster.success(`Contrat ajouté`, { position: "top-right" });
 
-        // this.$router.push("/listcontrat");
+        this.$router.push("/listcontrat");
       } catch (error) {
         console.error("Error storing contract offline:", error);
       }

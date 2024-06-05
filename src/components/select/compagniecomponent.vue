@@ -26,6 +26,7 @@ export default {
       compagnies: [],
     };
   },
+  
   mounted() {
     this.getCompagnie();
   },

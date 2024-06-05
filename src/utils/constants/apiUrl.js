@@ -75,7 +75,6 @@ const apiUrl = {
 
     refresh : createApiUrl('refresh'),
 
-
     postcontrat: createApiUrl('postcontrat'),
     postautomobile: createApiUrl('postautomobile'),
     getcontrat: createApiUrl('getcontrats'),
@@ -86,6 +85,9 @@ const apiUrl = {
     setinfoavenantcontrat: (uuidContrat) => `${base_url}/api/auth/getinfoavenantcontrat/${uuidContrat}`, 
     setavenantcontrat: (uuidContrat) => `${base_url}/api/auth/getavenantcontrat/${uuidContrat}`,
     setinfovehicule: (uuidContrat) => `${base_url}/api/auth/getinfovehicules/${uuidContrat}`,
+
+    importautomobile: createApiUrl('importautomobile'),
+    
  
 
 

@@ -34,8 +34,6 @@
   </div>
 </template>
 <script>
-import AppStorage from '../../db/AppStorage';
-import { v4 as uuidv4 } from 'uuid';
 import { createToaster } from "@meforma/vue-toaster";
 import switchService from '../../services/switchService';
 // import $ from "jquery";

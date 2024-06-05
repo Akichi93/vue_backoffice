@@ -166,7 +166,6 @@ export default {
     async editContrat(uuidContrat) {
       try {
         this.contrattoedit = await switchService.getContratByUuid(uuidContrat);
-        console.log(this.contrattoedit);
       } catch (error) {
         console.log(error);
       }
@@ -204,16 +203,16 @@ export default {
     //   }
     // },
 
-    searchtask() {
-      if (this.q.length > 3) {
-        AppStorage.searchContratsByName(this.q).then((result) => {
-          this.contrats = result;
-          console.log(result);
-        });
-      } else {
-        this.getContrat();
-      }
-    },
+    // searchtask() {
+    //   if (this.q.length > 3) {
+    //     AppStorage.searchContratsByName(this.q).then((result) => {
+    //       this.contrats = result;
+    //       console.log(result);
+    //     });
+    //   } else {
+    //     this.getContrat();
+    //   }
+    // },
 
     async refresh() {
       this.contrats = await switchService.getContrats();
