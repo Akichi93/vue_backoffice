@@ -74,7 +74,7 @@ class OfflineService {
             sync: 0,
         }];
 
-     
+
 
         // Enregistré les contrats dans IndexedDB
         await AppStorage.storeDataInIndexedDB("genres", newGenreData);
@@ -898,7 +898,7 @@ class OfflineService {
         }
     }
 
-    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant,formData) {
+    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant, formData) {
         const uuid = uuidv4();
         const clientName = await AppStorage.getClientNameByUUID(
             form.client_id
@@ -1279,6 +1279,46 @@ class OfflineService {
         } catch (error) {
             console.error('Erreur lors du stockage de l\'avenant:', error);
             throw error; // Relance l'erreur pour être gérée par l'appelant
+        }
+    }
+
+
+    async getAssurance() {
+        return await AppStorage.getAssuranceTemporaires();
+    }
+
+    async storeAssurance(form, userId, entrepriseId) {
+
+        const uuid = uuidv4();
+
+        const newAssuranceData = [
+            {
+                id: userId,
+                uuidAssuranceTemporaire: uuid,
+                uuidCompagnie: form.compagnie_id,
+                nbreMoisMin: form.nbre_min,
+                nbreMoisMax: form.nbre_max,
+                pourcentage: form.pourcentage,
+                sync: 0,
+                id_entreprise: entrepriseId,
+            },
+        ];
+
+        await AppStorage.storeDataInIndexedDB(
+            "assurancetemporaires",
+            newAssuranceData
+        );
+
+        const updatedAssurances = await AppStorage.getAssuranceTemporaires();
+
+        return updatedAssurances;
+    }
+
+    async getAssuranceByUuid(uuid) {
+        try {
+            return await AppStorage.getAssuranceTemporaireByUuid(uuid);
+        } catch (error) {
+            throw new Error(error);
         }
     }
 

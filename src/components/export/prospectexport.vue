@@ -3,7 +3,6 @@
   <button @click="exportToCSV">Exporter en CSV</button>
 </template>
 <script>
-import { getProspectsExport } from "../../services/prospectService";
 import AppStorage from "../../db/AppStorage";
 export default {
   created() {

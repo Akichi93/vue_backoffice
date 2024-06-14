@@ -163,14 +163,12 @@
 // import pagination from "laravel-vue-pagination";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { getProspectsExport } from "../../services/prospectService";
 import { getRoleActif } from "../../services/roleservice";
 import admettreProspect from "./admettreProspect.vue";
 import deleteProspect from "./deleteProspect.vue";
 import editProspect from "./editProspect.vue";
 import changeProspect from "./changeProspect.vue";
 import prospectexport from "../../components/export/prospectexport.vue";
-import AppStorage from "../../db/AppStorage.js";
 import switchService from "../../services/switchService";
 export default {
   name: "listprospect",

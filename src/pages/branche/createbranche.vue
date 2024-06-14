@@ -65,11 +65,9 @@
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import { postBranche } from "../../services/brancheService";
 import { useBranchesStore } from "../../store/branche";
 import { createToaster } from "@meforma/vue-toaster";
 import AppStorage from "../../db/AppStorage.js";
-import { apiUrl } from "../../utils/constants/apiUrl";
 import { v4 as uuidv4 } from "uuid";
 import { validateBrancheForm } from "../../utils/helpers/formValidation";
 import switchService from "../../services/switchService";

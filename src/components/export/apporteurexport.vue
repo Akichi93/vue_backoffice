@@ -3,8 +3,6 @@
   <button @click="exportToCSV">Exporter en CSV</button>
 </template>
 <script>
-import { getApporteursExport } from "../../services/apporteurService";
-import AppStorage from "../../db/AppStorage";
 import switchService from "../../services/switchService";
 export default {
   created() {
@@ -14,9 +12,7 @@ export default {
   methods: {
     async getApporteur() {
       this.apporteurs = await switchService.getApporteurs();
-      // AppStorage.getApporteurs().then((result) => {
-      //   this.apporteurs = result;
-      // });
+     
     },
     exportToCSV() {
       const header = Object.keys(this.apporteurs[0]).join(",");

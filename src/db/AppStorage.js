@@ -2944,6 +2944,7 @@ class AppStorage {
 
     static async getAssuranceTemporaireByUuid(uuidAssuranceTemporaire) {
         const allAssurances = await this.getData('assurancetemporaires') || [];
+        console.log(allAssurances)
         return allAssurances.find(assurance => assurance.uuidAssuranceTemporaire === uuidAssuranceTemporaire);
     }
 

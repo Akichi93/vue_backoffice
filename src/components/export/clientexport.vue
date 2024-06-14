@@ -4,7 +4,6 @@
 </template>
 <script>
 import AppStorage from "../../db/AppStorage";
-import { getClientSelect } from "../../services/clientService";
 export default {
   created() {
     this.getClients();

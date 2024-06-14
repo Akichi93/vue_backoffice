@@ -127,8 +127,6 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import searchbranche from "../../components/search/searchbranche.vue";
-import { getApporteursExport } from "../../services/apporteurService";
-import { getRoleActif } from "../../services/roleservice";
 import editApporteur from "./editApporteur.vue";
 import deleteApporteur from "./deleteApporteur.vue";
 import apporteurexport from "../../components/export/apporteurexport.vue";

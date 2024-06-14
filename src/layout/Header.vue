@@ -224,7 +224,7 @@
                           type="button"
                           class="btn btn-primary"
                           @click="storeSync"
-                          data-bs-dismiss="modal"
+                          :disabled="isLoading"
                         >
                           Synchroniser
                         </button>
@@ -256,33 +256,31 @@
         </div>
       </div>
     </div>
+
+    <!-- Loader -->
+    <div v-if="isLoading" class="loader"></div>
+
   </div>
 </template>
+
 <script>
 import AppStorage from "../db/AppStorage.js";
 import syncservice from "../services/syncService.js";
 import axios from "axios";
 import { createToaster } from "@meforma/vue-toaster";
-import { apiUrl } from "../utils/constants/apiUrl";
-const toaster = createToaster({
-  /* options */
-});
+
+const toaster = createToaster();
 
 export default {
   data() {
     return {
-      loading: true,
-      user: AppStorage.getUser(),
-      error: null,
-      roleactif: AppStorage.getRole(),
-      isModalVisible: false, // Add this line
+      isLoading: false,
+      isModalVisible: false,
+      roleactif: "",
+      isConnected: false,
     };
   },
-
   computed: {
-    name() {
-      return this.user;
-    },
     isAdmin() {
       return this.roleactif === "ADMIN";
     },
@@ -307,12 +305,9 @@ export default {
       try {
         const isConnected = await this.checkInternetConnection();
         if (!isConnected) {
-          toaster.error(
-            `Veuillez vous connecter à Internet pour effectuer cette action.`,
-            {
-              position: "top-right",
-            }
-          );
+          toaster.error(`Veuillez vous connecter à Internet pour effectuer cette action.`, {
+            position: "top-right",
+          });
           return;
         }
 
@@ -326,10 +321,7 @@ export default {
           return;
         }
 
-        const objectStoreExists = await this.checkObjectStore(
-          dbName,
-          objectStoreName
-        );
+        const objectStoreExists = await this.checkObjectStore(dbName, objectStoreName);
         if (!objectStoreExists) {
           console.log(`Le magasin d'objets ${objectStoreName} n'existe pas.`);
           this.performLogoutCleanup();
@@ -346,15 +338,10 @@ export default {
     async checkInternetConnection() {
       try {
         const apiUrl = import.meta.env.VITE_API_BASE_URL;
-        const response = await axios.get(
-          `${apiUrl}/api/check-internet-connection`
-        );
+        const response = await axios.get(`${apiUrl}/api/check-internet-connection`);
         return response.data.connected;
       } catch (error) {
-        console.error(
-          "Erreur lors de la vérification de la connexion Internet :",
-          error
-        );
+        console.error("Erreur lors de la vérification de la connexion Internet :", error);
         return false;
       }
     },
@@ -375,9 +362,7 @@ export default {
         const request = window.indexedDB.open(dbName);
 
         request.onerror = () => {
-          console.error(
-            `Erreur lors de l'ouverture de la base de données ${dbName}`
-          );
+          console.error(`Erreur lors de l'ouverture de la base de données ${dbName}`);
           resolve(false);
         };
 
@@ -407,9 +392,7 @@ export default {
             };
 
             upgradeRequest.onerror = () => {
-              console.error(
-                `Erreur lors de la suppression des magasins d'objets de la base de données ${dbName}`
-              );
+              console.error(`Erreur lors de la suppression des magasins d'objets de la base de données ${dbName}`);
               resolve(false);
             };
           }
@@ -421,6 +404,7 @@ export default {
     },
     async storeSync() {
       try {
+        this.isLoading = true; // Start loading
         const response = await axios.get(apiUrl.getinternetconnection);
 
         if (response.status !== 200) {
@@ -431,8 +415,6 @@ export default {
         const data = response.data;
         this.isConnected = data.connected;
 
-        console.log()
-
         if (this.isConnected) {
           // Exécutez le service validateAndRefreshToken
           await syncservice.validateAndRefreshToken();
@@ -441,6 +423,8 @@ export default {
         }
       } catch (error) {
         console.error("Erreur lors de la synchronisation :", error);
+      } finally {
+        this.isLoading = false; // Stop loading
       }
     },
     refreshPage() {
@@ -454,72 +438,24 @@ export default {
   name: "Header",
 };
 </script>
+
 <style scoped>
-.modal {
-  display: block;
-  background: rgba(0, 0, 0, 0.5);
+.loader {
+  border: 4px solid rgba(0, 0, 0, .1);
+  border-left-color: transparent;
+  width: 36px;
+  height: 36px;
+  animation: spin89345 1s linear infinite;
+  margin: auto; /* center loader */
 }
 
-.modal-dialog {
-  margin: 1.75rem auto;
-}
+@keyframes spin89345 {
+  0% {
+    transform: rotate(0deg);
+  }
 
-.modal-content {
-  position: relative;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.3rem;
-  outline: 0;
-}
-
-.modal-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 1rem;
-  border-bottom: 1px solid #e9ecef;
-  border-top-left-radius: 0.3rem;
-  border-top-right-radius: 0.3rem;
-}
-
-.modal-title {
-  margin-bottom: 0;
-  line-height: 1.5;
-}
-
-.btn-close {
-  padding: 0.25rem 0.5rem;
-  margin: -0.5rem -0.5rem -0.5rem auto;
-}
-
-.modal-body {
-  position: relative;
-  flex: 1 1 auto;
-  padding: 1rem;
-}
-
-.modal-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 1rem;
-  border-top: 1px solid #e9ecef;
-  border-bottom-right-radius: 0.3rem;
-  border-bottom-left-radius: 0.3rem;
-}
-
-.btn-secondary {
-  color: #fff;
-  background-color: #6c757d;
-  border-color: #6c757d;
-}
-
-.nav-pills .nav-link {
-  border-radius: 0;
-}
-
-.nav-pills .nav-link.active {
-  background-color: #007bff;
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

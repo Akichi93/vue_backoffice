@@ -112,6 +112,7 @@ import { v4 as uuidv4 } from "uuid";
 // import switchService from '../../services/switchService';
 import { createToaster } from "@meforma/vue-toaster";
 import AppStorage from "../../db/AppStorage";
+import switchService from "../../services/switchService";
 const toaster = createToaster({
   /* options */
 });
@@ -152,29 +153,15 @@ export default {
         return;
       }
 
-      const uuid = uuidv4();
+      
       const userId = parseInt(AppStorage.getId(), 10);
       const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
 
-      const newAssuranceData = [
-        {
-          id: userId,
-          uuidAssuranceTemporaire: uuid,
-          uuidCompagnie: this.form.compagnie_id,
-          nbreMoisMin: this.form.nbre_min,
-          nbreMoisMax: this.form.nbre_max,
-          pourcentage: this.form.pourcentage,
-          sync: 0,
-          id_entreprise: entrepriseId,
-        },
-      ];
-
-      await AppStorage.storeDataInIndexedDB(
-        "assurancetemporaires",
-        newAssuranceData
+      const updatedAssurances =  await switchService.storeAssurance(
+        this.form,
+        userId,
+        entrepriseId,
       );
-
-      const updatedAssurances = await AppStorage.getAssuranceTemporaires();
 
       this.$emit("assurance-add", updatedAssurances);
 

@@ -409,6 +409,7 @@ import importClasse from "./importClasse.vue";
 import { validateChoiceForm } from "../../utils/helpers/formValidation";
 import { v4 as uuidv4 } from "uuid";
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from "../../services/switchService";
 const toaster = createToaster({
   /* options */
 });
@@ -494,9 +495,7 @@ export default {
     },
 
     async getCompagnie() {
-      AppStorage.getCompagnies().then((result) => {
-        this.compagnies = result;
-      });
+      this.compagnies = await switchService.getCompagnies();
     },
 
     async getReduction() {
@@ -516,9 +515,7 @@ export default {
     },
 
     async getAssurance() {
-      AppStorage.getAssuranceTemporaires().then((result) => {
-        this.assurances = result;
-      });
+      this.assurances = await switchService.getAssurance();
     },
 
     async editAssuranceTemporaire(uuidAssuranceTemporaire) {

@@ -3,8 +3,6 @@
   <button @click="exportToCSV">Exporter en CSV</button>
 </template>
 <script>
-import { getbrancheExport } from "../../services/brancheService";
-import AppStorage from "../../db/AppStorage";
 import switchService from "../../services/switchService";
 export default {
   created() {
@@ -14,12 +12,6 @@ export default {
   methods: {
    async getBranche() {
     this.branches = await switchService.getBranches();
-      // AppStorage.getBranches().then((result) => {
-      //   this.branches = result;
-      //   });
-      // getbrancheExport().then((result) => {
-      //   this.branches = result;
-      // });
     },
     exportToCSV() {
       const header = Object.keys(this.branches[0]).join(",");
