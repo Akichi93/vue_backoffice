@@ -83,9 +83,9 @@ class switchService {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.getGenre(genre);
+                return await offlineService.storeGenre(genre);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.getGenre(genre);
+                return await onlineService.storeGenre(genre);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -179,9 +179,9 @@ class switchService {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.storeEnergie(energie);
+                return await offlineService.storeCouleur(energie);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.storeEnergie(energie);
+                return await onlineService.storeCouleur(energie);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -536,7 +536,6 @@ class switchService {
     }
 
     async getClientByUuid(uuid) {
-        ù
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
@@ -798,6 +797,8 @@ class switchService {
         }
     }
 
+    
+
     async getSommeCommissionsApporteurPayer(uuid) {
         this.refreshMode();
         try {
@@ -805,6 +806,22 @@ class switchService {
                 return await offlineService.getSommeCommissionsApporteurPayer(uuid);
             } else if (this.currentMode === "Ligne") {
                 return await onlineService.getSommeCommissionsApporteurPayer(uuid);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async updateAvenantPayerApporteur(uuidAvenantToUpdate, newPayer, newSyncState,uuidApporteur){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateAvenantPayerApporteur(uuidAvenantToUpdate, newPayer, newSyncState,uuidApporteur);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.updateAvenantPayerApporteur(uuidAvenantToUpdate, newPayer, newSyncState,uuidApporteur);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -905,6 +922,70 @@ class switchService {
                 return await offlineService.searchCompagniesByName(name);
             } else if (this.currentMode === "Ligne") {
                 return await onlineService.searchCompagniesByName(name);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async getAvenantsByUUIDCompagnie(uuid){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getAvenantsByUUIDCompagnie(uuid);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getAvenantsByUUIDCompagnie(uuid);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async updateAvenantPayerCompagnie(uuidAvenantToUpdate,newPayer,newSyncState,uuidApporteur){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateAvenantPayerCompagnie(uuidAvenantToUpdate,newPayer,newSyncState,uuidApporteur);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.updateAvenantPayerCompagnie(uuidAvenantToUpdate,newPayer,newSyncState,uuidApporteur);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async getSommeCommissionsCompagnie(uuid){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getSommeCommissionsCompagnie(uuid);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getSommeCommissionsCompagnie(uuid);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async getSommeCommissionsCompagniePayer(uuid){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getSommeCommissionsCompagniePayer(uuid);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getSommeCommissionsCompagniePayer(uuid);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -1049,6 +1130,22 @@ class switchService {
         }
     }
 
+    async updateContrat(contrattoedit, uuidContratToUpdate, entrepriseId){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateContrat(contrattoedit, uuidContratToUpdate, entrepriseId);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.updateContrat(contrattoedit, uuidContratToUpdate, entrepriseId);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
     async getInfoContratByUuid(uuid) {
         this.refreshMode();
         try {
@@ -1117,13 +1214,13 @@ class switchService {
         }
     }
 
-    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant) {
+    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant,formData) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant);
+                return await offlineService.storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant,formData);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant);
+                return await onlineService.storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant,formData);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -1180,6 +1277,88 @@ class switchService {
             throw error;
         }
     }
+
+    async getAvenantsByUuidContrat(uuid) {
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getAvenantsByUuidContrat(uuid);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getAvenantsByUuidContrat(uuid);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async getFactures(uuid) {
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getFactures(uuid);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getFactures(uuid);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async storeAvenant(form, userId, entrepriseId, uuidContrat, uuidAvenant, infocontrat, codeAvenant, calculateCommission, calculateCommissionCourtier) {
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.storeAvenant(form, userId, entrepriseId, uuidContrat, uuidAvenant, infocontrat, codeAvenant, calculateCommission, calculateCommissionCourtier);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.storeAvenant(form, userId, entrepriseId, uuidContrat, uuidAvenant, infocontrat, codeAvenant, calculateCommission, calculateCommissionCourtier);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async updateAvenantSolde(uuidContrat, uuidAvenantToUpdate, newSolde, newSyncState) {
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateAvenantSolde(uuidContrat, uuidAvenantToUpdate, newSolde, newSyncState);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.updateAvenantSolde(uuidContrat, uuidAvenantToUpdate, newSolde, newSyncState);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async updateAvenantReverse(uuidContrat,uuidAvenantToUpdate, newReverse, newSyncState) {
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateAvenantReverse(uuidContrat,uuidAvenantToUpdate, newReverse, newSyncState);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.updateAvenantReverse(uuidContrat,uuidAvenantToUpdate, newReverse, newSyncState);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    
 
 
 }

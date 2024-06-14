@@ -82,11 +82,9 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template
-                    v-for="avenant in avenants"
-                    :key="avenant.uuidAvenant"
-                  >
-                    <tr>
+                 
+                    <tr  v-for="avenant in avenants"
+                    :key="avenant.uuidAvenant">
                       <td v-text="avenant.type"></td>
                     
                       <td>{{ avenant.prime_nette }}</td>
@@ -234,7 +232,7 @@
                         </a>
                       </td>
                     </tr>
-                  </template>
+                  
                 </tbody>
               </table>
             </div>
@@ -274,6 +272,7 @@ import viewfacture from "../contrat/viewfacture.vue";
 import addfile from "../contrat/addfile.vue";
 // import viewfile from '../contrat/viewfile.vue';
 import AppStorage from "../../db/AppStorage.js";
+import switchService from "../../services/switchService";
 export default {
   components: {
     Header,
@@ -307,46 +306,28 @@ export default {
   methods: {
     async fetchDataAvenant() {
       const uuidContrat = this.$route.params.uuidContrat;
-
-      const avenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
-
-      this.avenants = avenants;
+      this.avenants  = await switchService.getAvenantsByUuidContrat(uuidContrat);
     },
 
     async editAvenant(uuidAvenant) {
       try {
-        this.avenantoedit = await AppStorage.getAvenantByUuid(uuidAvenant);
+        this.avenantoedit = await switchService.getAvenantByUuid(uuidAvenant);
       } catch (error) {
         console.log(error);
       }
-
-      // axios
-      //   .get("/api/auth/editAvenant/" + id_avenant)
-      //   .then((response) => {
-      //     this.avenantoedit = response.data;
-
-      //     // this.form.id_avenant = response.data.id_avenant;
-      //   })
-      //   .catch((error) => console.log(error));
     },
 
     async contratInfo() {
       try {
         const uuidContrat = this.$route.params.uuidContrat;
-        this.contrats = await AppStorage.getContratByUuid(uuidContrat);
+        this.contrats = await switchService.getContratByUuid(uuidContrat);
       } catch (error) {
         console.log(error);
       }
     },
 
     async viewFacture(uuidAvenant) {
-      this.facturetoedit = await AppStorage.getFactures(uuidAvenant);
-      // axios
-      //   .get("/api/auth/getFactures/" + id_avenant)
-      //   .then((response) => {
-      //     this.facturetoedit = response.data;
-      //   })
-      //   .catch((error) => console.log(error));
+      this.facturetoedit = await switchService.getFactures(uuidAvenant);
     },
 
     fetchFile(uuidAvenant) {
@@ -361,28 +342,42 @@ export default {
         });
     },
 
-    // fetchTask() {
-    //   var that = this;
-    //   axios
-    //     .all([
-    //       axios.get(`/api/auth/getAvenantContrat/${this.$route.params.id_contrat}`),
-    //       axios.get("/api/auth/getInfoAvenant/?contrat=" + this.$route.params.id_contrat),
-    //     ])
-    //     .then(
-    //       axios.spread(function (avenants, contrats) {
-    //         that.avenants = avenants.data;
-    //         that.contrats = contrats.data;
-
-    //       })
-    //     );
-    // },
-
-    refresh() {
+   async refresh() {
       const uuidContrat = this.$route.params.uuidContrat;
-      AppStorage.getAvenantsByUuidContrat(uuidContrat).then((result) => {
-        this.avenants = result;
-      });
+      this.avenants  = await switchService.getAvenantsByUuidContrat(uuidContrat);
     },
   },
 };
 </script>
+
+<style scoped>
+.page-head-box {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.breadcrumb {
+  background: transparent;
+}
+
+.table thead th {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.btn-info, .btn-warning, .btn-primary, .btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+}
+
+.btn-info i, .btn-warning i, .btn-primary i, .btn-danger i {
+  margin-right: 0;
+}
+</style>

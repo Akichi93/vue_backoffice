@@ -325,7 +325,7 @@
                           <input
                             type="date"
                             class="form-control"
-                            v-model="date_circulation"
+                            v-model="formData.date_circulation"
                           />
                         </div>
                         <div class="form-group">
@@ -333,7 +333,7 @@
                           <input
                             type="text"
                             class="form-control"
-                            v-model="identification_proprietaire"
+                            v-model="formData.identification_proprietaire"
                           />
                         </div>
                         <div class="form-group">
@@ -341,7 +341,7 @@
                           <input
                             type="text"
                             class="form-control"
-                            v-model="adresse_proprietaire"
+                            v-model="formData.adresse_proprietaire"
                           />
                         </div>
                         <div class="row">
@@ -349,7 +349,7 @@
                             <div class="form-group">
                               <label>Zone de circulation:</label>
                               <Multiselect
-                                v-model="zone"
+                                v-model="formData.zone"
                                 :options="localisations"
                                 :custom-label="
                                   ({ uuidLocalisation, nom_ville }) =>
@@ -383,7 +383,7 @@
                             <div class="form-group">
                               <label>Catégorie d'usage:</label>
                               <Multiselect
-                                v-model="categorie_id"
+                                v-model="formData.categorie_id"
                                 :options="categories"
                                 :custom-label="
                                   ({ uuidCategorie, categorie }) =>
@@ -417,7 +417,7 @@
                             <div class="form-group">
                               <label>Marque:</label>
                               <Multiselect
-                                v-model="marque_id"
+                                v-model="formData.marque_id"
                                 :options="marques"
                                 :custom-label="
                                   ({ uuidMarque, marque }) =>
@@ -451,7 +451,7 @@
                             <div class="form-group">
                               <label>Genre:</label>
                               <Multiselect
-                                v-model="genre_id"
+                                v-model="formData.genre_id"
                                 :options="genres"
                                 :custom-label="
                                   ({ uuidGenre, genre }) =>
@@ -484,7 +484,7 @@
                           <label>Type technique ou commercial:</label>
                           <typecomponent
                             :placeholder="'Choisir un type'"
-                            v-model="type"
+                            v-model="formData.type"
                           ></typecomponent>
                         </div>
                         <div class="form-group">
@@ -492,7 +492,7 @@
                           <input
                             type="text"
                             class="form-control"
-                            v-model="carosserie"
+                            v-model="formData.carosserie"
                           />
                         </div>
                         <div class="row">
@@ -500,7 +500,7 @@
                             <div class="form-group">
                               <label>Couleur:</label>
                               <Multiselect
-                                v-model="couleur_id"
+                                v-model="formData.couleur_id"
                                 :options="couleurs"
                                 :custom-label="
                                   ({ uuidCouleur, couleur }) =>
@@ -537,7 +537,7 @@
                             <div class="form-group">
                               <label>Energie:</label>
                               <Multiselect
-                                v-model="energie_id"
+                                v-model="formData.energie_id"
                                 :options="energies"
                                 :custom-label="
                                   ({ uuidEnergie, energie }) =>
@@ -574,7 +574,7 @@
                               <input
                                 type="text"
                                 class="form-control"
-                                v-model="place"
+                                v-model="formData.place"
                               />
                             </div>
                             <div class="form-group">
@@ -582,7 +582,7 @@
                               <input
                                 type="text"
                                 class="form-control"
-                                v-model="puissance"
+                                v-model="formData.puissance"
                               />
                             </div>
 
@@ -591,7 +591,7 @@
                               <input
                                 type="text"
                                 class="form-control"
-                                v-model="charge"
+                                v-model="formData.charge"
                               />
                             </div>
 
@@ -600,7 +600,7 @@
                               <input
                                 type="number"
                                 class="form-control"
-                                v-model="valeur_neuf"
+                                v-model="formData.valeur_neuf"
                               />
                             </div>
 
@@ -609,7 +609,7 @@
                               <input
                                 type="number"
                                 class="form-control"
-                                v-model="valeur_venale"
+                                v-model="formData.valeur_venale"
                               />
                             </div>
                             <div class="card">
@@ -627,7 +627,7 @@
                                     <input
                                       type="text"
                                       class="form-control"
-                                      v-model="categorie_socio_pro"
+                                      v-model="formData.categorie_socio_pro"
                                     />
                                   </div>
 
@@ -1037,6 +1037,7 @@
               </div>
             </div>
           </div>
+
         </div>
 
         <div class="row" style="margin-top: 15px">
@@ -1099,7 +1100,7 @@
                   "
                 >
                   <label>FGA</label>
-                  <input type="number" class="form-control" v-model="cfga" />
+                  <input type="number" class="form-control" v-model="formData.cfga" />
                 </div>
                 <div class="form-group">
                   <label>Taxes totales</label>
@@ -1220,15 +1221,12 @@ import addcouleur from "../../pages/form/addcouleur.vue";
 import addmarque from "../../pages/form/addmarque.vue";
 import addclient from "../../pages/clients/addclient.vue";
 import AppStorage from "../../db/AppStorage";
-import { apiUrl } from "../../utils/constants/apiUrl";
 import { v4 as uuidv4 } from "uuid";
 import { validateContratForm } from "../../utils/helpers/formValidation";
 import {
   calculateCommissionApporteur,
   calculateCommissionCompagnie,
 } from "../../utils/helpers/commisionHelpers";
-import { getCategoriesList } from "../../services/formService";
-
 import { createToaster } from "@meforma/vue-toaster";
 import switchService from "../../services/switchService";
 const toaster = createToaster({
@@ -1286,31 +1284,57 @@ export default {
         taxes_totales: 0,
       },
 
-      date_circulation: "",
-      identification_proprietaire: "",
-      adresse_proprietaire: "",
-      zone: "",
-      categorie_id: "",
-      marque_id: "",
-      genre_id: "",
-      type: "",
-      carosserie: "",
-      couleur_id: "",
-      energie_id: "",
-      place: "",
-      puissance: "",
-      charge: "",
-      valeur_neuf: "",
-      valeur_venale: "",
-      categorie_socio_pro: "",
-      permis: "",
-      option_garantie: "",
-      entree_le: "",
-      tierce: "",
-      cfga: 0,
+      formData: {
+        date_circulation: "",
+        identification_proprietaire: "",
+        adresse_proprietaire: "",
+        zone: "",
+        categorie_id: "",
+        marque_id: "",
+        genre_id: "",
+        type: "",
+        carosserie: "",
+        couleur_id: "",
+        energie_id: "",
+        place: "",
+        puissance: "",
+        charge: "",
+        valeur_neuf: "",
+        valeur_venale: "",
+        categorie_socio_pro: "",
+        permis: "",
+        option_garantie: "",
+        entree_le: "",
+        tierce: "",
+        cfga: 0,
+        gestion: "",
+      },
+
+      // date_circulation: "",
+      // identification_proprietaire: "",
+      // adresse_proprietaire: "",
+      // zone: "",
+      // categorie_id: "",
+      // marque_id: "",
+      // genre_id: "",
+      // type: "",
+      // carosserie: "",
+      // couleur_id: "",
+      // energie_id: "",
+      // place: "",
+      // puissance: "",
+      // charge: "",
+      // valeur_neuf: "",
+      // valeur_venale: "",
+      // categorie_socio_pro: "",
+      // permis: "",
+      // option_garantie: "",
+      // entree_le: "",
+      // tierce: "",
+      // cfga: 0,
       prime_ttc: 0,
       commission: "",
-      gestion: "",
+      // gestion: "",
       commission_apporteur: "",
       taux_courtier: "",
       taux_apporteur: "",
@@ -1519,10 +1543,9 @@ export default {
 
         let totalPrimeTtc =
           this.form.primes_nette +
-          this.form.frais_courtier +
-          this.form.accessoires +
-          this.cfga ?? 0 +
-          this.form.taxes_totales;
+            this.form.frais_courtier +
+            this.form.accessoires +
+            this.cfga ?? 0 + this.form.taxes_totales;
 
         await switchService.storeContrat(
           this.form,
@@ -1531,7 +1554,8 @@ export default {
           commission_courtier,
           commission_apporteur,
           totalPrimeTtc,
-          codeAvenant
+          codeAvenant,
+          this.formData
         );
 
         toaster.success(`Contrat ajouté`, { position: "top-right" });
@@ -1541,17 +1565,6 @@ export default {
         console.error("Error storing contract offline:", error);
       }
     },
-
-    // handleStoreContratError(error) {
-    //   if (error.response && error.response.status === 422) {
-    //     toaster.error(`Veuillez remplir les champs indiqués`, { position: "top-right" });
-    //     this.errors = error.response.data.errors;
-    //   } else if (error.request) {
-    //     console.log("Request error:", error.request);
-    //   } else {
-    //     console.log("Error:", error.message);
-    //   }
-    // },
 
     // fetchContrats
     // async fetchContrats() {

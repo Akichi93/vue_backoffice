@@ -5,6 +5,10 @@ function createApiUrl(endpoint) {
     return `${base_url}/api/auth/${endpoint}`;
 }
 
+function createUrl(endpoint) {
+    return `${base_url}/api/${endpoint}`;
+}
+
 // Objet contenant toutes les URLs d'API
 const apiUrl = {
     authentification: createApiUrl('login'),
@@ -73,22 +77,26 @@ const apiUrl = {
     gettauxcompagnie: createApiUrl('gettauxcompagnies'),
 
 
-    refresh : createApiUrl('refresh'),
+    refresh: createApiUrl('refresh'),
+    checktoken: createApiUrl('checktoken'),
 
     postcontrat: createApiUrl('postcontrat'),
     postautomobile: createApiUrl('postautomobile'),
     getcontrat: createApiUrl('getcontrats'),
-    gettauxbranchecompagnie: createApiUrl('gettauxbranchecompagnie'), 
+    gettauxbranchecompagnie: createApiUrl('gettauxbranchecompagnie'),
     gettauxbrancheapporteur: createApiUrl('gettauxbrancheapporteur'),
-    seteditcontrat: (uuidContrat) => `${base_url}/api/auth/editcontrat/${uuidContrat}`, 
-    setinfocontrat: (uuidContrat) => `${base_url}/api/auth/getinfocontrat/${uuidContrat}`, 
-    setinfoavenantcontrat: (uuidContrat) => `${base_url}/api/auth/getinfoavenantcontrat/${uuidContrat}`, 
+    seteditcontrat: (uuidContrat) => `${base_url}/api/auth/editcontrat/${uuidContrat}`,
+    editavenant: (uuidContrat) => `${base_url}/api/auth/editavenant/${uuidContrat}`,
+    setinfoavenant: (uuidContrat) => `${base_url}/api/auth/getinfoavenant/${uuidContrat}`,
+    setinfocontrat: (uuidContrat) => `${base_url}/api/auth/getinfocontrat/${uuidContrat}`,
+    setinfoavenantcontrat: (uuidContrat) => `${base_url}/api/auth/getinfoavenantcontrat/${uuidContrat}`,
     setavenantcontrat: (uuidContrat) => `${base_url}/api/auth/getavenantcontrat/${uuidContrat}`,
     setinfovehicule: (uuidContrat) => `${base_url}/api/auth/getinfovehicules/${uuidContrat}`,
+    setfactureavenant: (uuidAvenant) => `${base_url}/api/auth/getfactures/${uuidAvenant}`,
 
     importautomobile: createApiUrl('importautomobile'),
-    
- 
+
+
 
 
     getavenant: createApiUrl('getavenants'),
@@ -119,12 +127,11 @@ const apiUrl = {
     getactivite: createApiUrl('getactivites'),
     // getactivite: createApiUrl('getactivites'),
 
+    getinternetconnection : createUrl('check-internet-connection')
+
 };
 
-// function seteditbranche (uuidBranche) {
-//     var data = `${base_url}/editbranche/${uuidBranche}`;
-//     return data;
-// }
+
 
 // Export des fonctions et données
 export { createApiUrl, apiUrl };

@@ -101,10 +101,12 @@ export default {
   methods: {
     async compagnieUpdate() {
       const uuidCompagnieToUpdate = this.compagnietoedit.uuidCompagnie;
+      const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
 
       const updatedCompagnies = await switchService.updateCompagnie(
         this.compagnietoedit,
-        uuidCompagnieToUpdate
+        uuidCompagnieToUpdate,
+        entrepriseId
       );
 
       // Émettre un événement avec les compagnues mis à jour

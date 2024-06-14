@@ -69,6 +69,7 @@ class AxiosService {
                 return response.data;
             } else {
                 //Suppression des données en localstorage et ensuite deconnecté la personne
+                
             }
 
         } catch (error) {

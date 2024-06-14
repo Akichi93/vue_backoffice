@@ -16,7 +16,7 @@
                     <router-link to="/home">Tableau de bord</router-link>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
-                    Detail de l'apporteur
+                    Detail de l'apporteur <em>{{ names }}</em>
                   </li>
                 </ol>
               </nav>
@@ -31,8 +31,11 @@
                 <table class="table table-striped custom-table mb-0">
                   <thead>
                     <tr>
-                      <th>Type de contrat</th>
-                      <th>Numéro de police</th>
+                      <th>Client</th>
+                      <th>Type de contrat</th> 
+                      <th>Date de début</th>
+                      <th>Date de fin</th>
+                      <th>Prime nette</th>
                       <th>Commision</th>
                       <th>Payé</th>
                     </tr>
@@ -40,10 +43,16 @@
                   <tbody>
                     <template v-for="(contrat, i) in contrats" :key="i">
                       <tr>
+                        <td>{{ contrat.nom_client }}</td>
                         <td>
                           <h5>{{ contrat.nom_branche }}</h5>
                         </td>
-                        <td>{{ contrat.numero_police }}</td>
+                        
+                        <td>
+                          <h5>{{ formatDate(contrat.date_debut)  }}</h5>
+                        </td>
+                        <td>{{ formatDate(contrat.date_fin) }}</td>
+                        <td>{{ contrat.prime_nette }}</td>
                         <td>{{ contrat.commission }}</td>
                         <td v-if="contrat.payer_apporteur == 0">
                           <span class="badge badge-pill bg-danger">NON</span>
@@ -68,6 +77,9 @@
                     <tr>
                       <th>Total :</th>
                       <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
                       <td>{{ sommes }}</td>
                       <td>{{ sommepayes }}</td>
                     </tr>
@@ -87,11 +99,11 @@
   </div>
 </template>
 <script>
-import AppStorage from "../../db/AppStorage";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import switchService from "../../services/switchService";
 import validatepaye from "./validatepaye.vue";
+import { formatDate, formatDateTime } from "../../utils/helpers/dateFormat";
 export default {
   name: "statapporteur",
   components: {
@@ -103,6 +115,7 @@ export default {
     return {
       contrats: [],
       sommes: "",
+      names: null,
       sommepayes: "",
       avenantoedit: "",
     };
@@ -111,11 +124,13 @@ export default {
     this.fetchData();
     this.fetchDataSomme();
     this.fetchDataSommePayer();
+    this.fetchName();
   },
   methods: {
+    formatDate,
+    formatDateTime,
     async editAvenant(uuidAvenant) {
       try {
-        // this.avenantoedit = await AppStorage.getAvenantByUuid(uuidAvenant);
         this.avenantoedit = await switchService.getAvenantByUuid(uuidAvenant);
       } catch (error) {
         console.log(error);
@@ -134,29 +149,36 @@ export default {
       }
     },
 
+    async fetchName() {
+      const uuidApporteur = this.$route.params.uuidApporteur;
+
+      try {
+        this.names = await switchService.getNameApporteur(uuidApporteur);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
+      }
+    },
+
     async fetchDataSomme() {
-      const uuidApporteur = this.$route.params.uuidApporteur; // Remplacez "votre_uuid_apporteur" par l'UUID approprié
-      // const sommes = await AppStorage.getSommeCommissionsApporteur(uuidApporteur)
+      const uuidApporteur = this.$route.params.uuidApporteur;
       this.sommes = await switchService.getSommeCommissionsApporteur(
         uuidApporteur
       );
     },
 
     async fetchDataSommePayer() {
-      const uuidApporteur = this.$route.params.uuidApporteur; // Remplacez "votre_uuid_apporteur" par l'UUID approprié
-      // const sommepayes = await AppStorage.getSommeCommissionsApporteurPayer(uuidApporteur)
+      const uuidApporteur = this.$route.params.uuidApporteur;
       this.sommepayes = await switchService.getSommeCommissionsApporteurPayer(
         uuidApporteur
       );
-      //   this.sommepayes = sommepayes;
     },
 
     async refresh() {
       const uuidApporteur = this.$route.params.uuidApporteur;
+      this.sommepayes = await switchService.getSommeCommissionsApporteurPayer(
+        uuidApporteur
+      );
       this.contrats = await switchService.getInfoApporteur(uuidApporteur);
-      //   AppStorage.getAvenants().then((result) => {
-      //     this.contrats = result;
-      //   });
     },
   },
 };

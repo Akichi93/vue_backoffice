@@ -1,108 +1,128 @@
 <template>
   <div class="main-wrapper">
     <Header />
-
     <Sidebar />
     <div class="page-wrapper">
       <div class="content container-fluid">
+        <!-- Breadcrumb Section -->
         <div class="row">
           <div class="col-md-12">
-            <div class="page-head-box">
-              <h3>Apporteurs</h3>
+            <div class="page-head-box d-flex align-items-center justify-content-between mb-4">
+              <h3 class="mb-0">Apporteurs</h3>
               <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
+                <ol class="breadcrumb mb-0">
                   <li class="breadcrumb-item">
-                    <router-kink to="/home">
-                      Tableau de bord
-                    </router-kink>
+                    <router-link to="/home">Tableau de bord</router-link>
                   </li>
-                  <li class="breadcrumb-item active" aria-current="page">
-                    Apporteur
-                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Apporteur</li>
                 </ol>
               </nav>
             </div>
           </div>
         </div>
 
-        <div class="row filter-row">
+        <!-- Add Apporteur Button -->
+        <div class="row mb-3">
           <div class="col-md-8"></div>
-          <div class="col-md-4">
-            <div class="add-emp-section">
-              <router-link to="/createapporteur" class="btn btn-success btn-add-emp" style="width: auto">
-                Ajouter apporteur
-              </router-link>
-            </div>
+          <div class="col-md-4 text-end">
+            <router-link
+              to="/createapporteur"
+              class="btn btn-primary"
+            >
+              <i class="fas fa-plus me-2"></i>Ajouter apporteur
+            </router-link>
           </div>
         </div>
 
-        <div class="row">
-          <searchbranche :placeholder="'Rechercher un apporteur'" v-model="q" @keyup="searchtask"></searchbranche>
-          <div class="col-md-12" style="display: flex; justify-content: end">
+        <!-- Search and Export Section -->
+        <div class="row mb-4">
+          <div class="col-md-8">
+            <searchbranche
+              :placeholder="'Rechercher un apporteur'"
+              v-model="q"
+              @keyup="searchtask"
+            />
+          </div>
+          <div class="col-md-4 text-end">
             <apporteurexport></apporteurexport>
           </div>
+        </div>
+
+        <!-- Apporteurs Table -->
+        <div class="row">
           <div class="col-md-12">
             <div class="table-responsive">
               <table id="tbl_exporttable_to_xls" class="table table-striped custom-table mb-0">
                 <thead>
                   <tr>
                     <th>Code</th>
-                    <th>Nom et prenom de l'apporteur</th>
+                    <th>Nom et prénom de l'apporteur</th>
                     <th>Code postal</th>
-                    <th>ville</th>
+                    <th>Ville</th>
                     <th>Contact</th>
                     <th>Email</th>
-                    <th>Action</th>
+                    <th class="text-end">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(apporteur, i) in apporteurs" :key="i">
-                    <tr>
-                      <td v-text="apporteur.code_apporteur"></td>
-                      <td v-text="apporteur.nom_apporteur ">
-                      </td>
-                      <td v-text="apporteur.code_postal"></td>
-                      <td v-text="apporteur.adresse_apporteur"></td>
-                      <td v-text="apporteur.contact_apporteur"></td>
-                      <td v-text="apporteur.email_apporteur"></td>
-                      <td class="text-end ico-sec d-flex justify-content-end">
-                        <router-link :to="{
-                          name: 'tauxapporteur',
-                          params: { uuidApporteur: apporteur.uuidApporteur },
-                        }">
-                          <i class="fa fa-pen-fancy"></i>
-                        </router-link>
-                        <router-link :to="{
-                          name: 'detailsapporteur',
-                          params: { uuidApporteur: apporteur.uuidApporteur },
-                        }">
-                          <i class="fa fa-eye"></i>
-                        </router-link>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_department"
-                          @click="editApporteur(apporteur.uuidApporteur)" title="Modifier"><i class="fas fa-pen"></i>
-                        </a>
-                        <a href="#"  data-bs-toggle="modal" data-bs-target="#delete_apporteur"
-                          @click="editApporteur(apporteur.uuidApporteur)" title="supprimer"><i
-                            class="fas fa-trash-alt"></i>
-                        </a>
-                      </td>
-                    </tr>
-                  </template>
+                  <tr v-for="(apporteur, i) in apporteurs" :key="i">
+                    <td v-text="apporteur.code_apporteur"></td>
+                    <td v-text="apporteur.nom_apporteur"></td>
+                    <td v-text="apporteur.code_postal"></td>
+                    <td v-text="apporteur.adresse_apporteur"></td>
+                    <td v-text="apporteur.contact_apporteur"></td>
+                    <td v-text="apporteur.email_apporteur"></td>
+                    <td class="text-end d-flex justify-content-end">
+                      <router-link
+                        :to="{ name: 'tauxapporteur', params: { uuidApporteur: apporteur.uuidApporteur } }"
+                        class="btn btn-sm btn-info me-2"
+                      >
+                        <i class="fas fa-pen-fancy"></i>
+                      </router-link>
+                      <router-link
+                        :to="{ name: 'detailsapporteur', params: { uuidApporteur: apporteur.uuidApporteur } }"
+                        class="btn btn-sm btn-warning me-2"
+                      >
+                        <i class="fas fa-eye"></i>
+                      </router-link>
+                      <button
+                        @click="editApporteur(apporteur.uuidApporteur)"
+                        class="btn btn-sm btn-primary me-2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#edit_apporteur"
+                        title="Modifier"
+                      >
+                        <i class="fas fa-pen"></i>
+                      </button>
+                      <button
+                        @click="editApporteur(apporteur.uuidApporteur)"
+                        class="btn btn-sm btn-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#delete_apporteur"
+                        title="Supprimer"
+                      >
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
-            <editApporteur v-bind:apporteurtoedit="apporteurtoedit" @apporteur-updated="refresh"></editApporteur>
-            <deleteApporteur v-bind:apporteurtoedit="apporteurtoedit" @apporteur-delete="refresh"></deleteApporteur>
-
-            <!-- <pagination align="center" :data="apporteurs" :limit="5" :current_page="apporteurs.current_page"
-              :last_page="apporteurs.last_page" @pagination-change-page="getCompagnies">
-            </pagination> -->
+            <editApporteur
+              :apporteurtoedit="apporteurtoedit"
+              @apporteur-updated="refresh"
+            />
+            <deleteApporteur
+              :apporteurtoedit="apporteurtoedit"
+              @apporteur-delete="refresh"
+            />
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
@@ -111,10 +131,9 @@ import { getApporteursExport } from "../../services/apporteurService";
 import { getRoleActif } from "../../services/roleservice";
 import editApporteur from "./editApporteur.vue";
 import deleteApporteur from "./deleteApporteur.vue";
-// import pagination from "laravel-vue-pagination";
 import apporteurexport from "../../components/export/apporteurexport.vue";
-import AppStorage from "../../db/AppStorage.js";
 import switchService from '../../services/switchService';
+
 export default {
   components: {
     Header,
@@ -122,12 +141,10 @@ export default {
     searchbranche,
     editApporteur,
     deleteApporteur,
-    // pagination,
-    apporteurexport
+    apporteurexport,
   },
   data() {
     return {
-      value: null,
       apporteurs: [],
       apporteurtoedit: "",
       q: "",
@@ -136,46 +153,64 @@ export default {
   },
   created() {
     this.getApporteurs();
-    // this.getRoleconnect();
   },
   methods: {
-
     async getApporteurs() {
       this.apporteurs = await switchService.getApporteurs();
     },
-
     async editApporteur(uuidApporteur) {
       try {
-        this.apporteurtoedit = await switchService.getApporteurByUuid(
-          uuidApporteur
-        );
+        this.apporteurtoedit = await switchService.getApporteurByUuid(uuidApporteur);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     },
-
     async searchtask() {
       if (this.q.length > 3) {
-        this.apporteurs = await switchService.searchApporteursByName(this.q);
+        try {
+          this.apporteurs = await switchService.searchApporteursByName(this.q);
+        } catch (error) {
+          console.error(error);
+        }
       } else {
-        this.getApporteurs();
+        await this.getApporteurs();
       }
     },
-
-   async refresh() {
-      this.apporteurs = await switchService.getApporteurs();
+    async refresh() {
+      await this.getApporteurs();
     },
   },
 };
 </script>
 
 <style scoped>
-.pagination {
-  margin-bottom: 0;
+.page-head-box {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
 }
 
-.curseur:hover {
-  cursor: grab;
+.breadcrumb {
+  background: transparent;
+}
+
+.table thead th {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.btn-info, .btn-warning, .btn-primary, .btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+}
+
+.btn-info i, .btn-warning i, .btn-primary i, .btn-danger i {
+  margin-right: 0;
 }
 </style>
-

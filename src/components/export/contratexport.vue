@@ -1,72 +1,68 @@
 <template>
-    <button @click="exportToExcel">Exporter en Excel</button>
-    <button @click="exportToCSV">Exporter en CSV</button>
-  </template>
-  <script>
-  import AppStorage from "../../db/AppStorage";
-  export default {
-    created() {
-      this.getContrat();
+  <div class="export-buttons">
+    <button class="btn btn-primary" @click="exportToExcel">Export to Excel</button>
+    <button class="btn btn-primary" @click="exportToCSV">Export to CSV</button>
+  </div>
+</template>
+
+<script>
+import switchService from "../../services/switchService";
+
+export default {
+  data() {
+    return {
+      contrats: [],
+    };
+  },
+  created() {
+    this.getContrats();
+  },
+  methods: {
+    async getContrats() {
+      this.contrats = await switchService.getContrats();
     },
-  
-    methods: {
-      getContrat() {
-        AppStorage.getContrats().then((result) => {
-          this.contrats = result;
+    exportToCSV() {
+      const header = Object.keys(this.contrats[0]).join(",");
+      const rows = this.contrats.map(row => Object.values(row).join(","));
+
+      const csvContent = `${header}\n${rows.join("\n")}`;
+
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "contracts.csv";
+      link.click();
+    },
+    exportToExcel() {
+      const xlsContent = this.generateExcelContent();
+      const blob = new Blob([xlsContent], { type: "application/vnd.ms-excel" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "contracts.xls";
+      link.click();
+    },
+    generateExcelContent() {
+      const table = document.createElement("table");
+      const headerRow = table.insertRow(0);
+
+      Object.keys(this.contrats[0]).forEach(header => {
+        const th = document.createElement("th");
+        th.innerHTML = header;
+        headerRow.appendChild(th);
+      });
+
+      this.contrats.forEach(row => {
+        const tr = table.insertRow(-1);
+
+        Object.values(row).forEach(value => {
+          const td = tr.insertCell(-1);
+          td.innerHTML = value;
         });
-      },
-      exportToCSV() {
-        const header = Object.keys(this.contrats[0]).join(",");
-        const rows = this.contrats.map((row) => Object.values(row).join(","));
-  
-        const csvContent = `${header}\n${rows.join("\n")}`;
-  
-        const blob = new Blob([csvContent], { type: "text/csv" });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = "contrats.csv";
-        link.click();
-      },
-      exportToExcel() {
-        // Create a new Excel file
-        const xlsContent = this.generateExcelContent();
-  
-        // Create a Blob from the content
-        const blob = new Blob([xlsContent], { type: "application/vnd.ms-excel" });
-  
-        // Create a link element and trigger a download
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "contrats.xls";
-        link.click();
-      },
-      generateExcelContent() {
-        // Create an HTML table with the data
-        const table = document.createElement("table");
-        const headerRow = table.insertRow(0);
-  
-        // Add headers
-        Object.keys(this.contrats[0]).forEach((header) => {
-          const th = document.createElement("th");
-          th.innerHTML = header;
-          headerRow.appendChild(th);
-        });
-  
-        // Add data rows
-        this.contrats.forEach((row) => {
-          const tr = table.insertRow(-1);
-  
-          Object.values(row).forEach((value) => {
-            const td = tr.insertCell(-1);
-            td.innerHTML = value;
-          });
-        });
-  
-        // Convert the table to HTML string
-        const tableHtml = table.outerHTML;
-  
-        // Create the Excel file content
-        return `
+      });
+
+      const tableHtml = table.outerHTML;
+
+      return `
         <html xmlns:o="urn:schemas-microsoft-com:office:office"
           xmlns:x="urn:schemas-microsoft-com:office:excel"
           xmlns="http://www.w3.org/TR/REC-html40">
@@ -76,7 +72,17 @@
           <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
           </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
           </head><body>${tableHtml}</body></html>`;
-      },
     },
-  };
-  </script>
+  },
+};
+</script>
+
+<style scoped>
+.export-buttons {
+  margin-top: 20px;
+}
+
+.export-buttons button {
+  margin-right: 10px;
+}
+</style>

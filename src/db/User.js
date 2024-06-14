@@ -8,7 +8,7 @@ class User {
     static async responseAfterLogin(res) {
         const { access_token, name, user_id, id_entreprise, role, contact, adresse, email, mode } = res.data;
 
-        await AppStorage.store(access_token, name, user_id, id_entreprise, role, contact, adresse, email,mode);
+        await AppStorage.store(access_token, name, user_id, id_entreprise, role, contact, adresse, email, mode);
 
         const apiCalls = [
             { endpoint: 'getclients', storageKey: 'clients' },

@@ -92,10 +92,14 @@
     </div>
   </div>
 </template>
+
 <script>
 import AppStorage from "../db/AppStorage.js";
 import syncservice from "../services/syncService";
 import { timeSynchronise } from "../utils/constants/technicalConstant";
+import { apiUrl } from "../utils/constants/apiUrl";
+import axios from "axios";
+
 export default {
   data() {
     return {
@@ -124,7 +128,6 @@ export default {
   },
   mounted() {
     this.intervalId = setInterval(this.checkConnection, timeSynchronise);
-    // setInterval(this.checkConnection, timeSynchronise);
   },
   beforeDestroy() {
     // Nettoyez l'intervalle lors de la destruction du composant
@@ -133,32 +136,26 @@ export default {
   methods: {
     async checkConnection() {
       try {
-        if (this.mode == "Local") {
-          // Then use it in your fetch request
-          const response = await fetch(
-            `${apiUrl}/api/check-internet-connection`
-          );
-          // Make an API request to your endpoint
-          // const response = await fetch(
-          //   "https://fl4ir.loca.lt/api/check-internet-connection"
-          // );
+        if (this.mode === "Local") {
+          const response = await axios.get(apiUrl.getinternetconnection);
 
-          const data = await response.json();
+          if (response.status !== 200) {
+            // Si le statut HTTP n'est pas 200, lance une erreur
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
 
+          const data = response.data;
           this.isConnected = data.connected;
 
-          // Check if the response status is okay (e.g., 200)
-          const apiUrl = import.meta.env.VITE_API_BASE_URL;
-
           if (this.isConnected) {
-            // Execute checkAndSyncData service
-            await syncservice.checkAndSyncData(); // Assuming syncservice is an async function that returns a promise
+            // Exécutez le service checkAndSyncData
+            await syncservice.validateAndRefreshToken(); // Supposons que syncservice est une fonction asynchrone qui renvoie une promesse
           } else {
-            console.log("Pas de connexion internet ");
+            console.log("Pas de connexion internet");
           }
         }
       } catch (error) {
-        // Handle errors, e.g., network issues or server errors
+        // Gérez les erreurs, par exemple, les problèmes de réseau ou les erreurs serveur
         console.error("Error checking connection:", error);
       }
     },

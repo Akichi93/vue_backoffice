@@ -30,36 +30,7 @@
               <div class="col-md-12">
                 <div class="profile-view">
                   <div class="profile-basic">
-                    <div class="row">
-                      <div class="col-md-7">
-                        <ul class="personal-info">
-                          <!-- <li>
-                                                        <div class="title">Nom:</div>
-                                                        <div class="text">
-                                                            {{ apporteurs.nom_apporteur }}
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="title">Adresse:</div>
-                                                        <div class="text">
-                                                            {{ apporteurs.adresse_apporteur }}
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="title">Contact:</div>
-                                                        <div class="text">
-                                                            {{ apporteurs.contact_apporteur }}
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="title">Postal:</div>
-                                                        <div class="text">
-                                                            {{ apporteurs.code_postal }}
-                                                        </div>
-                                                    </li> -->
-                        </ul>
-                      </div>
-                    </div>
+                    <div class="row"></div>
                   </div>
                 </div>
               </div>
@@ -76,7 +47,6 @@
                     <tr>
                       <th>Client</th>
                       <th>Type de contrat</th>
-                      <th>Numéro de police</th>
                       <th>Date de début</th>
                       <th>Date de fin</th>
                       <th>Prime nette</th>
@@ -93,11 +63,9 @@
                         <td>
                           <h5>{{ contrat.nom_branche }}</h5>
                         </td>
+
                         <td>
-                          <h5>{{ contrat.numero_police }}</h5>
-                        </td>
-                        <td>
-                          <h5>{{ formatDate(contrat.date_debut)  }}</h5>
+                          <h5>{{ formatDate(contrat.date_debut) }}</h5>
                         </td>
                         <td>{{ formatDate(contrat.date_fin) }}</td>
                         <td>{{ contrat.prime_nette }}</td>
@@ -128,7 +96,7 @@
                       <th></th>
                       <th></th>
                       <th></th>
-                      <th></th>
+
                       <td>{{ sommes }}</td>
                       <td>{{ sommepayes }}</td>
                     </tr>
@@ -148,11 +116,11 @@
   </div>
 </template>
 <script>
-import AppStorage from "../../db/AppStorage";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import validatepaye from "./validatepaye.vue";
 import { formatDate, formatDateTime } from "../../utils/helpers/dateFormat";
+import switchService from "../../services/switchService";
 export default {
   name: "statapporteur",
   components: {
@@ -178,62 +146,31 @@ export default {
     formatDateTime,
     async editAvenant(uuidAvenant) {
       try {
-        this.avenantoedit = await AppStorage.getAvenantByUuid(uuidAvenant);
+        this.avenantoedit = await switchService.getAvenantByUuid(uuidAvenant);
       } catch (error) {
         console.log(error);
       }
-      // axios
-      //     .get("/api/auth/editAvenant/" + id_avenant)
-      //     .then((response) => {
-      //         this.avenantoedit = response.data;
-
-      //         // this.form.id_avenant = response.data.id_avenant;
-      //     })
-      //     .catch((error) => console.log(error));
     },
 
     async fetchData() {
       const uuidCompagnie = this.$route.params.uuidCompagnie;
       try {
-        const contrats = await AppStorage.getAvenantsByUUIDCompagnie(
+        const contrats = await switchService.getAvenantsByUUIDCompagnie(
           uuidCompagnie
         );
 
         this.contrats = contrats;
-
-        
       } catch (error) {
         console.error(
           "Une erreur s'est produite lors de la récupération des contrats:",
           error
         );
       }
-
-      // const token = localStorage.getItem("token");
-
-      // // Configurez les en-têtes de la requête
-      // const headers = {
-      //   Authorization: "Bearer " + token,
-      //   "x-access-token": token,
-      // };
-      // axios
-      //   .get(`/api/auth/detailsapporteurs/${this.$route.params.id_apporteur}`, {
-      //     headers,
-      //   })
-      //   .then((response) => {
-      //     this.apporteurs = response.data.apporteurs;
-      //     this.listescontrats = response.data.listescontrats;
-      //     this.sommes = response.data.sommes;
-      //     this.sommepayes = response.data.sommepayes;
-      //   })
-      //   .catch((error) => {
-      //     this.error = error.response.data.message || error.message;
-      //   });
     },
 
     async fetchDataSomme() {
       const uuidCompagnie = this.$route.params.uuidCompagnie;
-      const sommes = await AppStorage.getSommeCommissionsCompagnie(
+      const sommes = await switchService.getSommeCommissionsCompagnie(
         uuidCompagnie
       );
       this.sommes = sommes;
@@ -241,16 +178,20 @@ export default {
 
     async fetchDataSommePayer() {
       const uuidCompagnie = this.$route.params.uuidCompagnie;
-      const sommepayes = await AppStorage.getSommeCommissionsCompagniePayer(
+      const sommepayes = await switchService.getSommeCommissionsCompagniePayer(
         uuidCompagnie
       );
       this.sommepayes = sommepayes;
     },
 
-    refresh() {
-      AppStorage.getAvenants().then((result) => {
-        this.contrats = result;
-      });
+    async refresh() {
+      const uuidCompagnie = this.$route.params.uuidCompagnie;
+      this.contrats = await switchService.getAvenantsByUUIDCompagnie(
+        uuidCompagnie
+      );
+      this.sommepayes = await switchService.getSommeCommissionsCompagniePayer(
+        uuidCompagnie
+      );
     },
   },
 };

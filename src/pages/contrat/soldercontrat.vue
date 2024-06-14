@@ -10,11 +10,21 @@
           <div class="modal-btn delete-action">
             <div class="row">
               <div class="col-6">
-                <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary continue-btn"
-                  @click="ChangeSolde">Solder</a>
+                <a
+                  href="javascript:void(0);"
+                  data-bs-dismiss="modal"
+                  class="btn btn-primary continue-btn"
+                  @click="ChangeSolde"
+                  >Solder</a
+                >
               </div>
               <div class="col-6">
-                <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary cancel-btn">Annuler</a>
+                <a
+                  href="javascript:void(0);"
+                  data-bs-dismiss="modal"
+                  class="btn btn-primary cancel-btn"
+                  >Annuler</a
+                >
               </div>
             </div>
           </div>
@@ -24,9 +34,8 @@
   </div>
 </template>
 <script>
-import AppStorage from "../../db/AppStorage.js";
 import { createToaster } from "@meforma/vue-toaster";
-// import $ from "jquery";
+import switchService from "../../services/switchService";
 const toaster = createToaster({
   /* options */
 });
@@ -42,10 +51,12 @@ export default {
 
       const newSyncState = 0;
 
-      const avenantMisAJour = await AppStorage.updateAvenantSolde(uuidAvenantToUpdate, newSolde, newSyncState);
-
-      // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-      const updatedAvenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
+      const updatedAvenants = await switchService.updateAvenantSolde(
+        uuidContrat,
+        uuidAvenantToUpdate,
+        newSolde,
+        newSyncState
+      );
 
       // Émettre un événement avec les prospects mis à jour
       this.$emit("avenant-solder", updatedAvenants);
@@ -53,21 +64,7 @@ export default {
       toaster.success(`Avenant soldé`, {
         position: "top-right",
       });
-
-      // axios
-      //   .post("/api/auth/soldeAvenant", {
-      //     id_avenant: this.avenantoedit.id_avenant,
-      //   })
-      //   .then((response) => {
-      //     this.$emit('avenant-solder', response)
-      //     if (response.status === 200) {
-      //       toaster.success(`Avenant solde`, {
-      //         position: "top-right",
-      //       });
-      //     }
-      //   });
     },
-
-  }
-}
+  },
+};
 </script>

@@ -24,8 +24,8 @@
   </div>
 </template>
 <script>
-import AppStorage from "../../db/AppStorage.js";
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from "../../services/switchService";
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
@@ -42,10 +42,12 @@ export default {
 
       const newSyncState = 0;
 
-      const avenantMisAJour = await AppStorage.updateAvenantReverse(uuidAvenantToUpdate, newReverse, newSyncState);
-
-      // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-      const updatedAvenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
+      const updatedAvenants = await switchService.updateAvenantReverse(
+        uuidContrat,
+        uuidAvenantToUpdate,
+        newReverse,
+        newSyncState
+      );
 
       // Émettre un événement avec les prospects mis à jour
       this.$emit("avenant-reverser", updatedAvenants);

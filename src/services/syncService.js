@@ -3,7 +3,8 @@ import AppStorage from '../db/AppStorage.js';
 import axios from 'axios';
 import DataAPI from '../db/DataAPI.js';
 import { createToaster } from '@meforma/vue-toaster';
-
+import modalComponent from "../components/modalComponent.vue"
+import { apiUrl } from '../utils/constants/apiUrl.js';
 const toaster = createToaster({
     /* options */
 });
@@ -15,6 +16,7 @@ const SyncService = {
     syncSuccessDisplayed: false,
 
     async checkAndSyncData() {
+        // TODO refreshToken If Token Expire
         toaster.info('Début de la synchronisation des données...', { position: 'top-right' });
 
         const syncOrder = [
@@ -58,6 +60,35 @@ const SyncService = {
             this.syncSuccessDisplayed = true;
         } else {
             console.log('Aucune donnée à synchroniser.');
+        }
+        // }
+    },
+
+    openModal() {
+        const modalInstance = this.createModalComponent();
+        const modalContainer = document.getElementById('modal-container');
+        modalContainer.appendChild(modalInstance.$el);
+    },
+
+    createModalComponent() {
+        const ModalConstructor = Vue.extend(modalComponent);
+        return new ModalConstructor({
+            propsData: {
+                errorMessage: 'Votre session a expiré. Veuillez vous reconnecter.'
+            }
+        });
+    },
+
+    async validateAndRefreshToken() {
+        const tokenIsValid = await this.checkTokenValidity();
+    
+        if (!tokenIsValid) {
+            this.openModal();
+            // return false;
+        } else {
+            await this.refreshToken();
+            await this.checkAndSyncData(); // Appeler la synchronisation des données après le rafraîchissement du token
+            // return true;
         }
     },
 
@@ -251,6 +282,40 @@ const SyncService = {
             }
         }
     },
+
+    async checkTokenValidity() {
+        const token = AppStorage.getToken();
+
+        try {
+            const response = await axios.post(apiUrl.checktoken, { token });
+
+            if (response.status === 200 && response.data.valid) {
+                return true;
+            } else {
+                console.error('Le token est invalide.');
+                return false;
+            }
+        } catch (error) {
+            console.error('Erreur lors de la vérification du token:', error);
+            return false;
+        }
+    },
+
+    async refreshToken() {
+        const token = AppStorage.getToken();
+
+        try {
+            const response = await axios.post(apiUrl.refresh, { token });
+            if (response.status === 200) {
+                AppStorage.storeToken(response.data.access_token);
+            } else {
+                console.error('Le renouvellement du token a échoué.');
+            }
+        } catch (error) {
+            console.error('Erreur lors du renouvellement du token:', error);
+        }
+
+    }
 };
 
 export default SyncService;

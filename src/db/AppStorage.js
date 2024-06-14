@@ -208,8 +208,8 @@ class AppStorage {
     // }
 
     static async getClientByUuid(clientUuid) {
-        const allContrats = await this.getData('clients') || [];
-        return allContrats.find(contrat => contrat.uuidReductionGroupe === clientUuid);
+        const allClients = await this.getData('clients') || [];
+        return allClients.find(clients => clients.uuidClient === clientUuid);
     }
 
     static async getClientNameByUUID(uuidClient) {
@@ -608,6 +608,29 @@ class AppStorage {
         // return allContrats.filter(contrat => contrat.supprimer_contrat == 0);
     }
 
+    static async updateContrat(uuidContrat, nouvellesInfos) {
+        // Obtenez la liste des prospects
+        const allContrats = await this.getData('contrats') || [];
+
+        // Recherche du prospect par son UUID
+        const contratIndex = allContrats.findIndex(contrat => contrat.uuidContrat === uuidContrat);
+
+        if (contratIndex !== -1) {
+            // Mettre à jour les informations du prospect
+            Object.assign(allContrats[contratIndex], nouvellesInfos);
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('compagnies', allContrats);
+
+            console.log(allContrats[contratIndex])
+
+            return allContrats[contratIndex];
+
+        } else {
+            throw new Error('Compagnie non trouvé');
+        }
+    }
+
 
     // static async getContratByUuid(uuidContrat) {
     //     const allContrats = await this.getData('contrats') || [];
@@ -713,29 +736,66 @@ class AppStorage {
     }
 
     static async getSommeCommissionsApporteur(uuidApporteur) {
-        // Récupérer les données des avenants
-        const avenants = await this.getAvenants();
+        try {
+            // Récupérer les données des avenants
+            const avenants = await this.getAvenants();
 
-        // Filtrer les avenants pour trouver ceux correspondant à uuidApporteur
-        const avenantsApporteur = avenants.filter(avenant => avenant.uuidApporteur === uuidApporteur);
 
-        // Calculer la somme des commissions_apporteur
-        const sommeCommissions = avenantsApporteur.reduce((total, avenant) => total + avenant.commission, 0);
+            // Filtrer les avenants pour trouver ceux correspondant à uuidApporteur
+            const avenantsApporteur = avenants.filter(avenant => avenant.uuidApporteur === uuidApporteur);
 
-        return sommeCommissions;
+
+            // Calculer la somme des commissions_apporteur
+            const sommeCommissions = avenantsApporteur.reduce((total, avenant) => {
+                const commission = Number(avenant.commission);
+                if (!isNaN(commission)) {
+
+                    return total + commission;
+                } else {
+                    console.warn(`Commission invalide pour l'avenant avec uuidApporteur ${avenant.uuidApporteur}`);
+                    return total;
+                }
+            }, 0);
+
+            const sommeEntiere = Math.round(sommeCommissions); // Utilisez parseInt(sommeCommissions) si vous ne voulez pas arrondir mais tronquer les décimales
+
+            return sommeEntiere;
+        } catch (error) {
+            console.error('Erreur lors du calcul des commissions:', error);
+            throw error;
+        }
     }
 
+
+
     static async getSommeCommissionsApporteurPayer(uuidApporteur) {
-        // Récupérer les données des avenants
-        const avenants = await this.getAvenants();
+        try {
+            // Récupérer les données des avenants
+            const avenants = await this.getAvenants();
 
-        // Filtrer les avenants pour trouver ceux correspondant à uuidApporteur et payer_apporteur = 1
-        const avenantsApporteur = avenants.filter(avenant => avenant.uuidApporteur === uuidApporteur && avenant.payer_apporteur === 1);
+            // Filtrer les avenants pour trouver ceux correspondant à uuidApporteur et payer_apporteur = 1
+            const avenantsApporteur = avenants.filter(avenant => avenant.uuidApporteur === uuidApporteur && avenant.payer_apporteur === 1);
 
-        // Calculer la somme des commissions_apporteur
-        const sommeCommissions = avenantsApporteur.reduce((total, avenant) => total + avenant.commission, 0);
 
-        return sommeCommissions;
+            // Calculer la somme des commissions_apporteur
+            const sommeCommissions = avenantsApporteur.reduce((total, avenant) => {
+                const commission = Number(avenant.commission);
+                if (!isNaN(commission)) {
+
+                    return total + commission;
+                } else {
+
+                    return total;
+                }
+            }, 0);
+
+            const sommeEntiere = Math.round(sommeCommissions); // Utilisez parseInt(sommeCommissions) si vous ne voulez pas arrondir mais tronquer les décimales
+
+            return sommeEntiere;
+        } catch (error) {
+            console.error('Erreur lors du calcul des commissions:', error);
+            throw error;
+        }
     }
 
     static async getAvenantByUuid(uuidAvenant) {
@@ -1026,29 +1086,63 @@ class AppStorage {
     }
 
     static async getSommeCommissionsCompagnie(uuidCompagnie) {
-        // Récupérer les données des avenants
-        const avenants = await this.getAvenants();
+        try {
+            // Récupérer les données des avenants
+            const avenants = await this.getAvenants();
 
-        // Filtrer les avenants pour trouver ceux correspondant à uui
-        const avenantsCompagnie = avenants.filter(avenant => avenant.uuidCompagnie === uuidCompagnie);
+            // Filtrer les avenants pour trouver ceux correspondant à uuidCompagnie
+            const avenantsCompagnie = avenants.filter(avenant => avenant.uuidCompagnie === uuidCompagnie);
 
-        // Calculer la somme des commissions_apporteur
-        const sommeCommissions = avenantsCompagnie.reduce((total, avenant) => total + avenant.commission_courtier, 0);
 
-        return sommeCommissions;
+            // Calculer la somme des commissions_courtier
+            const sommeCommissions = avenantsCompagnie.reduce((total, avenant) => {
+                const commission = Number(avenant.commission_courtier);
+                if (!isNaN(commission)) {
+
+                    return total + commission;
+                } else {
+                    console.warn(`Commission invalide pour l'avenant avec uuidCompagnie ${avenant.uuidCompagnie}`);
+                    return total;
+                }
+            }, 0);
+
+            const sommeEntiere = Math.round(sommeCommissions); // Utilisez parseInt(sommeCommissions) si vous ne voulez pas arrondir mais tronquer les décimales
+
+            return sommeEntiere;
+        } catch (error) {
+            console.error('Erreur lors du calcul des commissions:', error);
+            throw error;
+        }
     }
 
     static async getSommeCommissionsCompagniePayer(uuidCompagnie) {
-        // Récupérer les données des avenants
-        const avenants = await this.getAvenants();
+        try {
+            // Récupérer les données des avenants
+            const avenants = await this.getAvenants();
 
-        // Filtrer les avenants pour trouver ceux correspondant à uuidCompagnie et payer_apporteur = 1
-        const avenantsCompagnie = avenants.filter(avenant => avenant.uuidCompagnie === uuidCompagnie && avenant.payer_courtier === 1);
 
-        // Calculer la somme des commissions_apporteur
-        const sommeCommissions = avenantsCompagnie.reduce((total, avenant) => total + avenant.commission_courtier, 0);
+            // Filtrer les avenants pour trouver ceux correspondant à uuidCompagnie et payer_courtier = 1
+            const avenantsCompagnie = avenants.filter(avenant => avenant.uuidCompagnie === uuidCompagnie && avenant.payer_courtier === 1);
 
-        return sommeCommissions;
+            // Calculer la somme des commissions_courtier
+            const sommeCommissions = avenantsCompagnie.reduce((total, avenant) => {
+                const commission = Number(avenant.commission_courtier);
+                if (!isNaN(commission)) {
+
+                    return total + commission;
+                } else {
+                    console.warn(`Commission invalide pour l'avenant avec uuidCompagnie ${avenant.uuidCompagnie}`);
+                    return total;
+                }
+            }, 0);
+
+            const sommeEntiere = Math.round(sommeCommissions); // Utilisez parseInt(sommeCommissions) si vous ne voulez pas arrondir mais tronquer les décimales
+
+            return sommeEntiere;
+        } catch (error) {
+            console.error('Erreur lors du calcul des commissions:', error);
+            throw error;
+        }
     }
 
 
@@ -3390,6 +3484,7 @@ class AppStorage {
         localStorage.removeItem('entreprise');
         localStorage.removeItem('role');
         localStorage.removeItem('mode');
+        localStorage.removeItem('expires_in');
 
         await this.clearData('clients');
     }
@@ -3397,6 +3492,15 @@ class AppStorage {
     static getToken() {
         return localStorage.getItem('token');
     }
+
+    // Méthode pour vérifier si le token a expiré
+    // static async isTokenExpired(token) {
+    //     const now = Math.floor(Date.now() / 1000);
+    //     const payload = JSON.parse(atob(token.split('.')[1]));
+    //     return payload.exp < now;
+    // }
+
+   
 
     static getUser() {
         return localStorage.getItem('user');

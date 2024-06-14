@@ -74,6 +74,8 @@ class OfflineService {
             sync: 0,
         }];
 
+     
+
         // Enregistré les contrats dans IndexedDB
         await AppStorage.storeDataInIndexedDB("genres", newGenreData);
 
@@ -597,6 +599,15 @@ class OfflineService {
         }
     }
 
+    async updateAvenantPayerApporteur(uuidAvenantToUpdate, newPayer, newSyncState, uuidApporteur) {
+        const avenantMisAJour = await AppStorage.updateAvenantPayerApporteur(uuidAvenantToUpdate, newPayer, newSyncState);
+
+        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
+        const updatedAvenants = await AppStorage.getSommeCommissionsApporteurPayer(uuidApporteur)
+
+        return updatedAvenants
+    }
+
     async searchTauxApporteurByNomBranche(name, uuid) {
         try {
             return await AppStorage.searchTauxApporteurByNomBranche(name, uuid);
@@ -664,9 +675,6 @@ class OfflineService {
             throw new Error(error);
         }
     }
-    // async getAdresse() {
-    //     return await AppStorage.getLocalisations();
-    // }
 
 
 
@@ -712,6 +720,39 @@ class OfflineService {
         } catch (error) {
             throw new Error(error);
         }
+    }
+
+    async getAvenantsByUUIDCompagnie(uuid) {
+        try {
+            return await AppStorage.getAvenantsByUUIDCompagnie(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getSommeCommissionsCompagnie(uuid) {
+        try {
+            return await AppStorage.getSommeCommissionsCompagnie(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getSommeCommissionsCompagniePayer(uuid) {
+        try {
+            return await AppStorage.getSommeCommissionsCompagniePayer(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async updateAvenantPayerCompagnie(uuidAvenantToUpdate, newPayer, newSyncState, uuidApporteur) {
+        const avenantMisAJour = await AppStorage.updateAvenantPayerCompagnie(uuidAvenantToUpdate, newPayer, newSyncState);
+
+        // // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
+        const updatedAvenants = await AppStorage.getSommeCommissionsCompagniePayer(uuidApporteur);
+
+        return updatedAvenants;
     }
 
     async searchTauxCompagnieByNomBranche(name, uuid) {
@@ -857,7 +898,7 @@ class OfflineService {
         }
     }
 
-    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant) {
+    async storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant,formData) {
         const uuid = uuidv4();
         const clientName = await AppStorage.getClientNameByUUID(
             form.client_id
@@ -953,7 +994,7 @@ class OfflineService {
                 date_fin: form.expire_le,
                 accessoires: form.accessoires,
                 frais_courtier: form.frais_courtier,
-                cfga: this.cfga,
+                cfga: formData.cfga,
                 taxes_totales: form.taxes_totales,
                 code_avenant: codeAvenant,
                 uuidAvenant: uuidAvenant,
@@ -987,32 +1028,33 @@ class OfflineService {
                     uuidAutomobile: uuidAutomobile,
                     uuidContrat: uuid,
                     numero_immatriculation: form.numero_immatriculation,
-                    date_circulation: this.date_circulation,
-                    identification_proprietaire: this.identification_proprietaire,
-                    adresse_proprietaire: this.adresse_proprietaire,
-                    zone: this.zone,
-                    categorie: this.categorie_id,
-                    marque: this.marque_id,
-                    genre: this.genre_id,
-                    type: this.type,
-                    carosserie: this.carosserie,
-                    couleur: this.couleur_id,
-                    energie: this.energie_id,
-                    place: this.place,
-                    puissance: this.puissance,
-                    charge: this.charge,
-                    valeur_neuf: this.valeur_neuf,
-                    valeur_venale: this.valeur_venale,
-                    categorie_socio_pro: this.categorie_socio_pro,
-                    permis: this.permis,
-                    entree: this.entree_le,
-                    tierce: this.tierce,
+                    date_circulation: formData.date_circulation,
+                    identification_proprietaire: formData.identification_proprietaire,
+                    adresse_proprietaire: formData.adresse_proprietaire,
+                    zone: formData.zone,
+                    categorie: formData.categorie_id,
+                    marque: formData.marque_id,
+                    genre: formData.genre_id,
+                    type: formData.type,
+                    carosserie: formData.carosserie,
+                    couleur: formData.couleur_id,
+                    energie: formData.energie_id,
+                    place: formData.place,
+                    puissance: formData.puissance,
+                    charge: formData.charge,
+                    valeur_neuf: formData.valeur_neuf,
+                    valeur_venale: formData.valeur_venale,
+                    categorie_socio_pro: formData.categorie_socio_pro,
+                    permis: formData.permis,
+                    entree: formData.entree_le,
+                    tierce: formData.tierce,
                     sync: 0,
                     supprimer_automobile: 0,
                     id_entreprise: entrepriseId,
                     id: userId,
                 },
             ];
+            console.log(newAutomobileData)
 
             await AppStorage.storeDataInIndexedDB(
                 "automobiles",
@@ -1053,7 +1095,7 @@ class OfflineService {
         return await AppStorage.getTauxParIdBrancheEtApporteur(id_branche, optional);
     }
 
-    async storeAutomobile(form, userId, entrepriseId, uuidAutomobile, uuidContrat, contrat,typegaranties) {
+    async storeAutomobile(form, userId, entrepriseId, uuidAutomobile, uuidContrat, contrat, typegaranties) {
         // Create an array with the new automobile data
         const newAutomobileData = [
             {
@@ -1095,14 +1137,14 @@ class OfflineService {
                 id_entreprise: entrepriseId,
             },
         ];
-    
+
         // Store the automobile data in IndexedDB
         await AppStorage.storeDataInIndexedDB("automobiles", newAutomobileData);
-    
+
         // Iterate over the typegarantie values and store each as a new guarantee record
         for (let nom_garantie of typegaranties) {
             const uuidGarantie = uuidv4(); // Generate a unique UUID for the guarantee
-    
+
             const newGarantieData = [
                 {
                     uuidGarantie: uuidGarantie,
@@ -1112,17 +1154,133 @@ class OfflineService {
                     id_entreprise: entrepriseId,
                 },
             ];
-    
+
             // Store the guarantee data in IndexedDB
             await AppStorage.storeDataInIndexedDB("garanties", newGarantieData);
         }
-    
+
         // Retrieve and return the updated list of automobiles associated with the contract
         const updatedAutomobiles = await AppStorage.getAutomobileByUuidContrat(uuidContrat);
         return updatedAutomobiles;
     }
-    
 
+    async getAvenantsByUuidContrat(uuid) {
+        try {
+            return await AppStorage.getAvenantsByUuidContrat(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getFactures(uuid) {
+        try {
+            return await AppStorage.getFactures(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async updateContrat(contrats, uuidContratToUpdate, entrepriseId) {
+        const nouvellesInfos = {
+            uuidBranche: contrats.uuidBranche,
+            uuidClient: contrats.uuidClient,
+            uuidCompagnie: contrats.uuidCompagnie,
+            uuidApporteur: contrats.uuidApporteur,
+            numero_police: contrats.numero_police,
+            effet_police: contrats.effet_police,
+            heure_police: contrats.heure_police,
+            expire_le: contrats.expire_le,
+            souscrit_le: contrats.souscrit_le,
+            reconduction: contrats.reconduction,
+            prime_nette: contrats.prime_nette,
+            accessoires: contrats.accessoires,
+            frais_courtier: contrats.frais_courtier,
+            cfga: contrats.cfga,
+            taxes_totales: contrats.taxes_totales,
+            gestion: contrats.gestion,
+            sync: 0
+        };
+
+        await AppStorage.updateContrat(uuidContratToUpdate, nouvellesInfos);
+
+        const udpatedContrat = await AppStorage.getContrats();;
+
+        return udpatedContrat;
+    }
+
+    async updateAvenantSolde(uuidContrat, uuidAvenantToUpdate, newSolde, newSyncState) {
+        const avenantMisAJour = await AppStorage.updateAvenantSolde(uuidAvenantToUpdate, newSolde, newSyncState);
+
+        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
+        const updatedAvenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
+
+        return updatedAvenants;
+    }
+
+    async updateAvenantReverse(uuidContrat, uuidAvenantToUpdate, newReverse, newSyncState) {
+        const avenantMisAJour = await AppStorage.updateAvenantReverse(uuidAvenantToUpdate, newReverse, newSyncState);
+
+        // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
+        const updatedAvenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
+
+        return updatedAvenants;
+    }
+
+
+
+    async storeAvenant(form, userId, entrepriseId, uuidContrat, uuidAvenant, infocontrat, codeAvenant, calculateCommission, calculateCommissionCourtier) {
+        try {
+            const [annee, mois, day] = this.date_debut.split('-');
+
+            // Optionnel : Vérification des données
+            if (!infocontrat || !uuidContrat || !uuidAvenant || !codeAvenant || !calculateCommission || !calculateCommissionCourtier) {
+                throw new Error('Données manquantes ou invalides');
+            }
+
+            const newAvenantsData = [{
+                id: userId,
+                uuidContrat: uuidContrat,
+                annee: annee,
+                mois: mois,
+                type: this.type,
+                nom_client: infocontrat.nom_client,
+                nom_branche: infocontrat.nom_branche,
+                nom_compagnie: infocontrat.nom_compagnie,
+                numero_police: infocontrat.numero_police,
+                prime_ttc: this.prime_ttc,
+                retrocession: 0,
+                commission: calculateCommission(),
+                commission_courtier: calculateCommissionCourtier(),
+                prise_charge: this.prise_charge,
+                ristourne: this.ristourne,
+                prime_nette: this.prime_nette,
+                date_emission: this.date_debut,
+                date_debut: this.date_debut,
+                date_fin: this.date_fin,
+                accessoires: this.accessoires,
+                frais_courtier: this.frais_courtier,
+                cfga: this.cfga,
+                taxes_totales: this.taxes_totales,
+                code_avenant: codeAvenant,
+                uuidAvenant: uuidAvenant,
+                solder: 0,
+                reverser: 0,
+                sync: 0,
+                id_entreprise: entrepriseId,
+            }];
+
+            // Enregistrer les avenants dans IndexedDB
+            await AppStorage.storeDataInIndexedDB("avenants", newAvenantsData);
+
+            // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des avenants
+            const updatedAvenants = await AppStorage.getAvenantsByUuidContrat(uuidContrat);
+            return updatedAvenants; // Retourne les avenants mis à jour
+
+        } catch (error) {
+            console.error('Erreur lors du stockage de l\'avenant:', error);
+            throw error; // Relance l'erreur pour être gérée par l'appelant
+        }
+    }
 
 }
 

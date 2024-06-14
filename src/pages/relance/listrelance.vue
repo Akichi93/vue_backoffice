@@ -12,7 +12,8 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="/home">Tableau de bord</a>
+                    <router-link to="/home">Tableau de bord</router-link>
+                   
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Relance
@@ -195,6 +196,7 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 export default {

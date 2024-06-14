@@ -1038,7 +1038,30 @@ class OnlineService {
         }
     }
 
+    async getAvenantsByUuidContrat(uuid) {
+        try {
+            const response = axios.get(apiUrl.setinfoavenant(uuid))
+            return response;
 
+        } catch (error) {
+            console.error("Erreur lors de la récupération des avenants par uuid:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+    async getFactures(uuid) {
+        try {
+            const response = axios.get(apiUrl.setfactureavenant(uuid))
+            return response;
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des avenants par uuid:", error);
+            return { success: false, error: "Erreur lors de la récupération" };
+        }
+    }
+
+   
+    
 
 
 }
