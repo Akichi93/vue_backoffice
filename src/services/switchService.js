@@ -1406,6 +1406,38 @@ class switchService {
         }
     }
 
+    async getInfoSinistreByUuid(uuid){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getInfoSinistreByUuid(uuid);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getInfoSinistreByUuid(uuid);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async storeSinistre(form,userId,entrepriseId,police){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.storeSinistre(form,userId,entrepriseId,police);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.storeSinistre(form,userId,entrepriseId,police);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
 
 
 

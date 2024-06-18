@@ -788,13 +788,6 @@ export default {
         const nombreIptEntier = parseFloat(nombreIpt);
         const tauxIptNombre = parseFloat(tauxIpt);
         const tauxFraisNombre = parseFloat(tauxFrais);
-        // console.log(
-        //   nombreDecesEntier,
-        //   tauxDecesNombre,
-        //   nombreIptEntier,
-        //   tauxIptNombre,
-        //   tauxFraisNombre
-        // );
 
         // Vérifiez si les valeurs sont positives
         if (nombreDecesEntier >= 0 && tauxDecesNombre >= 0) {
@@ -817,15 +810,11 @@ export default {
     },
 
     async getProspect() {
-      AppStorage.getProspects().then((result) => {
-        this.prospects = result;
-      });
+      this.prospects = await switchService.getProspects();
     },
 
     async getCompagnie() {
-      AppStorage.getCompagnies().then((result) => {
-        this.compagnies = result;
-      });
+      this.compagnies = await switchService.getCompagnies();
     },
     async getActivite() {
       AppStorage.getActivites().then((result) => {

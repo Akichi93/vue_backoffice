@@ -1037,7 +1037,6 @@
               </div>
             </div>
           </div>
-
         </div>
 
         <div class="row" style="margin-top: 15px">
@@ -1100,7 +1099,11 @@
                   "
                 >
                   <label>FGA</label>
-                  <input type="number" class="form-control" v-model="formData.cfga" />
+                  <input
+                    type="number"
+                    class="form-control"
+                    v-model="formData.cfga"
+                  />
                 </div>
                 <div class="form-group">
                   <label>Taxes totales</label>
@@ -1157,7 +1160,11 @@
                   </div>
                   <div class="form-group">
                     <label>Gestion</label>
-                    <input type="text" class="form-control" v-model="gestion" />
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="formData.gestion"
+                    />
                   </div>
                   <div class="row">
                     <div class="col-md-12">
@@ -1355,7 +1362,7 @@ export default {
         parseFloat(this.form.primes_nette) +
         parseFloat(this.form.accessoires) +
         parseFloat(this.form.frais_courtier) +
-        (this.cfga ?? 0) +
+        (this.formData.cfga ?? 0) +
         parseFloat(this.form.taxes_totales)
       );
     },
@@ -1541,11 +1548,11 @@ export default {
         const commission_apporteur = this.calulateCommissionApporteur;
         let codeAvenant = this.generateCodevenant();
 
-        let totalPrimeTtc =
+        const totalPrimeTtc =
           this.form.primes_nette +
             this.form.frais_courtier +
             this.form.accessoires +
-            this.cfga ?? 0 + this.form.taxes_totales;
+            this.formData.cfga ?? 0 + this.form.taxes_totales;
 
         await switchService.storeContrat(
           this.form,
@@ -1565,186 +1572,6 @@ export default {
         console.error("Error storing contract offline:", error);
       }
     },
-
-    // fetchContrats
-    // async fetchContrats() {
-    //   const token = AppStorage.getToken();
-
-    //   // Configurez les en-têtes de la requête
-    //   const headers = {
-    //     Authorization: "Bearer " + token,
-    //     "x-access-token": token,
-    //   };
-
-    //   try {
-    //     const response = await axios.get(apiUrl.getcontrat, { headers });
-
-    //     // Vous pouvez traiter les données comme vous le souhaitez
-    //     const contrats = response.data;
-
-    //     // Retourner les contrats pour une utilisation éventuelle
-    //     return contrats;
-    //   } catch (error) {
-    //     console.error("Erreur lors de la récupération des clients sur le serveur", error);
-    //   }
-    // },
-
-    // async storeContrat() {
-    //   alert(this.branche_id.uuidBranche)
-    //   const response = await fetch(
-    //     "/api/check-internet-connection"
-    //   );
-
-    //   const data = await response.json();
-
-    //   this.isConnected = data.connected;
-
-    //   if (this.isConnected) {
-
-    //     const { v4: uuidv4 } = require('uuid');
-    //     const uuid = uuidv4();
-    //     const userId = AppStorage.getId();
-    //     const entrepriseId = AppStorage.getEntreprise();
-
-    //     axios
-    //       .post("/api/auth/postContrat", {
-    //         //Contrat
-    //         id: userId,
-    //         uuidContrat: uuid,
-    //         id_entreprise: entrepriseId,
-    //         id_branche: this.branche_id.uuidBranche,
-    //         branche: this.branche_id.nom_branche,
-    //         id_client: this.client_id,
-    //         id_compagnie: this.compagnie_id,
-    //         id_apporteur: this.apporteur_id,
-    //         numero_police: this.numero_police,
-    //         effet_police: this.effet_police,
-    //         heure_police: this.heure_police,
-    //         expire_le: this.expire_le,
-    //         souscrit_le: this.souscrit_le,
-    //         reconduction: this.reconduction,
-    //         //Automobile
-    //         numero_immatriculation: this.numero_immatriculation,
-    //         date_circulation: this.date_circulation,
-    //         identification_proprietaire: this.identification_proprietaire,
-    //         adresse_proprietaire: this.adresse_proprietaire,
-    //         zone: this.zone,
-    //         categorie_id: this.categorie_id,
-    //         marque_id: this.marque_id,
-    //         genre_id: this.genre_id,
-    //         type: this.type,
-    //         carosserie: this.carosserie,
-    //         couleur_id: this.couleur_id,
-    //         energie_id: this.energie_id,
-    //         place: this.place,
-    //         puissance: this.puissance,
-    //         charge: this.charge,
-    //         valeur_neuf: this.valeur_neuf,
-    //         valeur_venale: this.valeur_venale,
-    //         categorie_socio_pro: this.categorie_socio_pro,
-    //         permis: this.permis,
-    //         option: this.option_garantie,
-    //         entree: this.entree_le,
-    //         garantie: this.typegarantie,
-    //         tierce: this.tierce,
-    //         prime_nette: this.primes_nette,
-    //         accessoires: this.accessoires,
-    //         frais_courtier: this.frais_courtier,
-    //         cfga: this.cfga,
-    //         taxes_totales: this.taxes_totales,
-    //         commission_courtier:
-    //           this.primes_nette * this.tauxcomp.tauxcomp * 0.01,
-    //         commission_apporteur:
-    //           this.primes_nette *
-    //           this.taux.taux *
-    //           0.01 *
-    //           this.tauxcomp.tauxcomp *
-    //           0.01,
-    //         gestion: this.gestion,
-    //         primes_ttc:
-    //           this.primes_nette +
-    //           this.frais_courtier +
-    //           this.accessoires +
-    //           this.cfga +
-    //           this.taxes_totales,
-    //       })
-    //       .then((response) => {
-    //         if (response.status === 200) {
-    //           toaster.success(`Contrat ajouté avec succès`, {
-    //             position: "top-right",
-    //           });
-    //           this.contrats = response.data;
-    //         }
-    //         this.$router.push("/listcontrat");
-    //       })
-    //       .catch((error) => {
-    //         if (error.response.status === 422) {
-    //           toaster.error(`Veuillez remplir les champs indiqués`, {
-    //             position: "top-right",
-    //           });
-    //           this.errors = error.response.data.errors;
-    //           // console.log("Message non enregisté")
-    //         } else if (error.request) {
-    //           // The request was made but no response was received
-    //           console.log(error.request);
-    //         } else {
-    //           // Something happened in setting up the request that triggered an Error
-    //           console.log("Error", error.message);
-    //         }
-    //       });
-    //   } else {
-    //     const { v4: uuidv4 } = require('uuid');
-    //     const uuid = uuidv4();
-
-    //     const userId = parseInt(AppStorage.getId(), 10);
-    //     const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
-
-    //     // Si hors ligne, ajoutez la nouvelle donnée directement dans IndexedDB
-    //     const newContratData = [{
-    //       id: userId,
-    //       uuidContrat: uuid,
-    //       id_entreprise: entrepriseId,
-    //       id_branche: this.branche_id.uuidBranche,
-    //       branche: this.branche_id.nom_branche,
-    //       id_client: this.client_id,
-    //       id_compagnie: this.compagnie_id,
-    //       id_apporteur: this.apporteur_id,
-    //       numero_police: this.numero_police,
-    //       effet_police: this.effet_police,
-    //       heure_police: this.heure_police,
-    //       expire_le: this.expire_le,
-    //       souscrit_le: this.souscrit_le,
-    //       reconduction: this.reconduction,
-    //       prime_nette: this.primes_nette,
-    //       accessoires: this.accessoires,
-    //       frais_courtier: this.frais_courtier,
-    //       cfga: this.cfga,
-    //       taxes_totales: this.taxes_totales,
-    //       commission_courtier:
-    //         this.primes_nette * this.tauxcomp.tauxcomp * 0.01,
-    //       commission_apporteur:
-    //         this.primes_nette *
-    //         this.taux.taux *
-    //         0.01 *
-    //         this.tauxcomp.tauxcomp *
-    //         0.01,
-    //       gestion: this.gestion,
-    //       primes_ttc:
-    //         this.primes_nette +
-    //         this.frais_courtier +
-    //         this.accessoires +
-    //         this.cfga +
-    //         this.taxes_totales,
-    //     }];
-
-    //     // Ajouter la nouvelle donnée dans IndexedDB
-    //     await AppStorage.storeDataInIndexedDB("contrats", newContratData);
-
-    //     toaster.info(`Contrat ajouté localement (hors ligne)`, {
-    //       position: "top-right",
-    //     });
-    //   }
-    // },
 
     calculttc: function (event) {
       alert(this.event.target.value);

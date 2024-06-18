@@ -71,11 +71,11 @@
                   <template v-for="(sinistre, i) in sinistres" :key="i">
                     <tr>
                       <td>
-                        <!-- {{ sinistre.contrat.numero_police }} -->
+                        {{ sinistre.contrat.numero_police }}
                       </td>
                       <td>{{ sinistre.client.nom_client }}</td>
                       <td>{{ sinistre.reference_compagnie }}</td>
-                      <td>{{ sinistre.numero_sinistre }}</td>
+                      <td>{{ sinistre.numero_sinistre_agence }}</td>
                       <td>{{ sinistre.branche.nom_branche }}</td>
                       <td>{{ sinistre.date_survenance }}</td>
                       <td>{{ sinistre.date_ouverture }}</td>

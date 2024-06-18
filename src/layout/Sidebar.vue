@@ -34,20 +34,7 @@
           <span class="material-icons-outlined"> dashboard </span>
         </router-link>
 
-        <router-link
-          v-if="isAdmin || isSuperadmin || isRh"
-          to="/rh"
-          class="nav-link menu"
-          title="RH"
-          role="tab"
-          aria-controls="v-pills-apps"
-          aria-selected="false"
-          :class="{ active: $route.path === '/rh' }"
-          :replace="true"
-        >
-          <span class="material-icons-outlined"> people </span>
-        </router-link>
-
+      
         <router-link
           to="/statistique"
           class="nav-link menu"

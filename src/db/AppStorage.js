@@ -614,21 +614,22 @@ class AppStorage {
 
         // Recherche du prospect par son UUID
         const contratIndex = allContrats.findIndex(contrat => contrat.uuidContrat === uuidContrat);
+        console.table(nouvellesInfos)
 
-        if (contratIndex !== -1) {
-            // Mettre à jour les informations du prospect
-            Object.assign(allContrats[contratIndex], nouvellesInfos);
+        // if (contratIndex !== -1) {
+        //     // Mettre à jour les informations du prospect
+        //     Object.assign(allContrats[contratIndex], nouvellesInfos);
 
-            // Sauvegarder les données mises à jour
-            await this.updateDataInIndexedDB('compagnies', allContrats);
+        //     // Sauvegarder les données mises à jour
+        //     await this.updateDataInIndexedDB('compagnies', allContrats);
 
-            console.log(allContrats[contratIndex])
+        //     console.log(allContrats[contratIndex])
 
-            return allContrats[contratIndex];
+        //     return allContrats[contratIndex];
 
-        } else {
-            throw new Error('Compagnie non trouvé');
-        }
+        // } else {
+        //     throw new Error('Compagnie non trouvé');
+        // }
     }
 
 
@@ -659,10 +660,6 @@ class AppStorage {
 
         return contrat;
     }
-
-
-
-
 
     // static async getContratByUuid(uuidContrat) {
     //     const allClients = await this.getData('contrats') || [];
@@ -2969,7 +2966,6 @@ class AppStorage {
     }
 
     // Frais médical
-
     static async getFraisMedicals() {
         return this.getData('fraismedicals') || [];
     }

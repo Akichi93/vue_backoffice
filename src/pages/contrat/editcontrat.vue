@@ -75,7 +75,13 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Compagnie:</label>
-                            <Multiselect
+                            <compagniecomponent
+                              :placeholder="'selectionnez la compagnie'"
+                              @select="optionSelected"
+                              v-model="contrats.uuidCompagnie"
+                            ></compagniecomponent>
+
+                            <!-- <Multiselect
                               @select="optionSelected"
                               :value="contrats.uuidCompagnie"
                               :options="compagnies"
@@ -89,7 +95,7 @@
                               track-by="nom_compagnie"
                               :searchable="true"
                             >
-                            </Multiselect>
+                            </Multiselect> -->
                           </div>
                         </div>
                         <div class="col-md-6">
@@ -290,13 +296,14 @@
   <!-- </div> -->
 </template>
 <script>
+import compagniecomponent from "../../components/select/compagniecomponent.vue";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import Multiselect from "@vueform/multiselect";
-import axios from "axios";
 import { createToaster } from "@meforma/vue-toaster";
 import addclient from "../../pages/clients/addclient.vue";
 import switchService from "../../services/switchService";
+import AppStorage from "../../db/AppStorage";
 const toaster = createToaster({
   /* options */
 });
@@ -306,6 +313,7 @@ export default {
     Header,
     Sidebar,
     addclient,
+    compagniecomponent,
   },
   data() {
     return {
@@ -345,11 +353,72 @@ export default {
       const uuidContratToUpdate = this.$route.params.uuidContrat;
       const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
 
-      const updatedContrat = await switchService.updateContrat(
-        this.contrats,
-        uuidContratToUpdate,
-        entrepriseId
+      // PrimeTTC et commissions
+      const primeNette = parseFloat(this.contrats.prime_nette) || 0;
+      const accessoires = parseFloat(this.contrats.accessoires) || 0;
+      const fraisCourtier = parseFloat(this.contrats.frais_courtier) || 0;
+      const cfga = parseFloat(this.contrats.cfga) || 0;
+      const taxesTotales = parseFloat(this.contrats.taxes_totales) || 0;
+
+      const totalPrimeTtc =
+        primeNette + accessoires + fraisCourtier + cfga + taxesTotales;
+
+      const clientName = await AppStorage.getClientNameByUUID(
+        this.contrats.uuidClient
       );
+      const clientCode = await AppStorage.getClientCodeByUUID(
+        this.contrats.uuidClient
+      );
+      const compagnieName = await AppStorage.getCompagnieNameByUUID(
+        this.contrats.uuidCompagnie
+      );
+      const apporteurName = await AppStorage.getApporteurNameByUUID(
+        this.contrats.uuidApporteur
+      );
+
+      // Commission Courtier
+
+      const newContratData = [
+        {
+          uuidContrat: uuid,
+          uuidBranche: this.contrats.uuidBranche,
+          nom_branche: this.contrats.nom_branche,
+          uuidClient: this.contrats.uuidClient,
+          nom_client: clientName,
+          numero_client: clientCode,
+          nom_compagnie: compagnieName,
+          nom_apporteur: apporteurName,
+          uuidCompagnie: this.contrats.uuidCompagnie,
+          uuidApporteur: this.contrats.uuidApporteur,
+          numero_police: this.contrats.numero_police,
+          effet_police: this.contrats.effet_police,
+          heure_police: this.contrats.heure_police,
+          expire_le: this.contrats.expire_le,
+          souscrit_le: this.contrats.souscrit_le,
+          reconduction: this.contrats.reconduction,
+          prime_nette: primeNette,
+          accessoires: accessoires,
+          frais_courtier: fraisCourtier,
+          cfga: this.contrats.cfga,
+          taxes_totales: taxesTotales,
+          commission_courtier: commission_courtier,
+          commission_apporteur: commission_apporteur,
+          gestion: this.contrats.gestion,
+          primes_ttc: totalPrimeTtc,
+          sync: 0,
+          solde: 0,
+          reverse: 0,
+          supprimer_contrat: 0,
+        },
+      ];
+
+      // console.log(newContratData);
+
+      // const updatedContrat = await switchService.updateContrat(
+      //   this.contrats,
+      //   uuidContratToUpdate,
+      //   entrepriseId
+      // );
     },
 
     async getBranche() {

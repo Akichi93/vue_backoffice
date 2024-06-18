@@ -936,11 +936,11 @@ class OfflineService {
                 prime_nette: form.primes_nette,
                 accessoires: form.accessoires,
                 frais_courtier: form.frais_courtier,
-                cfga: this.cfga,
+                cfga: formData.cfga,
                 taxes_totales: form.taxes_totales,
                 commission_courtier: commission_courtier,
                 commission_apporteur: commission_apporteur,
-                gestion: this.gestion,
+                gestion: formData.gestion,
                 primes_ttc: totalPrimeTtc,
                 sync: 0,
                 solde: 0,
@@ -1181,25 +1181,59 @@ class OfflineService {
     }
 
     async updateContrat(contrats, uuidContratToUpdate, entrepriseId) {
-        const nouvellesInfos = {
-            uuidBranche: contrats.uuidBranche,
-            uuidClient: contrats.uuidClient,
-            uuidCompagnie: contrats.uuidCompagnie,
-            uuidApporteur: contrats.uuidApporteur,
-            numero_police: contrats.numero_police,
-            effet_police: contrats.effet_police,
-            heure_police: contrats.heure_police,
-            expire_le: contrats.expire_le,
-            souscrit_le: contrats.souscrit_le,
-            reconduction: contrats.reconduction,
-            prime_nette: contrats.prime_nette,
-            accessoires: contrats.accessoires,
-            frais_courtier: contrats.frais_courtier,
-            cfga: contrats.cfga,
-            taxes_totales: contrats.taxes_totales,
-            gestion: contrats.gestion,
-            sync: 0
-        };
+        // const nouvellesInfos = {
+        //     uuidBranche: contrats.uuidBranche,
+        //     uuidClient: contrats.uuidClient,
+        //     uuidCompagnie: contrats.uuidCompagnie,
+        //     uuidApporteur: contrats.uuidApporteur,
+        //     numero_police: contrats.numero_police,
+        //     effet_police: contrats.effet_police,
+        //     heure_police: contrats.heure_police,
+        //     expire_le: contrats.expire_le,
+        //     souscrit_le: contrats.souscrit_le,
+        //     reconduction: contrats.reconduction,
+        //     prime_nette: contrats.prime_nette,
+        //     accessoires: contrats.accessoires,
+        //     frais_courtier: contrats.frais_courtier,
+        //     cfga: contrats.cfga,
+        //     taxes_totales: contrats.taxes_totales,
+        //     gestion: contrats.gestion,
+        //     sync: 0
+        // };
+
+        const nouvellesInfos = [
+            {
+                uuidContrat: uuid,
+                uuidBranche: contrats.uuidBranche,
+                nom_branche: contrats.nom_branche,
+                uuidClient: contrats.client_id,
+                nom_client: clientName,
+                numero_client: clientCode,
+                nom_compagnie: compagnieName,
+                nom_apporteur: apporteurName,
+                uuidCompagnie: contrats.compagnie_id,
+                uuidApporteur: contrats.apporteur_id,
+                numero_police: contrats.numero_police,
+                effet_police: contrats.effet_police,
+                heure_police: contrats.heure_police,
+                expire_le: contrats.expire_le,
+                souscrit_le: contrats.souscrit_le,
+                reconduction: contrats.reconduction,
+                prime_nette: primeNette,
+                accessoires: accessoires,
+                frais_courtier: fraisCourtier,
+                cfga: contrats.cfga,
+                taxes_totales: taxesTotales,
+                commission_courtier: commission_courtier,
+                commission_apporteur: commission_apporteur,
+                gestion: contrats.gestion,
+                primes_ttc: totalPrimeTtc,
+                sync: 0,
+                solde: 0,
+                reverse: 0,
+                supprimer_contrat: 0,
+            },
+        ];
 
         await AppStorage.updateContrat(uuidContratToUpdate, nouvellesInfos);
 
@@ -1320,6 +1354,54 @@ class OfflineService {
         } catch (error) {
             throw new Error(error);
         }
+    }
+
+    async getSinistre(){
+        return await AppStorage.getSinistres();
+    }
+
+    async getInfoSinistreByUuid(uuid){
+        return await AppStorage.getInfoSinistreByUuid(uuid);
+    }
+
+    async storeSinistre(form,userId,entrepriseId,police) {
+
+        const uuid = uuidv4();
+        const newSinistreData = [
+            {
+                id: userId,
+                uuidContrat: form.uuidPolice,
+                uuidSinistre: uuid,
+                id_entreprise: entrepriseId,
+                numero_police: police,
+                reference_compagnie: form.reference_compagnie,
+                gestion_compagnie: form.gestion_compagnie,
+                numero_sinistre_agence: form.numero_sinistre_agence,
+                garantie_applique: form.garantie_applique,
+                lieu: form.lieu,
+                materiel_corporel: form.materiel_corporel,
+                ipp: form.ipp,
+                date_survenance: form.date_survenance,
+                heure: form.heure,
+                date_ouverture: form.date_ouverture,
+                date_declaration: form.date_declaration,
+                date_declaration_compagnie: form.date_declaration_compagnie,
+                date_mission: form.date_mission,
+                recours: form.recours,
+                expert: form.expert,
+                accident_adversaire: form.accident_adversaire,
+                materiel_sinistre: form.materiel_sinistre,
+                commentaire: form.commentaire,
+                sync: 0,
+                etat: 0,
+                supprimer_sinistre: 0,
+            },
+        ];
+
+        // Enregistré les contrats dans IndexedDB
+        const sinistres = await AppStorage.storeDataInIndexedDB("sinistres", newSinistreData);
+
+        return sinistres;
     }
 
 }

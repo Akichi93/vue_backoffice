@@ -270,7 +270,7 @@
                                 <button
                                   type="button"
                                   class="btn btn-primary m-3"
-                                  onclick="updateSinistre(id_sinistre)"
+                                  @click="updateSinistre"
                                 >
                                   Modifier
                                 </button>
@@ -293,7 +293,7 @@
                             <template
                               v-for="file in files"
                               :key="file.id_fichier"
-                              class="row"
+                              
                             >
                               <!-- <a :href="'/images/piece_sinistres/' + file.nom_fichier"><img
                                                                 :src="'/images/piece_sinistres/' + file.nom_fichier" alt=""
@@ -337,10 +337,9 @@
 </template>
 <script>
 import axios from "axios";
-import AppStorage from "../../db/AppStorage";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
-import Form from "vform";
+import switchService from "../../services/switchService";
 export default {
   components: { Header, Sidebar },
   data() {
@@ -378,17 +377,15 @@ export default {
     async viewSinistre() {
       const uuidSinistre = this.$route.params.uuidSinistre;
 
-      const sinistres = await AppStorage.getInfoSinistreByUuid(uuidSinistre);
+      const sinistres = await switchService.getInfoSinistreByUuid(uuidSinistre);
 
       this.branches = sinistres.branche.nom_branche;
 
       this.sinistres = sinistres;
     },
-    updateSinistre(id) {
-      this.form.put("/api/auth/update/sinistre/" + id).then((response) => {
-        console.log(response.data);
-        this.$router.push("/listsinistre");
-      });
+
+    updateSinistre() {
+     
     },
     fetchData() {
       const token = localStorage.getItem("token");
