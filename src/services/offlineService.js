@@ -1240,6 +1240,7 @@ class OfflineService {
                 commission_apporteur: commissionApporteur,
                 gestion: contrats.gestion,
                 primes_ttc: totalPrimeTtc,
+                
                 sync: 0,
                 solde: 0,
                 reverse: 0,

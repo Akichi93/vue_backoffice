@@ -63,6 +63,9 @@ import createaccident from "../pages/accident/createaccident.vue";
 import listecode from "../pages/accident/listecode.vue";
 import moduleaccident from "../pages/module/moduleaccident.vue";
 import addtarification from "../pages/accident/addtarification.vue";
+import listemrh from "../pages/mrh/listemrh.vue";
+import modulemrh from "../pages/module/modulemrh.vue";
+
 
 // Fonction de vérification
 function isPageValid(route) {
@@ -434,6 +437,18 @@ const routes = [
     path: '/addtarification',
     name: 'addtarification',
     component: addtarification,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/modulemrh',
+    name: 'modulemrh',
+    component: modulemrh,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/listemrh',
+    name: 'listemrh',
+    component: listemrh,
     meta: { requiresAuth: true }
   },
 ];
