@@ -1181,38 +1181,50 @@ class OfflineService {
     }
 
     async updateContrat(contrats, uuidContratToUpdate, entrepriseId) {
-        // const nouvellesInfos = {
-        //     uuidBranche: contrats.uuidBranche,
-        //     uuidClient: contrats.uuidClient,
-        //     uuidCompagnie: contrats.uuidCompagnie,
-        //     uuidApporteur: contrats.uuidApporteur,
-        //     numero_police: contrats.numero_police,
-        //     effet_police: contrats.effet_police,
-        //     heure_police: contrats.heure_police,
-        //     expire_le: contrats.expire_le,
-        //     souscrit_le: contrats.souscrit_le,
-        //     reconduction: contrats.reconduction,
-        //     prime_nette: contrats.prime_nette,
-        //     accessoires: contrats.accessoires,
-        //     frais_courtier: contrats.frais_courtier,
-        //     cfga: contrats.cfga,
-        //     taxes_totales: contrats.taxes_totales,
-        //     gestion: contrats.gestion,
-        //     sync: 0
-        // };
+        const clientName = await AppStorage.getClientNameByUUID(
+            this.contrats.uuidClient
+        );
+        const clientCode = await AppStorage.getClientCodeByUUID(
+            this.contrats.uuidClient
+        );
+        const compagnieName = await AppStorage.getCompagnieNameByUUID(
+            this.contrats.uuidCompagnie
+        );
+        const apporteurName = await AppStorage.getApporteurNameByUUID(
+            this.contrats.uuidApporteur
+        );
+
+        // Retrieve tauxcomp
+        const tauxcomp = await AppStorage.getTauxCompagnieByUuid(
+            this.contrats.uuidCompagnie,
+            this.contrats.uuidBranche
+        );
+
+        if (tauxcomp === null) {
+            throw new Error(
+                "Tauxcomp not found for the given uuidCompagnie and uuidBranche"
+            );
+        }
+
+        const taux = await AppStorage.getTauxApporteurByUuid(
+            this.contrats.uuidApporteur,
+            this.contrats.uuidBranche
+        );
+
+        const commissionCourtier = primeNette * (tauxcomp / 100);
+        const commissionApporteur = commissionCourtier * (taux / 100);
 
         const nouvellesInfos = [
             {
-                uuidContrat: uuid,
                 uuidBranche: contrats.uuidBranche,
                 nom_branche: contrats.nom_branche,
-                uuidClient: contrats.client_id,
+                uuidClient: contrats.uuidClient,
                 nom_client: clientName,
                 numero_client: clientCode,
                 nom_compagnie: compagnieName,
                 nom_apporteur: apporteurName,
-                uuidCompagnie: contrats.compagnie_id,
-                uuidApporteur: contrats.apporteur_id,
+                uuidCompagnie: contrats.uuidCompagnie,
+                uuidApporteur: contrats.uuidApporteur,
                 numero_police: contrats.numero_police,
                 effet_police: contrats.effet_police,
                 heure_police: contrats.heure_police,
@@ -1224,8 +1236,8 @@ class OfflineService {
                 frais_courtier: fraisCourtier,
                 cfga: contrats.cfga,
                 taxes_totales: taxesTotales,
-                commission_courtier: commission_courtier,
-                commission_apporteur: commission_apporteur,
+                commission_courtier: commissionCourtier,
+                commission_apporteur: commissionApporteur,
                 gestion: contrats.gestion,
                 primes_ttc: totalPrimeTtc,
                 sync: 0,
@@ -1235,9 +1247,9 @@ class OfflineService {
             },
         ];
 
-        await AppStorage.updateContrat(uuidContratToUpdate, nouvellesInfos);
+        
 
-        const udpatedContrat = await AppStorage.getContrats();;
+        const udpatedContrat = await AppStorage.updateContrat(uuidContratToUpdate, nouvellesInfos);
 
         return udpatedContrat;
     }
@@ -1356,15 +1368,15 @@ class OfflineService {
         }
     }
 
-    async getSinistre(){
+    async getSinistre() {
         return await AppStorage.getSinistres();
     }
 
-    async getInfoSinistreByUuid(uuid){
+    async getInfoSinistreByUuid(uuid) {
         return await AppStorage.getInfoSinistreByUuid(uuid);
     }
 
-    async storeSinistre(form,userId,entrepriseId,police) {
+    async storeSinistre(form, userId, entrepriseId, police) {
 
         const uuid = uuidv4();
         const newSinistreData = [

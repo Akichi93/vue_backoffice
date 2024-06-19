@@ -363,62 +363,12 @@ export default {
       const totalPrimeTtc =
         primeNette + accessoires + fraisCourtier + cfga + taxesTotales;
 
-      const clientName = await AppStorage.getClientNameByUUID(
-        this.contrats.uuidClient
+      const updatedContrat = await switchService.updateContrat(
+        this.contrats,
+        uuidContratToUpdate,
+        totalPrimeTtc,
+        entrepriseId
       );
-      const clientCode = await AppStorage.getClientCodeByUUID(
-        this.contrats.uuidClient
-      );
-      const compagnieName = await AppStorage.getCompagnieNameByUUID(
-        this.contrats.uuidCompagnie
-      );
-      const apporteurName = await AppStorage.getApporteurNameByUUID(
-        this.contrats.uuidApporteur
-      );
-
-      // Commission Courtier
-
-      const newContratData = [
-        {
-          uuidContrat: uuid,
-          uuidBranche: this.contrats.uuidBranche,
-          nom_branche: this.contrats.nom_branche,
-          uuidClient: this.contrats.uuidClient,
-          nom_client: clientName,
-          numero_client: clientCode,
-          nom_compagnie: compagnieName,
-          nom_apporteur: apporteurName,
-          uuidCompagnie: this.contrats.uuidCompagnie,
-          uuidApporteur: this.contrats.uuidApporteur,
-          numero_police: this.contrats.numero_police,
-          effet_police: this.contrats.effet_police,
-          heure_police: this.contrats.heure_police,
-          expire_le: this.contrats.expire_le,
-          souscrit_le: this.contrats.souscrit_le,
-          reconduction: this.contrats.reconduction,
-          prime_nette: primeNette,
-          accessoires: accessoires,
-          frais_courtier: fraisCourtier,
-          cfga: this.contrats.cfga,
-          taxes_totales: taxesTotales,
-          commission_courtier: commission_courtier,
-          commission_apporteur: commission_apporteur,
-          gestion: this.contrats.gestion,
-          primes_ttc: totalPrimeTtc,
-          sync: 0,
-          solde: 0,
-          reverse: 0,
-          supprimer_contrat: 0,
-        },
-      ];
-
-      // console.log(newContratData);
-
-      // const updatedContrat = await switchService.updateContrat(
-      //   this.contrats,
-      //   uuidContratToUpdate,
-      //   entrepriseId
-      // );
     },
 
     async getBranche() {

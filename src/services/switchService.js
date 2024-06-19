@@ -1230,6 +1230,22 @@ class switchService {
         }
     }
 
+    async updateContrat(){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateContrat(form);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.updateContrat(form);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
     async getTauxParIdBrancheEtCompagnie(id_branche, option) {
         this.refreshMode();
         try {

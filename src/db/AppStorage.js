@@ -1167,6 +1167,19 @@ class AppStorage {
         return compagnie ? compagnie.nom_compagnie : null;
     }
 
+    static async getTauxCompagnieByUuid(uuidCompagnie, uuidBranche) {
+        const allTauxCompagnies = await this.getData('tauxcompagnies') || [];
+    
+        // Find the entry that matches both uuidCompagnie and uuidBranche
+        const compagnie = allTauxCompagnies.find(tauxCompagnie => 
+            tauxCompagnie.uuidCompagnie === uuidCompagnie && tauxCompagnie.uuidBranche === uuidBranche
+        );
+    
+        // Return the tauxcomp if found, otherwise null
+        return compagnie ? compagnie.tauxcomp : null;
+    }
+    
+
     static async updateCompagnie(uuidCompagnie, nouvellesInfos) {
         // Obtenez la liste des prospects
         const allCompagnies = await this.getData('compagnies') || [];
@@ -1428,6 +1441,20 @@ class AppStorage {
         const apporteur = allApporteurs.find(apporteur => apporteur.uuidApporteur === uuidApporteur);
 
         return apporteur ? apporteur.nom_apporteur : null;
+    }
+
+    static async getTauxApporteurByUuid(uuidApporteur,uuidBranche) {
+
+        const allTauxApporteurs = await this.getData('tauxapporteurs') || [];
+    
+        // Find the entry that matches both uuidCompagnie and uuidBranche
+        const apporteur = allTauxApporteurs.find(tauxApporteur => 
+            tauxApporteur.uuidApporteur === uuidApporteur && tauxApporteur.uuidBranche === uuidBranche
+        );
+    
+        // Return the tauxcomp if found, otherwise null
+        return apporteur ? apporteur.taux : null;
+        
     }
 
     static async getTauxApporteurById(uuidTauxApporteur) {
