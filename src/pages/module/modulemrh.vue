@@ -33,10 +33,10 @@
                 <div class="card-header">
                   <div class="text-center w-100 p-3">
                     <h2>
-                      <router-link to="/moduleaccident">Tarification accident individuel</router-link>
+                      <router-link to="/listecode">Paramètre de tarification MRH</router-link>
                     </h2>
                     <h2 class="bl-text mb-1">
-                      Ce module permet d'ajouter la tarification
+                      Ce module permert d'ajouter les contrats des clients
                     </h2>
                   </div>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="card-header">
                   <div class="text-center w-100 p-3">
                     <h2>
-                      <router-link to="">Tarification automobile </router-link>
+                      <router-link to="/listeaccident">MRH </router-link>
                     </h2>
                     <h2 class="bl-text mb-1">
                       Ce module permet d'enregistrer les tarification des accidents individuels
@@ -57,22 +57,13 @@
                 </div>
               </div>
             </div>
-
-            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
-              <div class="card flex-fill tickets-card">
-                <div class="card-header">
-                  <div class="text-center w-100 p-3">
-                    <h2>
-                      <router-link to="/modulemrh">Tarification MRH </router-link>
-                    </h2>
-                    <h2 class="bl-text mb-1">
-                      Ce module permet d'enregistrer les tarification des accidents individuels
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            </div>
+  
+           
           </div>
+  
+       
+  
+       
         </div>
       </div>
     </div>
