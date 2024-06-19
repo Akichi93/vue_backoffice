@@ -1130,13 +1130,13 @@ class switchService {
         }
     }
 
-    async updateContrat(contrattoedit, uuidContratToUpdate, entrepriseId) {
+    async updateContrat(contrats,uuidContratToUpdate,totalPrimeTtc,entrepriseId) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.updateContrat(contrattoedit, uuidContratToUpdate, entrepriseId);
+                return await offlineService.updateContrat(contrats,uuidContratToUpdate,totalPrimeTtc,entrepriseId);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.updateContrat(contrattoedit, uuidContratToUpdate, entrepriseId);
+                return await onlineService.updateContrat(contrats,uuidContratToUpdate,totalPrimeTtc,entrepriseId);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -1230,21 +1230,7 @@ class switchService {
         }
     }
 
-    async updateContrat(){
-        this.refreshMode();
-        try {
-            if (this.currentMode === "Local") {
-                return await offlineService.updateContrat(form);
-            } else if (this.currentMode === "Ligne") {
-                return await onlineService.updateContrat(form);
-            } else {
-                throw new Error("Unsupported mode: " + this.currentMode);
-            }
-        } catch (error) {
-            console.error("Error storing branch:", error);
-            throw error;
-        }
-    }
+    
 
     async getTauxParIdBrancheEtCompagnie(id_branche, option) {
         this.refreshMode();
