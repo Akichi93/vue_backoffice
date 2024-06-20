@@ -1114,6 +1114,38 @@ class switchService {
         }
     }
 
+    async getContratsOneExpire(){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getContratsOneExpire();
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getContratsOneExpire();
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Erreur de la recupération des contrats:", error);
+            throw error;
+        }
+    }
+
+    async getContratsTwoExpire(){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getContratsTwoExpire();
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getContratsTwoExpire();
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Erreur de la recupération des contrats:", error);
+            throw error;
+        }
+    }
+
     async getContratByUuid(uuid) {
         this.refreshMode();
         try {
