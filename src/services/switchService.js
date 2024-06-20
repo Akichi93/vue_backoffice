@@ -1130,13 +1130,13 @@ class switchService {
         }
     }
 
-    async updateContrat(contrattoedit, uuidContratToUpdate, entrepriseId) {
+    async updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.updateContrat(contrattoedit, uuidContratToUpdate, entrepriseId);
+                return await offlineService.updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.updateContrat(contrattoedit, uuidContratToUpdate, entrepriseId);
+                return await onlineService.updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -1221,22 +1221,6 @@ class switchService {
                 return await offlineService.storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant, formData);
             } else if (this.currentMode === "Ligne") {
                 return await onlineService.storeContrat(form, userId, entrepriseId, commission_courtier, commission_apporteur, totalPrimeTtc, codeAvenant, formData);
-            } else {
-                throw new Error("Unsupported mode: " + this.currentMode);
-            }
-        } catch (error) {
-            console.error("Error storing branch:", error);
-            throw error;
-        }
-    }
-
-    async updateContrat(){
-        this.refreshMode();
-        try {
-            if (this.currentMode === "Local") {
-                return await offlineService.updateContrat(form);
-            } else if (this.currentMode === "Ligne") {
-                return await onlineService.updateContrat(form);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -1422,7 +1406,7 @@ class switchService {
         }
     }
 
-    async getInfoSinistreByUuid(uuid){
+    async getInfoSinistreByUuid(uuid) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
@@ -1438,13 +1422,13 @@ class switchService {
         }
     }
 
-    async storeSinistre(form,userId,entrepriseId,police){
+    async storeSinistre(form, userId, entrepriseId, police) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.storeSinistre(form,userId,entrepriseId,police);
+                return await offlineService.storeSinistre(form, userId, entrepriseId, police);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.storeSinistre(form,userId,entrepriseId,police);
+                return await onlineService.storeSinistre(form, userId, entrepriseId, police);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }

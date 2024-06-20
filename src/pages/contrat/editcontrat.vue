@@ -81,21 +81,7 @@
                               v-model="contrats.uuidCompagnie"
                             ></compagniecomponent>
 
-                            <!-- <Multiselect
-                              @select="optionSelected"
-                              :value="contrats.uuidCompagnie"
-                              :options="compagnies"
-                              :custom-label="
-                                ({ uuidCompagnie, nom_compagnie }) =>
-                                  `${uuidCompagnie} - [${nom_compagnie}]`
-                              "
-                              valueProp="uuidCompagnie"
-                              placeholder="Choisir une compagnie"
-                              label="nom_compagnie"
-                              track-by="nom_compagnie"
-                              :searchable="true"
-                            >
-                            </Multiselect> -->
+                          
                           </div>
                         </div>
                         <div class="col-md-6">
@@ -366,9 +352,16 @@ export default {
       const updatedContrat = await switchService.updateContrat(
         this.contrats,
         uuidContratToUpdate,
+        primeNette,
+        accessoires,
+        fraisCourtier,
+        cfga,
+        taxesTotales,
         totalPrimeTtc,
         entrepriseId
       );
+
+      this.$router.push("/listcontrat");
     },
 
     async getBranche() {

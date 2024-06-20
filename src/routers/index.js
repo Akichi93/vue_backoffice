@@ -65,6 +65,7 @@ import moduleaccident from "../pages/module/moduleaccident.vue";
 import addtarification from "../pages/accident/addtarification.vue";
 import listemrh from "../pages/mrh/listemrh.vue";
 import modulemrh from "../pages/module/modulemrh.vue";
+import createmrh from "../pages/mrh/createmrh.vue"
 
 
 // Fonction de vérification
@@ -449,6 +450,12 @@ const routes = [
     path: '/listemrh',
     name: 'listemrh',
     component: listemrh,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/createmrh',
+    name: 'createmrh',
+    component: createmrh,
     meta: { requiresAuth: true }
   },
 ];
