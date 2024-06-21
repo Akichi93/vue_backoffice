@@ -8,10 +8,9 @@ export default defineConfig({
     outDir: 'dist',
     rollupOptions: {
       output: {
-        format: 'cjs'
+        format: 'es' // Use 'es' for ES Modules
       }
     }
   },
-  base: './', // Utiliser des chemins relatifs
-
+  base: './', // Use relative paths
 });
