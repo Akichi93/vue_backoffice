@@ -1162,6 +1162,15 @@ class switchService {
         }
     }
 
+<<<<<<< HEAD
+    async updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId) {
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId);
+=======
     async updateContrat(contrats,uuidContratToUpdate,totalPrimeTtc,entrepriseId) {
         this.refreshMode();
         try {
@@ -1169,6 +1178,7 @@ class switchService {
                 return await offlineService.updateContrat(contrats,uuidContratToUpdate,totalPrimeTtc,entrepriseId);
             } else if (this.currentMode === "Ligne") {
                 return await onlineService.updateContrat(contrats,uuidContratToUpdate,totalPrimeTtc,entrepriseId);
+>>>>>>> main
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -1262,8 +1272,11 @@ class switchService {
         }
     }
 
+<<<<<<< HEAD
+=======
     
 
+>>>>>>> main
     async getTauxParIdBrancheEtCompagnie(id_branche, option) {
         this.refreshMode();
         try {
@@ -1440,7 +1453,7 @@ class switchService {
         }
     }
 
-    async getInfoSinistreByUuid(uuid){
+    async getInfoSinistreByUuid(uuid) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
@@ -1456,13 +1469,13 @@ class switchService {
         }
     }
 
-    async storeSinistre(form,userId,entrepriseId,police){
+    async storeSinistre(form, userId, entrepriseId, police) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.storeSinistre(form,userId,entrepriseId,police);
+                return await offlineService.storeSinistre(form, userId, entrepriseId, police);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.storeSinistre(form,userId,entrepriseId,police);
+                return await onlineService.storeSinistre(form, userId, entrepriseId, police);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }

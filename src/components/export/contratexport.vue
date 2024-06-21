@@ -1,7 +1,7 @@
 <template>
   <div class="export-buttons">
-    <button class="btn btn-primary" @click="exportToExcel">Export to Excel</button>
-    <button class="btn btn-primary" @click="exportToCSV">Export to CSV</button>
+    <button class="btn btn-primary" @click="exportToExcel">Exporter en Excel</button>
+    <button class="btn btn-primary" @click="exportToCSV">Exporter en CSV</button>
   </div>
 </template>
 
