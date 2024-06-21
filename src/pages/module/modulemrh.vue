@@ -48,7 +48,7 @@
                 <div class="card-header">
                   <div class="text-center w-100 p-3">
                     <h2>
-                      <router-link to="/listeaccident">MRH </router-link>
+                      <router-link to="/listemrh">MRH </router-link>
                     </h2>
                     <h2 class="bl-text mb-1">
                       Ce module permet d'enregistrer les tarification des accidents individuels
