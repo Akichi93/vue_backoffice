@@ -1114,6 +1114,38 @@ class switchService {
         }
     }
 
+    async getContratsOneExpire(){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getContratsOneExpire();
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getContratsOneExpire();
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Erreur de la recupération des contrats:", error);
+            throw error;
+        }
+    }
+
+    async getContratsTwoExpire(){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getContratsTwoExpire();
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getContratsTwoExpire();
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Erreur de la recupération des contrats:", error);
+            throw error;
+        }
+    }
+
     async getContratByUuid(uuid) {
         this.refreshMode();
         try {
@@ -1130,6 +1162,7 @@ class switchService {
         }
     }
 
+<<<<<<< HEAD
     async updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId) {
         this.refreshMode();
         try {
@@ -1137,6 +1170,15 @@ class switchService {
                 return await offlineService.updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId);
             } else if (this.currentMode === "Ligne") {
                 return await onlineService.updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId);
+=======
+    async updateContrat(contrats,uuidContratToUpdate,totalPrimeTtc,entrepriseId) {
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateContrat(contrats,uuidContratToUpdate,totalPrimeTtc,entrepriseId);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.updateContrat(contrats,uuidContratToUpdate,totalPrimeTtc,entrepriseId);
+>>>>>>> main
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -1230,6 +1272,11 @@ class switchService {
         }
     }
 
+<<<<<<< HEAD
+=======
+    
+
+>>>>>>> main
     async getTauxParIdBrancheEtCompagnie(id_branche, option) {
         this.refreshMode();
         try {

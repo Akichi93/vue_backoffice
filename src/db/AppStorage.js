@@ -1,5 +1,6 @@
 // AppStorage.js
 import { openDB } from 'idb';
+import { expireOneMonth, expireTwoMonth } from '../utils/constants/technicalConstant';
 class AppStorage {
 
     static dbName = 'fl4ir';
@@ -576,7 +577,7 @@ class AppStorage {
 
 
     static async getContrats() {
-        // return this.getData('contrats') || [];
+        
         const allContrats = await this.getData('contrats') || [];
         const clients = await this.getData('clients') || [];
         const compagnies = await this.getData('compagnies') || [];
@@ -602,11 +603,82 @@ class AppStorage {
         });
 
         return contratsAvecDonnees
-
-
-        // const allContrats = await this.getData('contrats') ;
-        // return allContrats.filter(contrat => contrat.supprimer_contrat == 0);
     }
+
+    static async getContratsOneExpire() {
+        const allContrats = await this.getData('contrats') || [];
+        const clients = await this.getData('clients') || [];
+        const compagnies = await this.getData('compagnies') || [];
+        const apporteurs = await this.getData('apporteurs') || [];
+        const branches = await this.getData('branches') || [];
+    
+        const contrats = allContrats.filter(contrat => contrat.supprimer_contrat == 0);
+    
+        // Joindre les données des clients, apporteurs et compagnies aux contrats
+        const contratsAvecDonnees = contrats.map(contrat => {
+            const client = clients.find(client => client.uuidClient === contrat.uuidClient);
+            const apporteur = apporteurs.find(apporteur => apporteur.uuidApporteur === contrat.uuidApporteur);
+            const compagnie = compagnies.find(compagnie => compagnie.uuidCompagnie === contrat.uuidCompagnie);
+            const branche = branches.find(branche => branche.uuidBranche === contrat.uuidBranche);
+    
+            return {
+                ...contrat,
+                client,
+                apporteur,
+                compagnie,
+                branche
+            };
+        });
+    
+        // Filtrer les contrats qui expirent dans moins de 3 jours
+        const now = new Date();
+        const threeDaysFromNow = new Date(now.getTime() + expireOneMonth);
+    
+        const contratsExpirantBientot = contratsAvecDonnees.filter(contrat => {
+            const expirationDate = new Date(contrat.dateExpiration);
+            return expirationDate >= now && expirationDate <= threeDaysFromNow;
+        });
+    
+        return contratsExpirantBientot;
+    }
+
+    static async getContratsTwoExpire() {
+        const allContrats = await this.getData('contrats') || [];
+        const clients = await this.getData('clients') || [];
+        const compagnies = await this.getData('compagnies') || [];
+        const apporteurs = await this.getData('apporteurs') || [];
+        const branches = await this.getData('branches') || [];
+    
+        const contrats = allContrats.filter(contrat => contrat.supprimer_contrat == 0);
+    
+        // Joindre les données des clients, apporteurs et compagnies aux contrats
+        const contratsAvecDonnees = contrats.map(contrat => {
+            const client = clients.find(client => client.uuidClient === contrat.uuidClient);
+            const apporteur = apporteurs.find(apporteur => apporteur.uuidApporteur === contrat.uuidApporteur);
+            const compagnie = compagnies.find(compagnie => compagnie.uuidCompagnie === contrat.uuidCompagnie);
+            const branche = branches.find(branche => branche.uuidBranche === contrat.uuidBranche);
+    
+            return {
+                ...contrat,
+                client,
+                apporteur,
+                compagnie,
+                branche
+            };
+        });
+    
+        // Filtrer les contrats qui expirent dans moins de 3 jours
+        const now = new Date();
+        const threeDaysFromNow = new Date(now.getTime() + expireTwoMonth);
+    
+        const contratsExpirantBientot = contratsAvecDonnees.filter(contrat => {
+            const expirationDate = new Date(contrat.dateExpiration);
+            return expirationDate >= now && expirationDate <= threeDaysFromNow;
+        });
+    
+        return contratsExpirantBientot;
+    }
+    
 
     static async updateContrat(uuidContrat, nouvellesInfos) {
         // Obtenez la liste des prospects

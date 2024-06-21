@@ -349,7 +349,7 @@ export default {
       const totalPrimeTtc =
         primeNette + accessoires + fraisCourtier + cfga + taxesTotales;
 
-      const updatedContrat = await switchService.updateContrat(
+        await switchService.updateContrat(
         this.contrats,
         uuidContratToUpdate,
         primeNette,
@@ -360,6 +360,10 @@ export default {
         totalPrimeTtc,
         entrepriseId
       );
+
+      this.$router.push("/listcontrat");
+
+      toaster.success(`Contrat ajouté`, { position: "top-right" });
 
       this.$router.push("/listcontrat");
     },
