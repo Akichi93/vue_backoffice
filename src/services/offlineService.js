@@ -1180,24 +1180,24 @@ class OfflineService {
         }
     }
 
-    async updateContrat(contrats, uuidContratToUpdate, entrepriseId) {
+    async updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId) {
         const clientName = await AppStorage.getClientNameByUUID(
-            this.contrats.uuidClient
+            contrats.uuidClient
         );
         const clientCode = await AppStorage.getClientCodeByUUID(
-            this.contrats.uuidClient
+            contrats.uuidClient
         );
         const compagnieName = await AppStorage.getCompagnieNameByUUID(
-            this.contrats.uuidCompagnie
+            contrats.uuidCompagnie
         );
         const apporteurName = await AppStorage.getApporteurNameByUUID(
-            this.contrats.uuidApporteur
+            contrats.uuidApporteur
         );
 
         // Retrieve tauxcomp
         const tauxcomp = await AppStorage.getTauxCompagnieByUuid(
-            this.contrats.uuidCompagnie,
-            this.contrats.uuidBranche
+            contrats.uuidCompagnie,
+            contrats.uuidBranche
         );
 
         if (tauxcomp === null) {
@@ -1207,8 +1207,8 @@ class OfflineService {
         }
 
         const taux = await AppStorage.getTauxApporteurByUuid(
-            this.contrats.uuidApporteur,
-            this.contrats.uuidBranche
+            contrats.uuidApporteur,
+            contrats.uuidBranche
         );
 
         const commissionCourtier = primeNette * (tauxcomp / 100);
@@ -1239,8 +1239,7 @@ class OfflineService {
                 commission_courtier: commissionCourtier,
                 commission_apporteur: commissionApporteur,
                 gestion: contrats.gestion,
-                primes_ttc: totalPrimeTtc,
-                
+                primes_ttc: totalPrimeTtc,   
                 sync: 0,
                 solde: 0,
                 reverse: 0,
@@ -1251,6 +1250,50 @@ class OfflineService {
         
 
         const udpatedContrat = await AppStorage.updateContrat(uuidContratToUpdate, nouvellesInfos);
+
+
+        const newAvenantsData = [
+            {
+                id: userId,
+                uuidContrat: uuid,
+                annee: annee,
+                mois: mois,
+                type: "Terme",
+                nom_client: clientName,
+                nom_branche: form.branche_id.nom_branche,
+                prime_ttc: totalPrimeTtc,
+                retrocession: 0,
+                // commission: calculateCommission,
+                commission: commission_apporteur,
+                // commission_courtier: calculateCommissionCourtier(),
+                commission_courtier: commission_courtier,
+                prise_charge: 0,
+                ristourne: 0,
+                prime_nette: form.primes_nette,
+                date_emission: form.souscrit_le,
+                date_debut: form.effet_police,
+                date_fin: form.expire_le,
+                accessoires: form.accessoires,
+                frais_courtier: form.frais_courtier,
+                cfga: formData.cfga,
+                taxes_totales: form.taxes_totales,
+                code_avenant: codeAvenant,
+                uuidAvenant: uuidAvenant,
+                uuidApporteur: form.apporteur_id,
+                uuidCompagnie: form.compagnie_id,
+                uuidClient: form.client_id,
+                sync: 0,
+                solder: 0,
+                reverser: 0,
+                payer_apporteur: 0,
+                payer_courtier: 0,
+                supprimer_avenant: 0,
+                id_entreprise: entrepriseId,
+            },
+        ];
+
+        // Enregistré les avenants dans IndexedDB
+        await AppStorage.storeDataInIndexedDB("avenants", newAvenantsData);
 
         return udpatedContrat;
     }
