@@ -15,7 +15,6 @@
 </template>
 <script>
 import Multiselect from "@vueform/multiselect";
-import AppStorage from "../../db/AppStorage.js";
 import switchService from "../../services/switchService";
 
 export default {
@@ -33,9 +32,6 @@ export default {
   methods: {
     async getAdresse() {
       this.localisations = await switchService.getAdresse();
-      // AppStorage.getLocalisations().then((result) => {
-      //   this.localisations = result;
-      // });
     },
   },
   components: { Multiselect },
