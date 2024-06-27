@@ -28,7 +28,7 @@
           role="tab"
           aria-controls="v-pills-apps"
           aria-selected="false"
-          :class="{ active: $route.path === '/courtage' }"
+          :class="{ active: isCourtageActive }"
           :replace="true"
         >
           <span class="material-icons-outlined"> dashboard </span>
@@ -56,7 +56,7 @@
           role="tab"
           aria-controls="v-pills-apps"
           aria-selected="false"
-          :class="{ active: $route.path === '/tarification' }"
+          :class="{ active: isTarificationActive }"
           :replace="true"
         >
           <span class="material-icons-outlined"> attach_money </span>
@@ -91,8 +91,8 @@ export default {
   data() {
     return {
       isHovered: false,
-      roleactif: AppStorage.getRole(),
-      mode: AppStorage.getMode(),
+      roleactif: localStorage.getItem("role"),
+      mode: localStorage.getItem("mode"),
       isConnected: false,
     };
   },
@@ -111,6 +111,35 @@ export default {
     },
     isCourtier() {
       return this.roleactif === "COURTIER";
+    },
+    isCourtageActive() {
+      return (
+        this.$route.path === "/courtage" ||
+        this.$route.path.startsWith("/listcontrat") ||
+        this.$route.path.startsWith("/createcontrat") ||
+        this.$route.path.startsWith("/detailscontrat") ||
+        this.$route.path.startsWith("/listcompagnie") ||
+        this.$route.path.startsWith("/createcompagnie") ||
+        this.$route.path.startsWith("/listbranche") ||
+        this.$route.path.startsWith("/createbranche") ||
+        this.$route.path.startsWith("/listapporteur") ||
+        this.$route.path.startsWith("/createapporteur") ||
+        this.$route.path.startsWith("/listprospect") ||
+        this.$route.path.startsWith("/createprospect") ||
+        this.$route.path.startsWith("/listclient") ||
+        this.$route.path.startsWith("/upload") ||
+        this.$route.path.startsWith("/listsinistre") ||
+        this.$route.path.startsWith("/createsinistre")
+      );
+    },
+    isTarificationActive() {
+      return (
+        this.$route.path === "/tarification" ||
+        this.$route.path.startsWith("/moduleaccident") ||
+        this.$route.path.startsWith("/listecode") ||
+        this.$route.path.startsWith("/listeaccident") ||
+        this.$route.path.startsWith("/createaccident")
+      );
     },
   },
   mounted() {

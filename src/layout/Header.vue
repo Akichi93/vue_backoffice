@@ -40,8 +40,7 @@
               >Relances</router-link
             >
           </template>
-
-          <template v-if="roleactif == 'ADMIN' || roleactif == 'SUPERADMIN'">
+          <template v-if="roleactif === 'ADMIN' || roleactif === 'SUPERADMIN'">
             <router-link class="dropdown-item" to="/listcompagnie"
               >Compagnie</router-link
             >
@@ -52,8 +51,7 @@
               >Apporteurs</router-link
             >
           </template>
-
-          <template v-if="roleactif == 'ADMIN' || roleactif == 'COURTIER'">
+          <template v-if="roleactif === 'ADMIN' || roleactif === 'COURTIER'">
             <router-link class="dropdown-item" to="/listprospect"
               >Prospects</router-link
             >
@@ -74,26 +72,14 @@
           aria-haspopup="true"
           aria-expanded="false"
         >
-          RH
+          Tarification
         </a>
         <div class="dropdown-menu">
-          <router-link class="dropdown-item" to="/listuser"
-            >Utilisateurs</router-link
-          >
-          <router-link class="dropdown-item" to="">Salaires</router-link>
-          <router-link class="dropdown-item" to="">Dépenses</router-link>
+          <router-link class="dropdown-item" to="">Automobile</router-link>
           <router-link class="dropdown-item" to=""
-            >Catégories dépenses</router-link
+            >Accident individuel</router-link
           >
-          <router-link class="dropdown-item" to=""
-            >Catégories types</router-link
-          >
-          <router-link class="dropdown-item" to=""
-            >Catégories types</router-link
-          >
-          <router-link class="dropdown-item" to=""
-            >Types de depenses</router-link
-          >
+          <router-link class="dropdown-item" to="">MRH</router-link>
         </div>
       </li>
       <li>
@@ -111,10 +97,10 @@
             >Statistiques courtage</router-link
           >
           <router-link class="dropdown-item" to="/statsinistre"
-            >Statistiques rh</router-link
+            >Statistiques RH</router-link
           >
           <router-link class="dropdown-item" to="/statsupprime"
-            >Supprimes</router-link
+            >Supprimés</router-link
           >
         </div>
       </li>
@@ -126,7 +112,7 @@
 
     <ul class="nav user-menu">
       <li>
-        <a href="#" class="report-btn" @click="toggleModal">
+        <a href="#" class="report-btn" @click="storeSync" :disabled="isLoading">
           <span class="material-icons-outlined"> settings </span>
         </a>
       </li>
@@ -141,6 +127,9 @@
         <div class="dropdown-menu">
           <router-link class="dropdown-item" to="/profil"
             >Mon profile</router-link
+          >
+          <router-link class="dropdown-item" to="/profil"
+            >Paramètre</router-link
           >
           <a class="dropdown-item" href="#" @click="logout">Se déconnecter</a>
         </div>
@@ -158,111 +147,26 @@
       </a>
       <div class="dropdown-menu dropdown-menu-right">
         <a class="dropdown-item" href="">Mon profile</a>
+        <a class="dropdown-item" href="">Paramètre</a>
         <a class="dropdown-item" href="#" @click="logout">Se déconnecter</a>
       </div>
     </div>
 
-    <!-- Modal -->
-    <div v-if="isModalVisible" class="modal" tabindex="-1">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Paramètre</h5>
-            <button
-              type="button"
-              class="btn-close"
-              @click="toggleModal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="bg-white">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-3">
-                    <ul class="nav nav-tabs flex-column nav-tabs-solid">
-                      <li class="nav-item mb-2">
-                        <a
-                          class="nav-link active"
-                          href="#solid-justified-tab1"
-                          data-bs-toggle="tab"
-                          >Synchronisation</a
-                        >
-                      </li>
-                      <li class="nav-item mb-2">
-                        <a
-                          class="nav-link"
-                          href="#solid-justified-tab2"
-                          data-bs-toggle="tab"
-                          >Logo</a
-                        >
-                      </li>
-                      <li class="nav-item mb-2">
-                        <a
-                          class="nav-link"
-                          href="#solid-justified-tab3"
-                          data-bs-toggle="tab"
-                          >Messages</a
-                        >
-                      </li>
-                      <li class="nav-item mb-2">
-                        <a
-                          class="nav-link"
-                          href="#solid-justified-tab4"
-                          data-bs-toggle="tab"
-                          >Thème</a
-                        >
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="col-9">
-                    <div class="tab-content">
-                      <div
-                        class="tab-pane show active"
-                        id="solid-justified-tab1"
-                      >
-                        <button
-                          type="button"
-                          class="btn btn-primary"
-                          @click="storeSync"
-                          :disabled="isLoading"
-                        >
-                          Synchroniser
-                        </button>
-                      </div>
-                      <div class="tab-pane" id="solid-justified-tab2">
-                        Tab content 2
-                      </div>
-                      <div class="tab-pane" id="solid-justified-tab3">
-                        Tab content 3
-                      </div>
-                      <div class="tab-pane" id="solid-justified-tab4">
-                        Tab content 4
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @click="toggleModal"
-            >
-              Fermer
-            </button>
-          </div>
+    <div v-if="isLoading" class="loader-container">
+      <div class="hourglassBackground">
+        <div class="hourglassContainer">
+          <div class="hourglassCurves"></div>
+          <div class="hourglassCapTop"></div>
+          <div class="hourglassGlassTop"></div>
+          <div class="hourglassSand"></div>
+          <div class="hourglassSandStream"></div>
+          <div class="hourglassCapBottom"></div>
+          <div class="hourglassGlass"></div>
         </div>
       </div>
     </div>
-
-    <!-- Loader -->
-    <div v-if="isLoading" class="loader"></div>
-
   </div>
 </template>
-
 <script>
 import AppStorage from "../db/AppStorage.js";
 import syncservice from "../services/syncService.js";
@@ -275,12 +179,16 @@ export default {
   data() {
     return {
       isLoading: false,
-      isModalVisible: false,
-      roleactif: "",
+      modalOpen: false,
+      roleactif: localStorage.getItem("role"),
       isConnected: false,
+      apiUrl: import.meta.env.VITE_API_BASE_URL,
     };
   },
   computed: {
+    name() {
+      return localStorage.getItem("user");
+    },
     isAdmin() {
       return this.roleactif === "ADMIN";
     },
@@ -298,16 +206,16 @@ export default {
     },
   },
   methods: {
-    toggleModal() {
-      this.isModalVisible = !this.isModalVisible;
-    },
     async logout() {
       try {
         const isConnected = await this.checkInternetConnection();
         if (!isConnected) {
-          toaster.error(`Veuillez vous connecter à Internet pour effectuer cette action.`, {
-            position: "top-right",
-          });
+          toaster.error(
+            `Veuillez vous connecter à Internet pour effectuer cette action.`,
+            {
+              position: "top-right",
+            }
+          );
           return;
         }
 
@@ -321,7 +229,10 @@ export default {
           return;
         }
 
-        const objectStoreExists = await this.checkObjectStore(dbName, objectStoreName);
+        const objectStoreExists = await this.checkObjectStore(
+          dbName,
+          objectStoreName
+        );
         if (!objectStoreExists) {
           console.log(`Le magasin d'objets ${objectStoreName} n'existe pas.`);
           this.performLogoutCleanup();
@@ -337,11 +248,22 @@ export default {
     },
     async checkInternetConnection() {
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL;
-        const response = await axios.get(`${apiUrl}/api/check-internet-connection`);
+        const apiUrl = this.apiUrl;
+        const response = await axios.get(
+          `${apiUrl}/api/check-internet-connection`
+        );
         return response.data.connected;
       } catch (error) {
-        console.error("Erreur lors de la vérification de la connexion Internet :", error);
+        toaster.error(
+          "Erreur lors de la vérification de la connexion Internet.",
+          {
+            position: "top-right",
+          }
+        );
+        console.error(
+          "Erreur lors de la vérification de la connexion Internet :",
+          error
+        );
         return false;
       }
     },
@@ -362,7 +284,9 @@ export default {
         const request = window.indexedDB.open(dbName);
 
         request.onerror = () => {
-          console.error(`Erreur lors de l'ouverture de la base de données ${dbName}`);
+          console.error(
+            `Erreur lors de l'ouverture de la base de données ${dbName}`
+          );
           resolve(false);
         };
 
@@ -392,7 +316,9 @@ export default {
             };
 
             upgradeRequest.onerror = () => {
-              console.error(`Erreur lors de la suppression des magasins d'objets de la base de données ${dbName}`);
+              console.error(
+                `Erreur lors de la suppression des magasins d'objets de la base de données ${dbName}`
+              );
               resolve(false);
             };
           }
@@ -405,7 +331,10 @@ export default {
     async storeSync() {
       try {
         this.isLoading = true; // Start loading
-        const response = await axios.get(apiUrl.getinternetconnection);
+        const apiUrl = this.apiUrl;
+        const response = await axios.get(
+          `${apiUrl}/api/check-internet-connection`
+        );
 
         if (response.status !== 200) {
           // Si le statut HTTP n'est pas 200, lance une erreur
@@ -422,6 +351,9 @@ export default {
           console.log("Pas de connexion internet");
         }
       } catch (error) {
+        toaster.error("Erreur lors de la synchronisation.", {
+          position: "top-right",
+        });
         console.error("Erreur lors de la synchronisation :", error);
       } finally {
         this.isLoading = false; // Stop loading
@@ -440,22 +372,489 @@ export default {
 </script>
 
 <style scoped>
-.loader {
-  border: 4px solid rgba(0, 0, 0, .1);
-  border-left-color: transparent;
-  width: 36px;
-  height: 36px;
-  animation: spin89345 1s linear infinite;
-  margin: auto; /* center loader */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  z-index: 9999;
 }
 
-@keyframes spin89345 {
+.hourglassBackground {
+  position: relative;
+  background-color: rgb(71, 60, 60);
+  height: 130px;
+  width: 130px;
+  border-radius: 50%;
+  margin: 30px auto;
+}
+
+.hourglassContainer {
+  position: absolute;
+  top: 30px;
+  left: 40px;
+  width: 50px;
+  height: 70px;
+  -webkit-animation: hourglassRotate 2s ease-in 0s infinite;
+  animation: hourglassRotate 2s ease-in 0s infinite;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.hourglassContainer div,
+.hourglassContainer div:before,
+.hourglassContainer div:after {
+  transform-style: preserve-3d;
+}
+
+@-webkit-keyframes hourglassRotate {
   0% {
-    transform: rotate(0deg);
+    transform: rotateX(0deg);
+  }
+
+  50% {
+    transform: rotateX(180deg);
   }
 
   100% {
-    transform: rotate(360deg);
+    transform: rotateX(180deg);
   }
 }
+
+@keyframes hourglassRotate {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  50% {
+    transform: rotateX(180deg);
+  }
+
+  100% {
+    transform: rotateX(180deg);
+  }
+}
+
+.hourglassCapTop {
+  top: 0;
+}
+
+.hourglassCapTop:before {
+  top: -25px;
+}
+
+.hourglassCapTop:after {
+  top: -20px;
+}
+
+.hourglassCapBottom {
+  bottom: 0;
+}
+
+.hourglassCapBottom:before {
+  bottom: -25px;
+}
+
+.hourglassCapBottom:after {
+  bottom: -20px;
+}
+
+.hourglassGlassTop {
+  transform: rotateX(90deg);
+  position: absolute;
+  top: -16px;
+  left: 3px;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  background-color: #999999;
+}
+
+.hourglassGlass {
+  perspective: 100px;
+  position: absolute;
+  top: 32px;
+  left: 20px;
+  width: 10px;
+  height: 6px;
+  background-color: #999999;
+  opacity: 0.5;
+}
+
+.hourglassGlass:before,
+.hourglassGlass:after {
+  content: '';
+  display: block;
+  position: absolute;
+  background-color: #999999;
+  left: -17px;
+  width: 44px;
+  height: 28px;
+}
+
+.hourglassGlass:before {
+  top: -27px;
+  border-radius: 0 0 25px 25px;
+}
+
+.hourglassGlass:after {
+  bottom: -27px;
+  border-radius: 25px 25px 0 0;
+}
+
+.hourglassCurves:before,
+.hourglassCurves:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 32px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #333;
+  animation: hideCurves 2s ease-in 0s infinite;
+}
+
+.hourglassCurves:before {
+  left: 15px;
+}
+
+.hourglassCurves:after {
+  left: 29px;
+}
+
+@-webkit-keyframes hideCurves {
+  0% {
+    opacity: 1;
+  }
+
+  25% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hideCurves {
+  0% {
+    opacity: 1;
+  }
+
+  25% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.hourglassSandStream:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 24px;
+  width: 3px;
+  background-color: white;
+  -webkit-animation: sandStream1 2s ease-in 0s infinite;
+  animation: sandStream1 2s ease-in 0s infinite;
+}
+
+.hourglassSandStream:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 36px;
+  left: 19px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #fff;
+  animation: sandStream2 2s ease-in 0s infinite;
+}
+
+@-webkit-keyframes sandStream1 {
+  0% {
+    height: 0;
+    top: 35px;
+  }
+
+  50% {
+    height: 0;
+    top: 45px;
+  }
+
+  60% {
+    height: 35px;
+    top: 8px;
+  }
+
+  85% {
+    height: 35px;
+    top: 8px;
+  }
+
+  100% {
+    height: 0;
+    top: 8px;
+  }
+}
+
+@keyframes sandStream1 {
+  0% {
+    height: 0;
+    top: 35px;
+  }
+
+  50% {
+    height: 0;
+    top: 45px;
+  }
+
+  60% {
+    height: 35px;
+    top: 8px;
+  }
+
+  85% {
+    height: 35px;
+    top: 8px;
+  }
+
+  100% {
+    height: 0;
+    top: 8px;
+  }
+}
+
+@-webkit-keyframes sandStream2 {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  51% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  91% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes sandStream2 {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  51% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  91% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.hourglassSand:before,
+.hourglassSand:after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 6px;
+  background-color: white;
+  perspective: 500px;
+}
+
+.hourglassSand:before {
+  top: 8px;
+  width: 39px;
+  border-radius: 3px 3px 30px 30px;
+  animation: sandFillup 2s ease-in 0s infinite;
+}
+
+.hourglassSand:after {
+  border-radius: 30px 30px 3px 3px;
+  animation: sandDeplete 2s ease-in 0s infinite;
+}
+
+@-webkit-keyframes sandFillup {
+  0% {
+    opacity: 0;
+    height: 0;
+  }
+
+  60% {
+    opacity: 1;
+    height: 0;
+  }
+
+  100% {
+    opacity: 1;
+    height: 17px;
+  }
+}
+
+@keyframes sandFillup {
+  0% {
+    opacity: 0;
+    height: 0;
+  }
+
+  60% {
+    opacity: 1;
+    height: 0;
+  }
+
+  100% {
+    opacity: 1;
+    height: 17px;
+  }
+}
+
+@-webkit-keyframes sandDeplete {
+  0% {
+    opacity: 0;
+    top: 45px;
+    height: 17px;
+    width: 38px;
+    left: 6px;
+  }
+
+  1% {
+    opacity: 1;
+    top: 45px;
+    height: 17px;
+    width: 38px;
+    left: 6px;
+  }
+
+  24% {
+    opacity: 1;
+    top: 45px;
+    height: 17px;
+    width: 38px;
+    left: 6px;
+  }
+
+  25% {
+    opacity: 1;
+    top: 41px;
+    height: 17px;
+    width: 38px;
+    left: 6px;
+  }
+
+  50% {
+    opacity: 1;
+    top: 41px;
+    height: 17px;
+    width: 38px;
+    left: 6px;
+  }
+
+  90% {
+    opacity: 1;
+    top: 41px;
+    height: 0;
+    width: 10px;
+    left: 20px;
+  }
+}
+
+@keyframes sandDeplete {
+  0% {
+    opacity: 0;
+    top: 45px;
+    height: 17px;
+    width: 38px;
+    left: 6px;
+  }
+
+  1% {
+    opacity: 1;
+    top: 45px;
+    height: 17px;
+    width: 38px;
+    left: 6px;
+  }
+
+  24% {
+    opacity: 1;
+    top: 45px;
+    height: 17px;
+    width: 38px;
+    left: 6px;
+  }
+
+  25% {
+    opacity: 1;
+    top: 41px;
+    height: 17px;
+    width: 38px;
+    left: 6px;
+  }
+
+  50% {
+    opacity: 1;
+    top: 41px;
+    height: 17px;
+    width: 38px;
+    left: 6px;
+  }
+
+  90% {
+    opacity: 1;
+    top: 41px;
+    height: 0;
+    width: 10px;
+    left: 20px;
+  }
+}
+
 </style>
