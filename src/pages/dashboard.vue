@@ -388,31 +388,6 @@ export default {
 };
 </script>
 <style scoped>
-.settings-icon {
-  z-index: 99999;
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-}
-.settings-icon span,
-.align-center {
-  display: flex;
-  display: -webkit-flex;
-  align-items: center;
-  -webkit-align-items: center;
-  justify-content: center;
-  -webkit-justify-content: center;
-}
-.settings-icon span {
-  width: 45px;
-  height: 45px;
-  border-radius: 45px;
-  cursor: pointer;
-  color: #ffffff;
-  font-size: 24px;
-  background-color: #ff9b44;
-  -webkit-animation: spin 4s linear infinite;
-  -moz-animation: spin 4s linear infinite;
-  animation: spin 4s linear infinite;
-}
+ 
+
 </style>
