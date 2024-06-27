@@ -1,6 +1,6 @@
 <template>
-  <button @click="exportToExcel">Exporter en Excel</button>
-  <button @click="exportToCSV">Exporter en CSV</button>
+  <button class="btn btn-primary" @click="exportToExcel">Exporter en Excel</button>
+  <button class="btn btn-primary" @click="exportToCSV">Exporter en CSV</button>
 </template>
 <script>
 import AppStorage from "../../db/AppStorage";
@@ -80,3 +80,12 @@ export default {
   },
 };
 </script>
+<style scoped>
+.export-buttons {
+  margin-top: 20px;
+}
+
+.export-buttons button {
+  margin-right: 10px;
+}
+</style>

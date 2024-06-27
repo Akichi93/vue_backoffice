@@ -116,22 +116,22 @@
       </div>
 
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6" v-if="chartData && chartData.length > 0">
           <Bar :data="chartData" />
-          
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6" v-if="chartDonnees && chartDonnees.length > 0">
           <Bar :data="chartDonnees" />
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6" v-if="chartGraphs && chartGraphs.length > 0">
           <Bar :data="chartGraphs" />
         </div>
       </div>
     </div>
   </div>
+  
 </template>
 <script>
 import Header from "../layout/Header.vue";
@@ -172,7 +172,7 @@ export default {
       echeance: "",
       countemission: "",
       // compagnies:[],
-      year: null, 
+      year: null,
       years: [],
       getYear: {},
       branches: {},
@@ -220,7 +220,6 @@ export default {
   components: { Header, Sidebar, Bar },
 
   methods: {
-
     async optionSelected() {
       if (this.branch) {
         await this.getData();
@@ -230,14 +229,11 @@ export default {
     async getCategory() {
       const groupedData = await AppStorage.getAvenantsGroupedByYear();
       this.getYear = Object.keys(groupedData).map((year) => parseInt(year));
-
     },
 
     async getTypes() {
       const brancheData = await AppStorage.getBranches();
       this.branches = brancheData;
-
-     
     },
 
     async getData() {
@@ -391,3 +387,32 @@ export default {
   },
 };
 </script>
+<style scoped>
+.settings-icon {
+  z-index: 99999;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+}
+.settings-icon span,
+.align-center {
+  display: flex;
+  display: -webkit-flex;
+  align-items: center;
+  -webkit-align-items: center;
+  justify-content: center;
+  -webkit-justify-content: center;
+}
+.settings-icon span {
+  width: 45px;
+  height: 45px;
+  border-radius: 45px;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 24px;
+  background-color: #ff9b44;
+  -webkit-animation: spin 4s linear infinite;
+  -moz-animation: spin 4s linear infinite;
+  animation: spin 4s linear infinite;
+}
+</style>
