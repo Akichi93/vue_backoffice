@@ -1,5 +1,5 @@
 export const couvertures = [
-    "COURVERT",
+    "COUVERT",
     "EXCLU",
 ];
 

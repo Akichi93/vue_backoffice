@@ -101,7 +101,12 @@
                   </div>
                 </div>
 
-                <h5 class="card-title" v-if="habitations == 'LOCATAIRE' || habitations === 'PROPRIETAIRE'">
+                <h5
+                  class="card-title"
+                  v-if="
+                    habitations == 'LOCATAIRE' || habitations === 'PROPRIETAIRE'
+                  "
+                >
                   Désignation des Garanties
                 </h5>
 
@@ -110,12 +115,14 @@
                     <table class="table table-bordered">
                       <thead>
                         <tr>
-                          <th class="designation-column">
+                          <th class="designation-header">
                             Désignation des Garanties
                           </th>
                           <th class="couvert-exclu-column">Couvert ou Exclu</th>
-                          <th>Capitaux Garantis (FCFA)</th>
-                          <th>Franchises (FCFA)</th>
+                          <th class="capitaux-header">
+                            Capitaux Garantis (FCFA)
+                          </th>
+                          <th class="franchise-header">Franchises (FCFA)</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -136,12 +143,15 @@
                           <td class="designation-column">
                             Risques Locatifs / Bâtiments
                           </td>
-                          <td class="couvert-exclu-column">
+                          <td :class="colors[0]">
                             <couverturecomponent
                               :placeholder="'selectionnez un type'"
                               v-model="apporteur_id"
+                              :index="0"
+                              @update-color="handleUpdateColor"
                             ></couverturecomponent>
                           </td>
+
                           <td class="capital">180 000 000</td>
                           <td></td>
                         </tr>
@@ -200,7 +210,7 @@
                           </td>
                           <td class="capital">1 an de loyer</td>
 
-                          <td>Néant</td>
+                          <td class="capitaux-column">Néant</td>
                         </tr>
                         <tr class="highlight-row">
                           <td class="designation-column">
@@ -997,7 +1007,10 @@
                     </div>
                   </div>
                 </div>
-                <div class="table-responsive" v-if="habitations == 'PROPRIETAIRE'">
+                <div
+                  class="table-responsive"
+                  v-if="habitations == 'PROPRIETAIRE'"
+                >
                   <div class="table-responsive">
                     <table class="table table-bordered">
                       <thead>
@@ -1922,16 +1935,27 @@ export default {
   data() {
     return {
       habitations: "",
+      apporteur_id: null,
+      colors: ["", ""], // Array to store colors for each instance
     };
   },
   methods: {
-    handleChange(value) {
-      console.log("Valeur sélectionnée:", value);
-      // Ajoutez ici la logique que vous souhaitez exécuter lors de la sélection
+    handleUpdateColor({ index, color }) {
+      this.colors[index] = color;
     },
   },
 };
 </script>
+<style scoped>
+.green .form-control {
+  border-color: green;
+  color: green;
+}
+.red .form-control {
+  border-color: red;
+  color: red;
+}
+</style>
 <style scoped>
 .table-responsive {
   overflow-x: auto;
@@ -1970,21 +1994,27 @@ export default {
 }
 
 .couvert-exclu-header {
-  min-width: 300px; /* Minimum width for Couvert ou Exclu header */
+  width: 10%;
 }
 
 .couvert-exclu-column {
-  min-width: 300px; /* Minimum width for Couvert ou Exclu column */
+  width: 10%;
 }
 
-.table td:nth-child(4),
-.table th:nth-child(4) {
-  width: auto; /* Ajustement automatique de la largeur */
+.capitaux-header {
+  max-width: 240px;
 }
 
-.table td:nth-child(5),
-.table th:nth-child(5) {
-  width: auto; /* Ajustement automatique de la largeur */
+.capitaux-column {
+  max-width: 240px;
+}
+
+.franchise-header {
+  max-width: 240px;
+}
+
+.franchise-column {
+  max-width: 240px;
 }
 
 .highlight-row {
@@ -2006,6 +2036,7 @@ export default {
 
 .capital {
   text-align: center;
+  max-width: 240px;
 }
 
 .note {
@@ -2029,6 +2060,6 @@ export default {
 }
 
 .designation-column {
-  width: 30%;
+  width: 40%;
 }
 </style>
