@@ -95,7 +95,8 @@
                       </a>
                     </li>
                   </ul>
-                  <div class="flex-shrink-0">
+                  <!-- <div class="flex-shrink-0">
+                    
                     <button
                       type="button"
                       class="btn btn-success"
@@ -104,7 +105,7 @@
                       <i class="ri-edit-box-line align-bottom"></i> Modifier
                       Sinistre
                     </button>
-                  </div>
+                  </div> -->
                 </div>
                 <!-- Tab panes -->
                 <div class="tab-content pt-4 text-muted">

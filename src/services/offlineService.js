@@ -1239,7 +1239,7 @@ class OfflineService {
                 commission_courtier: commissionCourtier,
                 commission_apporteur: commissionApporteur,
                 gestion: contrats.gestion,
-                primes_ttc: totalPrimeTtc,   
+                primes_ttc: totalPrimeTtc,
                 sync: 0,
                 solde: 0,
                 reverse: 0,
@@ -1247,7 +1247,7 @@ class OfflineService {
             },
         ];
 
-        
+
 
         const udpatedContrat = await AppStorage.updateContrat(uuidContratToUpdate, nouvellesInfos);
 
@@ -1459,6 +1459,59 @@ class OfflineService {
 
         return sinistres;
     }
+
+    async getReglement(uuid) {
+        return await AppStorage.getReglementsByUuidSinistre(uuid);
+    }
+
+    async getSommeReglement(uuid) {
+        return await AppStorage.getSommeReglementsByUuidSinistre(uuid);
+    }
+
+    async updateSinistre(uuidSinistreToUpdate, sinistres) {
+
+        const nouvellesInfos = [
+            {
+                // id: userId,
+                uuidContrat: sinistres.uuidContrat,
+                id_entreprise: sinistres.id_entreprise,
+                numero_police: sinistres.numero_police,
+                reference_compagnie: sinistres.reference_compagnie,
+                gestion_compagnie: sinistres.gestion_compagnie,
+                numero_sinistre_agence: sinistres.numero_sinistre_agence,
+                garantie_applique: sinistres.garantie_applique,
+                lieu: sinistres.lieu,
+                materiel_corporel: sinistres.materiel_corporel,
+                ipp: sinistres.ipp,
+                date_survenance: sinistres.date_survenance,
+                heure: sinistres.heure,
+                date_ouverture: sinistres.date_ouverture,
+                date_declaration: sinistres.date_declaration,
+                date_declaration_compagnie: sinistres.date_declaration_compagnie,
+                date_mission: sinistres.date_mission,
+                recours: sinistres.recours,
+                expert: sinistres.expert,
+                accident_adversaire: sinistres.accident_adversaire,
+                materiel_sinistre: sinistres.materiel_sinistre,
+                commentaire: sinistres.commentaire,
+                sync: 0,
+                etat: 0,
+                supprimer_sinistre: 0,
+            },
+        ];
+
+        const udpatedSinistre = await AppStorage.updateSinistre(uuidSinistreToUpdate, nouvellesInfos)
+
+        return udpatedSinistre;
+    }
+
+    async updateSinistreStatus(uuidSinistre){
+        const updatedSinistre = await AppStorage.updateSinistreStatus(uuidSinistre);
+
+        return updatedSinistre;
+    }
+
+
 
 }
 

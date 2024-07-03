@@ -577,7 +577,7 @@ class AppStorage {
 
 
     static async getContrats() {
-        
+
         const allContrats = await this.getData('contrats') || [];
         const clients = await this.getData('clients') || [];
         const compagnies = await this.getData('compagnies') || [];
@@ -611,16 +611,16 @@ class AppStorage {
         const compagnies = await this.getData('compagnies') || [];
         const apporteurs = await this.getData('apporteurs') || [];
         const branches = await this.getData('branches') || [];
-    
+
         const contrats = allContrats.filter(contrat => contrat.supprimer_contrat == 0);
-    
+
         // Joindre les données des clients, apporteurs et compagnies aux contrats
         const contratsAvecDonnees = contrats.map(contrat => {
             const client = clients.find(client => client.uuidClient === contrat.uuidClient);
             const apporteur = apporteurs.find(apporteur => apporteur.uuidApporteur === contrat.uuidApporteur);
             const compagnie = compagnies.find(compagnie => compagnie.uuidCompagnie === contrat.uuidCompagnie);
             const branche = branches.find(branche => branche.uuidBranche === contrat.uuidBranche);
-    
+
             return {
                 ...contrat,
                 client,
@@ -629,16 +629,16 @@ class AppStorage {
                 branche
             };
         });
-    
+
         // Filtrer les contrats qui expirent dans moins de 3 jours
         const now = new Date();
         const threeDaysFromNow = new Date(now.getTime() + expireOneMonth);
-    
+
         const contratsExpirantBientot = contratsAvecDonnees.filter(contrat => {
             const expirationDate = new Date(contrat.dateExpiration);
             return expirationDate >= now && expirationDate <= threeDaysFromNow;
         });
-    
+
         return contratsExpirantBientot;
     }
 
@@ -648,16 +648,16 @@ class AppStorage {
         const compagnies = await this.getData('compagnies') || [];
         const apporteurs = await this.getData('apporteurs') || [];
         const branches = await this.getData('branches') || [];
-    
+
         const contrats = allContrats.filter(contrat => contrat.supprimer_contrat == 0);
-    
+
         // Joindre les données des clients, apporteurs et compagnies aux contrats
         const contratsAvecDonnees = contrats.map(contrat => {
             const client = clients.find(client => client.uuidClient === contrat.uuidClient);
             const apporteur = apporteurs.find(apporteur => apporteur.uuidApporteur === contrat.uuidApporteur);
             const compagnie = compagnies.find(compagnie => compagnie.uuidCompagnie === contrat.uuidCompagnie);
             const branche = branches.find(branche => branche.uuidBranche === contrat.uuidBranche);
-    
+
             return {
                 ...contrat,
                 client,
@@ -666,19 +666,19 @@ class AppStorage {
                 branche
             };
         });
-    
+
         // Filtrer les contrats qui expirent dans moins de 3 jours
         const now = new Date();
         const threeDaysFromNow = new Date(now.getTime() + expireTwoMonth);
-    
+
         const contratsExpirantBientot = contratsAvecDonnees.filter(contrat => {
             const expirationDate = new Date(contrat.dateExpiration);
             return expirationDate >= now && expirationDate <= threeDaysFromNow;
         });
-    
+
         return contratsExpirantBientot;
     }
-    
+
 
     static async updateContrat(uuidContrat, nouvellesInfos) {
         // Obtenez la liste des prospects
@@ -1241,16 +1241,16 @@ class AppStorage {
 
     static async getTauxCompagnieByUuid(uuidCompagnie, uuidBranche) {
         const allTauxCompagnies = await this.getData('tauxcompagnies') || [];
-    
+
         // Find the entry that matches both uuidCompagnie and uuidBranche
-        const compagnie = allTauxCompagnies.find(tauxCompagnie => 
+        const compagnie = allTauxCompagnies.find(tauxCompagnie =>
             tauxCompagnie.uuidCompagnie === uuidCompagnie && tauxCompagnie.uuidBranche === uuidBranche
         );
-    
+
         // Return the tauxcomp if found, otherwise null
         return compagnie ? compagnie.tauxcomp : null;
     }
-    
+
 
     static async updateCompagnie(uuidCompagnie, nouvellesInfos) {
         // Obtenez la liste des prospects
@@ -1515,18 +1515,18 @@ class AppStorage {
         return apporteur ? apporteur.nom_apporteur : null;
     }
 
-    static async getTauxApporteurByUuid(uuidApporteur,uuidBranche) {
+    static async getTauxApporteurByUuid(uuidApporteur, uuidBranche) {
 
         const allTauxApporteurs = await this.getData('tauxapporteurs') || [];
-    
+
         // Find the entry that matches both uuidCompagnie and uuidBranche
-        const apporteur = allTauxApporteurs.find(tauxApporteur => 
+        const apporteur = allTauxApporteurs.find(tauxApporteur =>
             tauxApporteur.uuidApporteur === uuidApporteur && tauxApporteur.uuidBranche === uuidBranche
         );
-    
+
         // Return the tauxcomp if found, otherwise null
         return apporteur ? apporteur.taux : null;
-        
+
     }
 
     static async getTauxApporteurById(uuidTauxApporteur) {
@@ -2381,6 +2381,57 @@ class AppStorage {
 
     }
 
+    static async updateSinistre(uuidSinistre, nouvellesInfos) {
+        // Obtenez la liste des prospects
+        const allSinistres = await this.getData('sinistres') || [];
+
+        // Recherche du prospect par son UUID
+        const sinistreIndex = allSinistres.findIndex(sinistre => sinistre.uuidSinistre === uuidSinistre);
+
+        if (sinistreIndex !== -1) {
+            // Mettre à jour les informations du prospect
+            Object.assign(allSinistres[sinistreIndex], nouvellesInfos);
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('sinistres', allSinistres);
+
+            return allSinistres[sinistreIndex];
+
+        } else {
+            throw new Error('Sinistre non trouvé');
+        }
+    }
+
+    static async updateSinistreStatus(uuidSinistre) {
+        // Obtenez la liste des prospects
+        const allSinistres = await this.getData('sinistres') || [];
+
+        // Recherche du prospect par son UUID
+        const sinistreIndex = allSinistres.findIndex(sinistre => sinistre.uuidSinistre === uuidSinistre);
+
+
+
+        if (sinistreIndex !== -1) {
+            // Vérifier l'état actuel du sinistre
+            const currentEtat = allSinistres[sinistreIndex].etat;
+            // console.log(currentEtat)
+            // Définir le nouvel état (basculer entre 0 et 1)
+            const newState = currentEtat === 0 ? 1 : 0;
+            // Mettre à jour l'état du prospect
+            allSinistres[sinistreIndex].etat = newState;
+
+            // Mettre à jour l'état de synchronisation
+            allSinistres[sinistreIndex].sync = 0;
+
+            // Sauvegarder les données mises à jour
+            await this.updateDataInIndexedDB('sinistres', allSinistres);
+
+            return allSinistres;
+        } else {
+            throw new Error('Avenant non trouvé');
+        }
+    }
+
     //Reglements
     static async storeReglements(reglements) {
         await this.storeData('reglements', reglements);
@@ -2414,6 +2465,8 @@ class AppStorage {
         return sumByUuidSinistre
 
     }
+
+
 
 
 
@@ -3596,7 +3649,7 @@ class AppStorage {
     //     return payload.exp < now;
     // }
 
-   
+
 
     static getUser() {
         return localStorage.getItem('user');

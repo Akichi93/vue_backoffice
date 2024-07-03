@@ -1437,6 +1437,22 @@ class switchService {
         }
     }
 
+    async getSinistre(){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getSinistre();
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getSinistre();
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
     async getInfoSinistreByUuid(uuid) {
         this.refreshMode();
         try {
@@ -1460,6 +1476,71 @@ class switchService {
                 return await offlineService.storeSinistre(form, userId, entrepriseId, police);
             } else if (this.currentMode === "Ligne") {
                 return await onlineService.storeSinistre(form, userId, entrepriseId, police);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async getReglement(uuid){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getReglement(uuid);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getReglement(uuid);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async getSommeReglement(uuid){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getSommeReglement(uuid);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getSommeReglement(uuid);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+
+    async updateSinistre(uuidSinistreToUpdate,sinistres){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateSinistre(uuidSinistreToUpdate,sinistres);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.updateSinistre(uuidSinistreToUpdate,sinistres);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    }
+
+    async updateSinistreStatus(uuid){
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.updateSinistreStatus(uuid);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.updateSinistreStatus(uuid);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
