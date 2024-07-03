@@ -67,7 +67,7 @@
                           :key="reglement.uuiReglement"
                         >
                           <tr>
-                            <td>{{ reglement.date }}</td>
+                            <td>{{ formatDate(reglement.date) }}</td>
                             <td>{{ reglement.mode }}</td>
                             <td>{{ reglement.nom }}</td>
                             <td>{{ reglement.type }}</td>
@@ -100,13 +100,14 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import addReglement from "./addReglement.vue";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import { createToaster } from "@meforma/vue-toaster";
 import { formatNumberWithThousandsSeparator } from "../../utils/helpers/thousandSeparator";
 import AppStorage from "../../db/AppStorage";
+import switchService from "../../services/switchService";
+import { formatDate } from "../../utils/helpers/dateFormat";
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
@@ -131,15 +132,14 @@ export default {
   },
 
   methods: {
+    formatDate,
     formatMontant(montant) {
       return formatNumberWithThousandsSeparator(montant);
     },
     async getReglement() {
       const uuidSinistre = this.$route.params.uuidSinistre;
 
-      const reglements = await AppStorage.getReglementsByUuidSinistre(
-        uuidSinistre
-      );
+      const reglements = await switchService.getReglement(uuidSinistre);
 
       this.reglements = reglements;
     },
@@ -147,13 +147,10 @@ export default {
     async getSomme() {
       const uuidSinistre = this.$route.params.uuidSinistre;
 
-      const reglements = await AppStorage.getSommeReglementsByUuidSinistre(
-        uuidSinistre
-      );
+      const reglements = await switchService.getSommeReglement(uuidSinistre)
 
-     
       const nombreFormate = formatNumberWithThousandsSeparator(
-        nombre,
+        reglements, // Use the obtained sum as the number to format
         "fr-FR",
         { style: "decimal" }
       );
@@ -162,18 +159,13 @@ export default {
     },
 
     async refresh() {
-      const uuidSinistre = this.$route.params.uuidSinistre;
-      AppStorage.getReglementsByUuidSinistre(uuidSinistre).then((result) => {
-        this.reglements = result;
-      });
+      await this.getReglement();
       await this.getSomme();
     },
   },
   created() {
-    // this.fetchData();
     this.getReglement();
     this.getSomme();
   },
 };
 </script>
-<!-- <style src="@vueform/multiselect/themes/default.css"></style> -->

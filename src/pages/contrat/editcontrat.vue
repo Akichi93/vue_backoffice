@@ -361,9 +361,7 @@ export default {
         entrepriseId
       );
 
-      this.$router.push("/listcontrat");
-
-      toaster.success(`Contrat ajouté`, { position: "top-right" });
+      toaster.success(`Contrat modifié`, { position: "top-right" });
 
       this.$router.push("/listcontrat");
     },

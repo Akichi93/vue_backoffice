@@ -293,7 +293,6 @@
                             <template
                               v-for="file in files"
                               :key="file.id_fichier"
-                              
                             >
                               <!-- <a :href="'/images/piece_sinistres/' + file.nom_fichier"><img
                                                                 :src="'/images/piece_sinistres/' + file.nom_fichier" alt=""
@@ -336,10 +335,13 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import switchService from "../../services/switchService";
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({
+  /* options */
+});
 export default {
   components: { Header, Sidebar },
   data() {
@@ -349,28 +351,6 @@ export default {
       sinistres: "",
       branches: "",
       id_sinistre: "",
-      form: {
-        type_contrat: "",
-        id_contrat: "",
-        reference_compagnie: "",
-        gestion_compagnie: "",
-        numero_sinistre_agence: "",
-        garantie_applique: "",
-        lieu: "",
-        materiel_corporel: "",
-        ipp: "",
-        date_survenance: "",
-        heure: "",
-        date_ouverture: "",
-        date_declaration: "",
-        date_declaration_compagnie: "",
-        date_mission: "",
-        recours: "",
-        expert: "",
-        accident_adversaire: "",
-        materiel_sinistre: "",
-        commentaire: "",
-      },
     };
   },
   methods: {
@@ -384,50 +364,17 @@ export default {
       this.sinistres = sinistres;
     },
 
-    updateSinistre() {
-     
-    },
-    fetchData() {
-      const token = localStorage.getItem("token");
+    async updateSinistre() {
+      const uuidSinistreToUpdate = this.$route.params.uuidSinistre;
+      
+      await switchService.updateSinistre(uuidSinistreToUpdate, this.sinistres);
 
-      // Configurez les en-têtes de la requête
-      const headers = {
-        Authorization: "Bearer " + token,
-        "x-access-token": token,
-      };
-      axios
-        .get("/api/auth/get/sinistres", { headers })
-        .then((response) => {
-          // this.sinistres = response.data.sinistres;
-          // this.type_contrat = response.data.sinistres.type_contrat,
-          // this.form.id_contrat = response.data.sinistres.id_contrat,
-          // this.form.reference_compagnie = response.data.sinistres.reference_compagnie,
-          // this.form.gestion_compagnie = response.data.sinistres.gestion_compagnie,
-          // this.form.numero_sinistre_agence = response.data.sinistres.numero_sinistre_agence,
-          // this.form.garantie_applique = response.data.sinistres.garantie_applique,
-          // this.form.lieu = response.data.sinistres.lieu,
-          // this.form.materiel_corporel = response.data.sinistres.materiel_corporel,
-          // this.form.ipp = response.data.sinistres.ipp,
-          // this.form.date_survenance = response.data.sinistres.date_survenance,
-          // this.form.heure = response.data.sinistres.heure,
-          // this.form.date_ouverture = response.data.sinistres.date_ouverture,
-          // this.form.date_declaration = response.data.sinistres.date_declaration,
-          // this.form.date_declaration_compagnie = response.data.sinistres.date_declaration_compagnie,
-          // this.form.date_mission = response.data.sinistres.date_mission,
-          // this.form.recours = response.data.sinistres.recours,
-          // this.form.expert = response.data.sinistres.expert,
-          // this.form.accident_adversaire = response.data.sinistres.accident_adversaire,
-          // this.form.materiel_sinistre = response.data.sinistres.materiel_sinistre,
-          // this.form.commentaire = response.data.sinistres.commentaire,
-        })
-        .catch((error) => {
-          this.loading = false;
-          this.error = error.response.data.message || error.message;
-        });
+      toaster.success(`Sinistre modifié`, { position: "top-right" });
+
+      this.$router.push("/listsinistre");
     },
   },
   created() {
-    this.fetchData();
     this.viewSinistre();
   },
 };

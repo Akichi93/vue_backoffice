@@ -63,7 +63,7 @@
                     <th>Branche</th>
                     <th>Date de survenance</th>
                     <th>Date d'ouverture</th>
-                    <th>Dossier cloturé</th>
+                    <!-- <th>Dossier cloturé</th> -->
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -79,35 +79,31 @@
                       <td>{{ sinistre.branche.nom_branche }}</td>
                       <td>{{ sinistre.date_survenance }}</td>
                       <td>{{ sinistre.date_ouverture }}</td>
-                      <td
-                        class="text-end ico-sec d-flex justify-content-end"
-                        v-if="sinistre.etat == 1"
-                      >
+
+                      <td class="text-end ico-sec d-flex justify-content-end">
                         <button
                           @click="updateSinistreStatus(sinistre.uuidSinistre)"
                           type="button"
                           class="btn"
                         >
-                          <i class="fa fa-toggle-on"></i
-                          ><span class="badge badge-pill bg-success"
-                            >En cours</span
+                          <i
+                            :class="
+                              sinistre.etat == 0
+                                ? 'fa fa-toggle-off'
+                                : 'fa fa-toggle-on'
+                            "
+                          ></i>
+                          <span
+                            :class="
+                              sinistre.etat == 0
+                                ? 'badge badge-pill bg-secondary'
+                                : 'badge badge-pill bg-success'
+                            "
                           >
+                            {{ sinistre.etat == 0 ? "En cours" : "Terminé" }}
+                          </span>
                         </button>
-                        <span class="badge badge-pill bg-danger">Termine</span>
-                      </td>
-                      <td v-else>
-                        <button
-                          @click="updateSinistreStatus(sinistre.uuidSinistre)"
-                          href="#"
-                          class="btn"
-                        >
-                          <i class="fa fa-toggle-off"></i
-                          ><span class="badge badge-pill bg-success"
-                            >En cours</span
-                          >
-                        </button>
-                      </td>
-                      <td class="text-end ico-sec d-flex justify-content-end">
+
                         <router-link
                           v-if="sinistre.etat == 0"
                           :to="{
@@ -149,39 +145,7 @@
           </div>
         </div>
 
-        <div class="modal custom-modal fade" id="delete_sinistre" role="dialog">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-body">
-                <div class="form-header">
-                  <h3>Supprimer sinistre</h3>
-                  <p>Voulez vous supprimer le sinistre?</p>
-                </div>
-                <div class="modal-btn delete-action">
-                  <div class="row">
-                    <div class="col-6">
-                      <a
-                        href="javascript:void(0);"
-                        class="btn btn-primary continue-btn"
-                        data-bs-dismiss="modal"
-                        @click="deleteSinistre"
-                        >supprimer</a
-                      >
-                    </div>
-                    <div class="col-6">
-                      <a
-                        href="javascript:void(0);"
-                        data-bs-dismiss="modal"
-                        class="btn btn-primary cancel-btn"
-                        >Annuler</a
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      
       </div>
     </div>
   </div>
@@ -189,7 +153,6 @@
 
 <script>
 import axios from "axios";
-import AppStorage from "../../db/AppStorage";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import Form from "vform";
@@ -197,6 +160,7 @@ import { HasError } from "vform/src/components/bootstrap5";
 import Multiselect from "@vueform/multiselect";
 
 import { createToaster } from "@meforma/vue-toaster";
+import switchService from "../../services/switchService";
 // import $ from "jquery";
 const toaster = createToaster({
   /* options */
@@ -227,16 +191,14 @@ export default {
     this.fetchData();
   },
   methods: {
-    updateSinistreStatus(id) {
-      axios
-        .put("/api/auth/update-sinistre-status/" + id)
-        .then((response) => {
-          this.fetchData();
-          console.log(response.data);
-        })
-        .catch((error) => {
-          this.error = error.response.data.message || error.message;
-        });
+    async updateSinistreStatus(uuidSinistre) {
+      await switchService.updateSinistreStatus(uuidSinistre);
+
+      toaster.success(`Etat changé`, {
+        position: "top-right",
+      });
+
+      this.fetchData();
     },
 
     getSinistre(id_sinistre) {
@@ -248,43 +210,9 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    fetchData() {
-      AppStorage.getSinistres().then((result) => {
-        this.sinistres = result;
-        console.log(result)
-      });
-      // const token = localStorage.getItem("token");
-
-      // // Configurez les en-têtes de la requête
-      // const headers = {
-      //     Authorization: "Bearer " + token,
-      //     "x-access-token": token,
-      // };
-      // axios
-      //     .get("/api/auth/get/sinistres", { headers })
-      //     .then((response) => {
-      //         this.sinistres = response.data;
-      //     })
-      //     .catch((error) => {
-      //         this.loading = false;
-      //         this.error = error.response.data.message || error.message;
-      //     });
+    async fetchData() {
+      this.sinistres = await switchService.getSinistre();
     },
-
-    // editSinistre(id) {
-    //     // alert(id)
-    //     window.location.href = "/edit/sinistre?sinistre=" + id;
-    // },
-
-    // voirSinistre(id) {
-    //     // alert(id)
-    //     window.location.href = "/voir/sinistre?sinistre=" + id;
-    // },
-
-    // addReglement(id) {
-    //     // alert(id)
-    //     window.location.href = "/addreglement?sinistre=" + id;
-    // },
 
     addPiece(id) {
       // alert($('#createUserLabel').html())
@@ -362,5 +290,40 @@ export default {
   },
 };
 </script>
+<style scoped>
+.page-head-box {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+}
 
-<!-- <style src="@vueform/multiselect/themes/default.css"></style> -->
+.breadcrumb {
+  background: transparent;
+}
+
+.table thead th {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.btn-info,
+.btn-warning,
+.btn-primary,
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+}
+
+.btn-info i,
+.btn-warning i,
+.btn-primary i,
+.btn-danger i {
+  margin-right: 0;
+}
+</style>
