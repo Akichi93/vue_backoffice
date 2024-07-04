@@ -95,13 +95,12 @@ const apiUrl = {
     setfactureavenant: (uuidAvenant) => `${base_url}/api/auth/getfactures/${uuidAvenant}`,
 
     importautomobile: createApiUrl('importautomobile'),
-
-
-
+    importclient: createApiUrl('importclient'),
+    importprospect: createApiUrl('importprospect'),
+    importapporteur: createApiUrl('importapporteur'),
+    importcompagnie: createApiUrl('importcompagnie'),
 
     getavenant: createApiUrl('getavenants'),
-
-
 
     statistiques: createApiUrl('stat/'),
     year: createApiUrl('year'),
