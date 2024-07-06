@@ -16,6 +16,17 @@ class OnlineService {
     //     };
     // }
 
+    async getRole() {
+        try {
+            const response = await axios.get(apiUrl.getrole);
+
+            return response.data;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
 
     async getAdresses() {
         try {
@@ -1060,8 +1071,52 @@ class OnlineService {
         }
     }
 
-   
-    
+    async getUser() {
+        try {
+            const response = await AxiosService.get(apiUrl.getuser);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+    async storeUser(user) {
+        try {
+            const userData = {
+                name: user.name,
+                email: user.email,
+                password: user.password,
+                contact: user.contact,
+                id_role: user.poste,
+                id_entreprise: localStorage.getItem("entreprise"),
+            };
+
+            const response = await AxiosService.post(apiUrl.postuser, user);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de l'ajout d'un utilisateur:", error);
+            return { success: false, error: "Erreur lors de l'ajout d'un utilisateur" };
+        }
+    }
+
+    async validateToken() {
+        try {
+            const response = await AxiosService.get(apiUrl.validatetoken);
+
+            return response;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des adresses:", error);
+            return { success: false, error: "Erreur lors de l'ajout de la branche" };
+        }
+    }
+
+
+
+
+
 
 
 }

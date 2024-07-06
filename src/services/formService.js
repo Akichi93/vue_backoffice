@@ -188,5 +188,4 @@ export async function getRoleList() {
 
     const response = await axios.get("/api/auth/getRoles", { headers })
     return response.data;
-
 }

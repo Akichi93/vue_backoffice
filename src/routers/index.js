@@ -65,17 +65,16 @@ import moduleaccident from "../pages/module/moduleaccident.vue";
 import addtarification from "../pages/accident/addtarification.vue";
 import listemrh from "../pages/mrh/listemrh.vue";
 import modulemrh from "../pages/module/modulemrh.vue";
-import createmrh from "../pages/mrh/createmrh.vue"
-
+import createmrh from "../pages/mrh/createmrh.vue";
+import settings from "../pages/parametre/settings.vue";
+import synchronisation from "../pages/parametre/synchronisation.vue";
+import expire from "../components/modal/expire.vue";
 
 // Fonction de vérification
 function isPageValid(route) {
-  // Ajoutez votre logique de vérification ici
-  // Par exemple, vérifiez si le chemin correspond à une route existante
   const validRoutes = ['/', '/register', '/forgot', '/home', '/courtage']; // Liste des routes valides
   return validRoutes.includes(route);
 }
-
 
 const routes = [
   {
@@ -83,6 +82,11 @@ const routes = [
     name: 'welcome',
     component: login,
     meta: { requiresAuth: false },
+  },
+  {
+    path: '/expire',
+    name: 'expire',
+    component: expire,
   },
   {
     path: '/register',
@@ -312,14 +316,14 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/statclient/details/:id_client',
+    path: '/infoclient/:uuidClient',
     name: 'infoclient',
     component: infoclient,
     props: true,
     meta: { requiresAuth: true }
   },
   {
-    path: '/statclient/detailcontrats/:id_contrat',
+    path: '/infocontrat/:uuidContrat',
     name: 'infocontrat',
     component: infocontrat,
     props: true,
@@ -332,7 +336,7 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/statapporteur/details/:id_apporteur',
+    path: '/infoapporteur/:uuidApporteur',
     name: 'infoapporteur',
     component: infoapporteur,
     props: true,
@@ -387,10 +391,10 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/:catchAll(.*)',
+    path: '/notfound',
     name: 'notfound',
     component: notfound,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: false }
   },
   {
     path: '/tarification',
@@ -441,15 +445,15 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/modulemrh',
-    name: 'modulemrh',
-    component: modulemrh,
-    meta: { requiresAuth: true }
-  },
-  {
     path: '/listemrh',
     name: 'listemrh',
     component: listemrh,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/modulemrh',
+    name: 'modulemrh',
+    component: modulemrh,
     meta: { requiresAuth: true }
   },
   {
@@ -458,49 +462,48 @@ const routes = [
     component: createmrh,
     meta: { requiresAuth: true }
   },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: settings,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/synchronisation',
+    name: 'synchronisation',
+    component: synchronisation,
+    meta: { requiresAuth: true }
+  },
 ];
-
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
 
-
-// Navigation guard
 router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !User.loggedIn()) {
-    next({ name: 'welcome' }); // Redirect to welcome page if not logged in
+    next({ name: 'welcome' });
   } else if (!to.meta.requiresAuth && User.loggedIn()) {
-    next({ name: 'dashboard' }); // Redirect to dashboard if logged in and trying to access a non-authenticated route
+    next({ name: 'dashboard' });
   } else {
     const clientFileStore = useClientFileStore();
     const prospectFileStore = useProspectFileStore();
 
     if (clientFileStore.isLoadingFile) {
-      // Si le fichier est en cours de chargement, empêcher la navigation
       await toaster.warning("Base des clients en cours de chargement. Veuillez patienter...", {
         position: "top-right",
       });
       next(false);
     } else if (prospectFileStore.isLoadingFile) {
-      // Si le fichier est en cours de chargement, empêcher la navigation
       await toaster.warning("Base des prospects en cours de chargement. Veuillez patienter...", {
         position: "top-right",
       });
       next(false);
-    }
-    else {
-      // Sinon, permettre la navigation
+    } else {
       next();
     }
-
-    //else
-    next(); // Proceed with the navigation
   }
 });
-
-
-
 
 export default router;

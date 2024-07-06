@@ -79,6 +79,7 @@ const apiUrl = {
 
     refresh: createApiUrl('refresh'),
     checktoken: createApiUrl('checktoken'),
+    validatetoken: createApiUrl('validatetoken'),
 
     postcontrat: createApiUrl('postcontrat'),
     postautomobile: createApiUrl('postautomobile'),
@@ -116,6 +117,7 @@ const apiUrl = {
     postfileavenant: createApiUrl('postfileavenants'),
 
     getuser: createApiUrl('utilisateurs'),
+    postuser: createApiUrl('utilisateurs'),
     setedituser: (id) => `${base_url}/utilisateurs/edit/${id}`,
     getreductiongroup: createApiUrl('getreductiongroups'),
     getassurancetemporaire: createApiUrl('getassurancetemporaires'),
@@ -124,7 +126,8 @@ const apiUrl = {
     gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
     gettarificateuraccident: createApiUrl('gettarificateuraccidents'),
     getactivite: createApiUrl('getactivites'),
-    // getactivite: createApiUrl('getactivites'),
+
+    getrole: createApiUrl('getroles'),
 
     getinternetconnection : createUrl('check-internet-connection')
 
