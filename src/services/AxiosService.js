@@ -12,7 +12,7 @@ class AxiosService {
 
         this.axiosService.interceptors.request.use(
             (config) => {
-                const token = AppStorage.getToken();
+                const token = localStorage.getItem("token");
                 if (token) {
                     config.headers.Authorization = `Bearer ${token}`;
                 }
@@ -54,7 +54,7 @@ class AxiosService {
     }
 
     getHeaders() {
-        const token = AppStorage.getToken();
+        const token = localStorage.getItem("token");
 
         return {
             Authorization: "Bearer " + token,

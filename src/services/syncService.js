@@ -1,10 +1,12 @@
-// SyncService.js
-import AppStorage from '../db/AppStorage.js';
+// src/services/SyncService.js
 import axios from 'axios';
-import DataAPI from '../db/DataAPI.js';
 import { createToaster } from '@meforma/vue-toaster';
-import modalComponent from "../components/modalComponent.vue"
+import { useModalStore } from '../store/modalStore.js'; // Importez votre store modal
+import AppStorage from '../db/AppStorage.js';
+import DataAPI from '../db/DataAPI.js';
 import { apiUrl } from '../utils/constants/apiUrl.js';
+import router from '../routers';
+
 const toaster = createToaster({
     /* options */
 });
@@ -61,34 +63,60 @@ const SyncService = {
         } else {
             console.log('Aucune donnée à synchroniser.');
         }
-        // }
     },
 
-    openModal() {
-        const modalInstance = this.createModalComponent();
-        const modalContainer = document.getElementById('modal-container');
-        modalContainer.appendChild(modalInstance.$el);
-    },
-
-    createModalComponent() {
-        const ModalConstructor = Vue.extend(modalComponent);
-        return new ModalConstructor({
-            propsData: {
-                errorMessage: 'Votre session a expiré. Veuillez vous reconnecter.'
-            }
-        });
-    },
+  
 
     async validateAndRefreshToken() {
         const tokenIsValid = await this.checkTokenValidity();
-    
+
         if (!tokenIsValid) {
-            this.openModal();
-            // return false;
+           return false
+
+
         } else {
-            await this.refreshToken();
-            await this.checkAndSyncData(); // Appeler la synchronisation des données après le rafraîchissement du token
-            // return true;
+            try {
+                await this.refreshToken();
+                await this.checkAndSyncData(); // Appeler la synchronisation des données après le rafraîchissement du token
+            } catch (error) {
+                console.error('Erreur lors du rafraîchissement du token:', error);
+                if (error.response && error.response.data.error === 'Token has expired and can no longer be refreshed') {
+                    this.redirectToCourtage()
+                }
+            }
+        }
+    },
+
+    async checkTokenValidity() {
+        const token = AppStorage.getToken();
+
+        try {
+            const response = await axios.post(apiUrl.checktoken, { token });
+
+            if (response.status === 200 && response.data.valid) {
+                return true;
+            } else {
+                // console.error('Le token est invalide ou a expiré.');
+                return false;
+            }
+        } catch (error) {
+            console.error('Erreur lors de la vérification du token:', error);
+            return false;
+        }
+    },
+
+    async refreshToken() {
+        const token = AppStorage.getToken();
+
+        try {
+            const response = await axios.post(apiUrl.refresh, { token });
+            if (response.status === 200) {
+                AppStorage.storeToken(response.data.access_token);
+            } else {
+                console.error('Le renouvellement du token a échoué.');
+            }
+        } catch (error) {
+            console.error('Erreur lors du renouvellement du token:', error);
         }
     },
 
@@ -272,49 +300,14 @@ const SyncService = {
                     case 'tarificationaccidents':
                         await DataAPI.getGraveTarificationAccidentsData();
                         break;
-
                     default:
                         console.warn(`La méthode de récupération des données graves pour ${table} n'est pas définie.`);
                         break;
                 }
             } catch (error) {
-                console.error(`Erreur lors de la récupération des données graves de ${table} :`, error);
+                console.error(`Erreur lors de la récupération des données graves pour ${table} :`, error);
             }
         }
-    },
-
-    async checkTokenValidity() {
-        const token = AppStorage.getToken();
-
-        try {
-            const response = await axios.post(apiUrl.checktoken, { token });
-
-            if (response.status === 200 && response.data.valid) {
-                return true;
-            } else {
-                console.error('Le token est invalide.');
-                return false;
-            }
-        } catch (error) {
-            console.error('Erreur lors de la vérification du token:', error);
-            return false;
-        }
-    },
-
-    async refreshToken() {
-        const token = AppStorage.getToken();
-
-        try {
-            const response = await axios.post(apiUrl.refresh, { token });
-            if (response.status === 200) {
-                AppStorage.storeToken(response.data.access_token);
-            } else {
-                console.error('Le renouvellement du token a échoué.');
-            }
-        } catch (error) {
-            console.error('Erreur lors du renouvellement du token:', error);
-        }
-
     }
 };
 
