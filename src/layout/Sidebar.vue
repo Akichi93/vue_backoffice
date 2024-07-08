@@ -81,7 +81,6 @@
 </template>
 
 <script>
-import AppStorage from "../db/AppStorage.js";
 import syncservice from "../services/syncService";
 import { timeSynchronise } from "../utils/constants/technicalConstant";
 import { apiUrl } from "../utils/constants/apiUrl";

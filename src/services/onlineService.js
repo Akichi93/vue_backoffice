@@ -1075,7 +1075,7 @@ class OnlineService {
         try {
             const response = await AxiosService.get(apiUrl.getuser);
 
-            return response;
+            return response.data;
         } catch (error) {
             console.error("Erreur lors de la récupération des adresses:", error);
             return { success: false, error: "Erreur lors de l'ajout de la branche" };
