@@ -273,8 +273,8 @@ export default {
         return;
       }
 
-      const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
-      const userId = parseInt(AppStorage.getId(), 10);
+      const entrepriseId = parseInt(localStorage.getItem("entreprise"), 10);
+      const userId = parseInt(localStorage.getItem("id"), 10);
 
       const { success, uuid, existingProspect } =
         await switchService.storeProspect(this.form, userId, entrepriseId);

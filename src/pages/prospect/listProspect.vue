@@ -54,7 +54,11 @@
           </div>
           <div class="col-md-12">
             <div class="table-responsive">
-              <table class="table table-striped custom-table mb-0">
+              <template v-if="isLoading">
+                <loadingcomponent></loadingcomponent>
+              </template>
+              <template v-else>
+                <table class="table table-striped custom-table mb-0">
                 <thead>
                   <tr>
                     <th>Nom du prospect</th>
@@ -131,8 +135,10 @@
                   </template>
                 </tbody>
               </table>
+              </template>
+             
             </div>
-            
+
             <admettreProspect
               v-bind:prospectoedit="prospectoedit"
               @prospect-admettre="refresh"
@@ -170,6 +176,7 @@ import editProspect from "./editProspect.vue";
 import changeProspect from "./changeProspect.vue";
 import prospectexport from "../../components/export/prospectexport.vue";
 import switchService from "../../services/switchService";
+import loadingcomponent from "../../components/loading/spinnercomponent.vue"
 export default {
   name: "listprospect",
   components: {
@@ -181,6 +188,7 @@ export default {
     editProspect,
     changeProspect,
     prospectexport,
+    loadingcomponent
   },
   data() {
     return {
@@ -189,16 +197,23 @@ export default {
       prospectoedit: "",
       q: "",
       roleactif: "",
+      isLoading: true,
     };
   },
   created() {
     this.getProspects();
-    // this.getRoleconnect();
   },
 
   methods: {
     async getProspects() {
-      this.prospects = await switchService.getProspects();
+      try {
+        this.isLoading = true;
+        this.prospects = await switchService.getProspects();
+      } catch (error) {
+        console.error("There was an error fetching the data:", error);
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     getRoleconnect() {
@@ -208,8 +223,14 @@ export default {
     },
 
     async editProspect(uuidProspect) {
+      if (!uuidProspect) {
+        console.error("UUID prospect is missing or undefined");
+        return;
+      }
       try {
-        this.prospectoedit = await switchService.getProspectByUuid(uuidProspect);
+        this.prospectoedit = await switchService.getProspectByUuid(
+          uuidProspect
+        );
       } catch (error) {
         console.log(error);
       }
@@ -229,4 +250,34 @@ export default {
   },
 };
 </script>
-  
+<style scoped>
+.page-head-box {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.breadcrumb {
+  background: transparent;
+}
+
+.table thead th {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.btn-info, .btn-warning, .btn-primary, .btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+}
+
+.btn-info i, .btn-warning i, .btn-primary i, .btn-danger i {
+  margin-right: 0;
+}
+</style>

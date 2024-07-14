@@ -286,16 +286,16 @@ class OnlineService {
         try {
             const response = await AxiosService.get(apiUrl.getprospect);
 
-            return response;
+            return response.data;
         } catch (error) {
             console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
             return { success: false, error: "Erreur lors de l'ajout de la branche" };
         }
     }
 
-    async getProspectByUuid(uuid) {
+    async getProspectByUuid(uuidProspect) {
         try {
-            const response = axios.get(apiUrl.seteditprospect(uuid))
+            const response = axios.get(apiUrl.seteditprospect(uuidProspect))
             return response;
 
         } catch (error) {
@@ -325,8 +325,12 @@ class OnlineService {
             supprimer_prospect: 0,
         };
 
+
         try {
-            await axios.post(apiUrl.postprospect, newProspectData);
+            const response = await AxiosService.post(apiUrl.postprospect, newProspectData);
+
+            const token = response.data.token;
+            localStorage.setItem("token", token);
             return { success: true, uuid };
         } catch (error) {
             console.error("Erreur lors du stockage du prospect :", error);
@@ -346,10 +350,10 @@ class OnlineService {
                 profession_prospect: prospectoedit.profession_prospect,
                 email_prospect: prospectoedit.email_prospect,
                 fax_prospect: prospectoedit.fax_prospect,
-                etat: prospectoedit.statut,
-                sync: 0,
             };
-            const response = AxiosService.post(apiUrl.setupdateprospect(uuidProspectToUpdate), nouvellesInfos)
+            const response = AxiosService.post(apiUrl.setupdateprospect(uuidProspectToUpdate), nouvellesInfos);
+            const token = response.data.token;
+            localStorage.setItem("token", token);
             return response;
         } catch (error) {
             console.error("Erreur lors de la mise à jour du prospect:", error);
@@ -359,6 +363,7 @@ class OnlineService {
     }
 
     async changeProspect(uuidProspectToUpdate, newState, newSyncState, prospectoedit, entrepriseId, userId, numeroClient) {
+        const uuid = uuidv4();
         try {
             const nouvellesInfos = {
                 civilite: prospectoedit.civilite,
@@ -373,10 +378,13 @@ class OnlineService {
                 id: userId,
                 uuidProspect: uuidProspectToUpdate,
                 numero_client: numeroClient,
-                etat: newState
+                etat: newState,
+                uuidClient: uuid,
             };
 
             const response = AxiosService.post(apiUrl.validateprospect, nouvellesInfos)
+            const token = response.data.token;
+            localStorage.setItem("token", token);
             return response;
         } catch (error) {
             console.error("Erreur lors de la validation du prospect:", error);
@@ -385,9 +393,13 @@ class OnlineService {
     }
 
     async ChangeEtat(uuidProspectToUpdate, nouveauStatut, nouveauSyncState) {
+        const nouvellesInfos = {
+            statut: nouveauStatut,
+        };
         try {
-            const url = apiUrl.setetatprospect(uuidProspectToUpdate); // Utilisation de setetatprospect pour obtenir l'URL
-            const response = await AxiosService.post(url, { etat: nouveauStatut }); // Utiliser AxiosService
+            const response = await AxiosService.post(apiUrl.setetatprospect(uuidProspectToUpdate), nouvellesInfos);
+            const token = response.data.token;
+            localStorage.setItem("token", token);
             return response;
         } catch (error) {
             throw new Error('Erreur lors de la mise à jour de l\'état du prospect:', error);
@@ -397,9 +409,9 @@ class OnlineService {
     async deleteProspect(uuidProspectToUpdate, newDelete, newSyncState) {
         try {
             const nouvellesInfos = {
-                supprimer_branche: newDelete,
+                supprimer_prospect: newDelete,
             };
-            const response = axios.post(apiUrl.setdeleteprospect(uuidProspectToUpdate), nouvellesInfos)
+            const response = AxiosService.post(apiUrl.setdeleteprospect(uuidProspectToUpdate), nouvellesInfos)
             return response;
         } catch (error) {
             console.error("Erreur lors de la suppression du prospect:", error);
@@ -468,7 +480,7 @@ class OnlineService {
         try {
             const response = await AxiosService.get(apiUrl.getclient);
 
-            return response;
+            return response.data;
         } catch (error) {
             console.error("Erreur lors de la récupération des clients:", error);
             return { success: false, error: "Erreur lors de l'ajout de la branche" };

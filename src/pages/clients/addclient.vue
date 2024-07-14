@@ -163,7 +163,6 @@ import adressecomponent from "../../components/select/adressecomponent.vue";
 import professioncomponent from "../../components/select/professioncomponent.vue";
 import civilitecomponent from "../../components/select/civilitecomponent.vue";
 import inputText from "../../components/input/inputText.vue";
-import AppStorage from "../../db/AppStorage.js";
 import { validateClientForm } from "../../utils/helpers/formValidation";
 // import { apiUrl } from "../../utils/constants/apiUrl";
 import { createToaster } from "@meforma/vue-toaster";
@@ -209,8 +208,8 @@ export default {
         return;
       }
 
-      const userId = parseInt(AppStorage.getId(), 10);
-      const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+      const userId = parseInt(localStorage.getItem("id"), 10);
+      const entrepriseId = parseInt(localStorage.getItem("entreprise"), 10);
 
       const numeroClient = this.generateNumeroClient();
       try {

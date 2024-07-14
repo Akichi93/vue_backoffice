@@ -233,7 +233,6 @@
   </div>
 </template>
 <script>
-import AppStorage from "../../db/AppStorage.js";
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import professioncomponent from "../../components/select/professioncomponent.vue";
@@ -308,8 +307,8 @@ export default {
         return;
       }
 
-      const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
-      const userId = parseInt(AppStorage.getId(), 10);
+      const entrepriseId = parseInt(localStorage.getItem("entreprise"), 10);
+      const userId = parseInt(localStorage.getItem("id"), 10);
 
       const { success } =
         await switchService.storeProspect(this.form, userId, entrepriseId);
@@ -320,21 +319,6 @@ export default {
           position: "top-right",
         });
       } 
-      // else {
-      //   if (existingProspect) {
-      //     toaster.error(
-      //       `Le prospect ${existingProspect.nom_prospect} existe déjà`,
-      //       {
-      //         position: "top-right",
-      //       }
-      //     );
-      //   } else {
-      //     toaster.error(`Erreur lors de l'ajout du prospect`, {
-      //       position: "top-right",
-      //     });
-      //   }
-      //   console.error(error);
-      // }
     },
 
     handleClientsChange(localisations) {

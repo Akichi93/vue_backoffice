@@ -3,17 +3,15 @@
   <button @click="exportToCSV">Exporter en CSV</button>
 </template>
 <script>
-import AppStorage from "../../db/AppStorage";
+import switchService from "../../services/switchService";
 export default {
   created() {
     this.getProspect();
   },
 
   methods: {
-    getProspect() {
-      AppStorage.getProspects().then((result) => {
-        this.prospects = result;
-      });
+    async getProspect() {
+      this.prospects = await switchService.getProspects();
     },
     exportToCSV() {
       const header = Object.keys(this.prospects[0]).join(",");

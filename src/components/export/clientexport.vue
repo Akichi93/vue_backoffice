@@ -1,19 +1,19 @@
 <template>
-  <button class="btn btn-primary" @click="exportToExcel">Exporter en Excel</button>
+  <button class="btn btn-primary" @click="exportToExcel">
+    Exporter en Excel
+  </button>
   <button class="btn btn-primary" @click="exportToCSV">Exporter en CSV</button>
 </template>
 <script>
-import AppStorage from "../../db/AppStorage";
+import switchService from "../../services/switchService";
 export default {
   created() {
     this.getClients();
   },
 
   methods: {
-    getClients() {
-      AppStorage.getClients().then((result) => {
-        this.clients = result;
-      });
+    async getClients() {
+      this.clients = await switchService.getClients();
     },
     exportToCSV() {
       const header = Object.keys(this.clients[0]).join(",");

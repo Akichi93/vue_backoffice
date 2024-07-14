@@ -126,8 +126,6 @@ export default {
       try {
         this.isLoading = true;
         this.users = await onlineService.getUser();
-
-        console.log(this.users)
       } catch (error) {
         console.error("There was an error fetching the data:", error);
       } finally {
