@@ -56,8 +56,8 @@ export default {
 
 
       try {
-        const userId = parseInt(AppStorage.getId(), 10);
-        const entrepriseId = parseInt(AppStorage.getEntreprise(), 10);
+        const userId = parseInt(localStorage.getItem("entreprise"), 10);
+        const entrepriseId = parseInt(localStorage.getItem("entreprise"), 10);
         const numeroClient = this.generateNumeroClient();
         // Appeler la fonction pour mettre à jour les données dans IndexedDB
         const updatedProspects = await switchService.changeProspect(uuidProspectToUpdate, newState, newSyncState,this.prospectoedit,entrepriseId,userId,numeroClient);

@@ -185,37 +185,6 @@ export default {
     professioncomponent,
   },
   methods: {
-    // async editProspect() {
-
-    //     const uuidProspectToUpdate = this.prospectoedit.uuidProspect;
-
-    //     const nouvellesInfos = {
-    //       civilite: this.prospectoedit.civilite,
-    //       nom_prospect: this.prospectoedit.nom_prospect,
-    //       postal_prospect: this.prospectoedit.postal_prospect,
-    //       adresse_prospect: this.prospectoedit.adresse_prospect,
-    //       tel_prospect: this.prospectoedit.tel_prospect,
-    //       profession_prospect: this.prospectoedit.profession_prospect,
-    //       email_prospect: this.prospectoedit.email_prospect,
-    //       fax_prospect: this.prospectoedit.fax_prospect,
-    //       etat: this.prospectoedit.statut,
-    //       sync: 0,
-    //     };
-
-    //     await AppStorage.updateProspect(uuidProspectToUpdate, nouvellesInfos);
-
-    //     const updatedProspects = await AppStorage.getProspects();
-
-    //     // // Émettre un événement avec les prospects mis à jour
-    //     this.$emit("prospect-updated", updatedProspects);
-
-    //     toaster.info(`Propect modifié avec succès (Hors ligne)`, {
-    //       position: "top-right",
-    //     });
-
-    //   // }
-    // },
-
     async editProspect() {
       try {
         const uuidProspectToUpdate = this.prospectoedit.uuidProspect;
@@ -241,4 +210,3 @@ export default {
   },
 };
 </script>
-<!-- <style src="@vueform/multiselect/themes/default.css"></style> -->

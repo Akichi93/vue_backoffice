@@ -6,6 +6,7 @@ const toaster = createToaster({
   /* options */
 });
 import login from "../pages/auth/login.vue";
+import lockscreen from "../pages/auth/lockscreen.vue";
 import register from "../pages/auth/register.vue";
 import forgot from "../pages/auth/forgot.vue";
 import logout from "../pages/auth/logout.vue";
@@ -81,6 +82,12 @@ const routes = [
     path: '/',
     name: 'welcome',
     component: login,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/lockscreen',
+    name: 'lockscreen',
+    component: lockscreen,
     meta: { requiresAuth: false },
   },
   {

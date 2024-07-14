@@ -54,18 +54,18 @@ export default {
 
       const { success } = await switchService.deleteProspect(uuidProspectToUpdate, newDelete, newSyncState);
 
-      if (success) {
-        toaster.success(`Prospect supprimé`, {
-          position: "top-right",
-        });
-      } else {
-        toaster.error(`Erreur lors de la suppression du prospect`, {
-          position: "top-right",
-        });
-      }
+      // if (success) {
+      //   toaster.success(`Prospect supprimé`, {
+      //     position: "top-right",
+      //   });
+      // } else {
+      //   toaster.error(`Erreur lors de la suppression du prospect`, {
+      //     position: "top-right",
+      //   });
+      // }
 
       // Une fois que la mise à jour est effectuée avec succès, récupérez la liste mise à jour des prospects
-      const updatedProspects = await AppStorage.getProspects();
+      const updatedProspects = await switchService.getProspects();
 
       // Émettre un événement avec les prospects mis à jour
       this.$emit("prospect-deleted", updatedProspects);

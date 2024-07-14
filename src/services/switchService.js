@@ -287,7 +287,7 @@ class switchService {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
         } catch (error) {
-            console.error("Error storing branch:", error);
+            console.error("Erreur d'ajoût du prospect:", error);
             throw error; // Propagate the error for handling
         }
     }
@@ -314,7 +314,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.updateProspect(prospectoedit, uuidProspectToUpdate);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.updateProspect(prospectoedit, uuidProspectToUpdate);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -461,7 +461,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.searchProspectsByName(name);
             } else if (this.currentMode === "Ligne") {
-                // return await onlineService.storeBranche(nomBranche, entrepriseId);
+                return await onlineService.getProspects(name);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }

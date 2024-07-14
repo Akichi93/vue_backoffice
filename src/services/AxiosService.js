@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import { apiUrl } from '../utils/constants/apiUrl.js';
+import router from '../routers';
 
 const AxiosService = axios.create({
   headers: {
@@ -17,6 +18,17 @@ AxiosService.interceptors.request.use(config => {
   }
   return config;
 }, error => {
+  return Promise.reject(error);
+});
+
+// Intercepteur pour gérer les erreurs de réponse
+AxiosService.interceptors.response.use(response => {
+  return response;
+}, error => {
+  if (error.response && error.response.status === 401) {
+    // Si une réponse 401 est reçue, redirigez vers la page de connexion
+    router.push('/lockscreen');
+  }
   return Promise.reject(error);
 });
 
