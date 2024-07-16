@@ -81,10 +81,10 @@
 </template>
 
 <script>
-import syncservice from "../services/syncService";
-import { timeSynchronise } from "../utils/constants/technicalConstant";
-import { apiUrl } from "../utils/constants/apiUrl";
-import axios from "axios";
+// import syncservice from "../services/syncService";
+// import { timeSynchronise } from "../utils/constants/technicalConstant";
+// import { apiUrl } from "../utils/constants/apiUrl";
+// import axios from "axios";
 
 export default {
   data() {
@@ -92,7 +92,7 @@ export default {
       isHovered: false,
       roleactif: localStorage.getItem("role"),
       mode: localStorage.getItem("mode"),
-      isConnected: false,
+      // isConnected: false,
     };
   },
   computed: {
@@ -141,39 +141,39 @@ export default {
       );
     },
   },
-  mounted() {
-    this.intervalId = setInterval(this.checkConnection, timeSynchronise);
-  },
-  beforeDestroy() {
-    // Nettoyez l'intervalle lors de la destruction du composant
-    clearInterval(this.intervalId);
-  },
+  // mounted() {
+  //   this.intervalId = setInterval(this.checkConnection, timeSynchronise);
+  // },
+  // beforeDestroy() {
+  //   // Nettoyez l'intervalle lors de la destruction du composant
+  //   clearInterval(this.intervalId);
+  // },
   methods: {
-    async checkConnection() {
-      try {
-        if (this.mode === "Local") {
-          const response = await axios.get(apiUrl.getinternetconnection);
+    // async checkConnection() {
+    //   try {
+    //     if (this.mode === "Local") {
+    //       const response = await axios.get(apiUrl.getinternetconnection);
 
-          if (response.status !== 200) {
-            // Si le statut HTTP n'est pas 200, lance une erreur
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
+    //       if (response.status !== 200) {
+    //         // Si le statut HTTP n'est pas 200, lance une erreur
+    //         throw new Error(`HTTP error! Status: ${response.status}`);
+    //       }
 
-          const data = response.data;
-          this.isConnected = data.connected;
+    //       const data = response.data;
+    //       this.isConnected = data.connected;
 
-          if (this.isConnected) {
-            // Exécutez le service checkAndSyncData
-            await syncservice.validateAndRefreshToken(); // Supposons que syncservice est une fonction asynchrone qui renvoie une promesse
-          } else {
-            console.log("Pas de connexion internet");
-          }
-        }
-      } catch (error) {
-        // Gérez les erreurs, par exemple, les problèmes de réseau ou les erreurs serveur
-        console.error("Error checking connection:", error);
-      }
-    },
+    //       if (this.isConnected) {
+    //         // Exécutez le service checkAndSyncData
+    //         await syncservice.validateAndRefreshToken(); // Supposons que syncservice est une fonction asynchrone qui renvoie une promesse
+    //       } else {
+    //         console.log("Pas de connexion internet");
+    //       }
+    //     }
+    //   } catch (error) {
+    //     // Gérez les erreurs, par exemple, les problèmes de réseau ou les erreurs serveur
+    //     console.error("Error checking connection:", error);
+    //   }
+    // },
   },
 };
 </script>
