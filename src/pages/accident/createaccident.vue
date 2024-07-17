@@ -476,6 +476,7 @@ import { v4 as uuidv4 } from "uuid";
 import { validateChoiceForm } from "../../utils/helpers/formValidation";
 import { createToaster } from "@meforma/vue-toaster";
 import addProspect from "./../prospect/addProspect.vue";
+import switchService from '../../services/switchService';
 const toaster = createToaster({
   /* options */
 });
