@@ -310,15 +310,18 @@ export default {
       const entrepriseId = parseInt(localStorage.getItem("entreprise"), 10);
       const userId = parseInt(localStorage.getItem("id"), 10);
 
-      const { success } =
-        await switchService.storeProspect(this.form, userId, entrepriseId);
+      const response= await switchService.storeProspect(
+        this.form,
+        userId,
+        entrepriseId
+      );
 
-      if (success) {
+      if (response) {
         this.$router.push("/listprospect");
-        toaster.success(`Prospect ajouté`, {
+        toaster.success(response.message, {
           position: "top-right",
         });
-      } 
+      }
     },
 
     handleClientsChange(localisations) {

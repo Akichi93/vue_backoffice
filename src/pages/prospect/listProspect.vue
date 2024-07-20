@@ -209,6 +209,7 @@ export default {
       try {
         this.isLoading = true;
         this.prospects = await switchService.getProspects();
+        console.log(this.prospects)
       } catch (error) {
         console.error("There was an error fetching the data:", error);
       } finally {

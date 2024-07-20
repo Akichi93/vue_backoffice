@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
-import AppStorage from "../db/AppStorage.js";
 import { apiUrl } from '../utils/constants/apiUrl.js';
 import AxiosService from './AxiosService.js'; // Importer AxiosService
 import axios, { Axios } from 'axios';
+import { successResponse, errorResponse } from '../utils/helpers/responseHelper.js';
+import LocalStorage from '../db/LocalStorage.js';
 
 class OnlineService {
     // constructor() {
@@ -285,8 +286,10 @@ class OnlineService {
     async getProspects() {
         try {
             const response = await AxiosService.get(apiUrl.getprospect);
+            
+            return successResponse(response.data, response.data.message);
 
-            return response.data;
+            // return response.data;
         } catch (error) {
             console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
             return { success: false, error: "Erreur lors de l'ajout de la branche" };
@@ -329,12 +332,13 @@ class OnlineService {
         try {
             const response = await AxiosService.post(apiUrl.postprospect, newProspectData);
 
-            const token = response.data.token;
-            localStorage.setItem("token", token);
-            return { success: true, uuid };
+            if (response.data && response.data.token) {
+                LocalStorage.storeToken(response.data.token)
+            }
+
+            return successResponse(response.data.data, response.data.message);
         } catch (error) {
-            console.error("Erreur lors du stockage du prospect :", error);
-            throw new Error("Échec du stockage du prospect");
+            return errorResponse(error)
         }
     }
 

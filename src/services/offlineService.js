@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import AppStorage from "../db/AppStorage.js";
+import { successResponse } from '../utils/helpers/responseHelper';
 class OfflineService {
 
     //Form
@@ -358,7 +359,10 @@ class OfflineService {
     }
 
     async getProspects() {
-        return await AppStorage.getProspects();
+        const response = await AppStorage.getProspects();
+
+        return successResponse(response.data, response.data.message);
+        // return await AppStorage.getProspects();
     }
 
     async getProspectByUuid(uuid) {
@@ -1505,7 +1509,7 @@ class OfflineService {
         return udpatedSinistre;
     }
 
-    async updateSinistreStatus(uuidSinistre){
+    async updateSinistreStatus(uuidSinistre) {
         const updatedSinistre = await AppStorage.updateSinistreStatus(uuidSinistre);
 
         return updatedSinistre;
