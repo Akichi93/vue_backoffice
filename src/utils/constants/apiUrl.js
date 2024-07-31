@@ -32,7 +32,7 @@ const apiUrl = {
     setupdatebranche: (uuidBranche) => `${base_url}/api/auth/updatebranche/${uuidBranche}`,
     setdeletebranche: (uuidBranche) => `${base_url}/api/auth/deletebranche/${uuidBranche}`,
 
-    getprospect: createApiUrl('getprospects'),
+    getprospect:  createApiUrl('prospectlist'),
     postprospect: createApiUrl('postprospect'),
     seteditprospect: (uuidProspect) => `${base_url}/api/auth/editprospect/${uuidProspect}`,
     setupdateprospect: (uuidProspect) => `${base_url}/api/auth/updateprospect/${uuidProspect}`,
@@ -41,7 +41,7 @@ const apiUrl = {
     setnameprospect: (uuidProspect) => `${base_url}/api/auth/getnameprospect/${uuidProspect}`,
     setbranchediffprospect: (uuidProspect) => `${base_url}/api/auth/getbranchediffprospect/${uuidProspect}`,
     setbrancheprospect: (uuidProspect) => `${base_url}/api/auth/getbrancheprospect/${uuidProspect}`,
-    validateprospect: createApiUrl('validateprospect'),
+    setvalidateprospect: (uuidProspect) => `${base_url}/api/auth/validateprospect/${uuidProspect}`,
     postbrancheprospect: createApiUrl('postbrancheprospect'),
     getnameprospect: createApiUrl('validateprospect'),
 
@@ -129,7 +129,7 @@ const apiUrl = {
 
     getrole: createApiUrl('getroles'),
 
-    getinternetconnection : createUrl('check-internet-connection')
+    getinternetconnection: createUrl('check-internet-connection')
 
 };
 

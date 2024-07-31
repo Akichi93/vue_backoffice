@@ -69,22 +69,24 @@ const SyncService = {
 
     async validateAndRefreshToken() {
         const tokenIsValid = await this.checkTokenValidity();
+        return tokenIsValid;
+        // console.log(tokenIsValid)
 
-        if (!tokenIsValid) {
-           return false
+        // if (!tokenIsValid) {
+        //    return false
 
 
-        } else {
-            try {
-                await this.refreshToken();
-                await this.checkAndSyncData(); // Appeler la synchronisation des données après le rafraîchissement du token
-            } catch (error) {
-                console.error('Erreur lors du rafraîchissement du token:', error);
-                if (error.response && error.response.data.error === 'Token has expired and can no longer be refreshed') {
-                    this.redirectToCourtage()
-                }
-            }
-        }
+        // } else {
+        //     try {
+        //         await this.refreshToken();
+        //         await this.checkAndSyncData(); // Appeler la synchronisation des données après le rafraîchissement du token
+        //     } catch (error) {
+        //         console.error('Erreur lors du rafraîchissement du token:', error);
+        //         if (error.response && error.response.data.error === 'Token has expired and can no longer be refreshed') {
+        //             this.redirectToCourtage()
+        //         }
+        //     }
+        // }
     },
 
     async checkTokenValidity() {

@@ -314,7 +314,8 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.updateProspect(prospectoedit, uuidProspectToUpdate);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.updateProspect(prospectoedit, uuidProspectToUpdate);
+                const response = await onlineService.updateProspect(prospectoedit, uuidProspectToUpdate);
+                return response.data;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -428,7 +429,8 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getProspects();
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.getProspects();
+                const response = await onlineService.getProspects();
+                return response.data;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -445,7 +447,7 @@ class switchService {
                 return await offlineService.getProspectByUuid(uuid);
             } else if (this.currentMode === "Ligne") {
                 const response = await onlineService.getProspectByUuid(uuid);
-                return response.data;
+                return response.data.data;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -461,7 +463,7 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.searchProspectsByName(name);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.getProspects(name);
+                return await onlineService.getProspects();
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -1114,7 +1116,7 @@ class switchService {
         }
     }
 
-    async getContratsOneExpire(){
+    async getContratsOneExpire() {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
@@ -1130,7 +1132,7 @@ class switchService {
         }
     }
 
-    async getContratsTwoExpire(){
+    async getContratsTwoExpire() {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
@@ -1161,7 +1163,7 @@ class switchService {
             throw error;
         }
     }
-    
+
     async updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId) {
         this.refreshMode();
         try {
@@ -1169,7 +1171,7 @@ class switchService {
                 return await offlineService.updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId);
             } else if (this.currentMode === "Ligne") {
                 return await onlineService.updateContrat(contrats, uuidContratToUpdate, primeNette, accessoires, fraisCourtier, cfga, taxesTotales, totalPrimeTtc, entrepriseId);
-            } 
+            }
         } catch (error) {
             console.error("Error storing branch:", error);
             throw error;
@@ -1437,7 +1439,7 @@ class switchService {
         }
     }
 
-    async getSinistre(){
+    async getSinistre() {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
@@ -1485,7 +1487,7 @@ class switchService {
         }
     }
 
-    async getReglement(uuid){
+    async getReglement(uuid) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
@@ -1501,7 +1503,7 @@ class switchService {
         }
     }
 
-    async getSommeReglement(uuid){
+    async getSommeReglement(uuid) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
@@ -1518,13 +1520,13 @@ class switchService {
     }
 
 
-    async updateSinistre(uuidSinistreToUpdate,sinistres){
+    async updateSinistre(uuidSinistreToUpdate, sinistres) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {
-                return await offlineService.updateSinistre(uuidSinistreToUpdate,sinistres);
+                return await offlineService.updateSinistre(uuidSinistreToUpdate, sinistres);
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.updateSinistre(uuidSinistreToUpdate,sinistres);
+                return await onlineService.updateSinistre(uuidSinistreToUpdate, sinistres);
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }
@@ -1534,7 +1536,7 @@ class switchService {
         }
     }
 
-    async updateSinistreStatus(uuid){
+    async updateSinistreStatus(uuid) {
         this.refreshMode();
         try {
             if (this.currentMode === "Local") {

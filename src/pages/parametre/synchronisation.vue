@@ -140,7 +140,7 @@ export default {
 
         if (this.isConnected) {
           const verif = await syncservice.validateAndRefreshToken();
-          console.log(verif);
+          
 
           if (!verif) {
             // Show modal if verif is false

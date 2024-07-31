@@ -4,6 +4,7 @@ import AxiosService from './AxiosService.js'; // Importer AxiosService
 import axios, { Axios } from 'axios';
 import { successResponse, errorResponse } from '../utils/helpers/responseHelper.js';
 import LocalStorage from '../db/LocalStorage.js';
+import { jsonToArray } from '../utils/helpers/jsonToArray.js';
 
 class OnlineService {
     // constructor() {
@@ -283,13 +284,15 @@ class OnlineService {
         }
     }
 
+
+    //Prospects
     async getProspects() {
         try {
             const response = await AxiosService.get(apiUrl.getprospect);
-            
-            return successResponse(response.data, response.data.message);
 
-            // return response.data;
+            const data = response.data.data;
+
+            return successResponse(data, response.data);
         } catch (error) {
             console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
             return { success: false, error: "Erreur lors de l'ajout de la branche" };
@@ -298,8 +301,9 @@ class OnlineService {
 
     async getProspectByUuid(uuidProspect) {
         try {
-            const response = axios.get(apiUrl.seteditprospect(uuidProspect))
-            return response;
+            const response = await axios.get(apiUrl.seteditprospect(uuidProspect));
+
+            return successResponse(response.data, response.data.message);
 
         } catch (error) {
             console.error("Erreur lors de la recupération:", error);
@@ -355,10 +359,12 @@ class OnlineService {
                 email_prospect: prospectoedit.email_prospect,
                 fax_prospect: prospectoedit.fax_prospect,
             };
-            const response = AxiosService.post(apiUrl.setupdateprospect(uuidProspectToUpdate), nouvellesInfos);
-            const token = response.data.token;
-            localStorage.setItem("token", token);
-            return response;
+            const response = await AxiosService.post(apiUrl.setupdateprospect(uuidProspectToUpdate), nouvellesInfos);
+
+            if (response.data && response.data.token) {
+                LocalStorage.storeToken(response.data.token)
+            }
+            return successResponse(response.data, response.data.message);
         } catch (error) {
             console.error("Erreur lors de la mise à jour du prospect:", error);
             return { success: false, error: "Erreur lors de la récupération" };
@@ -380,16 +386,17 @@ class OnlineService {
                 profession_prospect: prospectoedit.profession_prospect,
                 id_entreprise: entrepriseId,
                 id: userId,
-                uuidProspect: uuidProspectToUpdate,
                 numero_client: numeroClient,
                 etat: newState,
                 uuidClient: uuid,
             };
 
-            const response = AxiosService.post(apiUrl.validateprospect, nouvellesInfos)
-            const token = response.data.token;
-            localStorage.setItem("token", token);
-            return response;
+            const response = await AxiosService.post(apiUrl.setvalidateprospect(uuidProspectToUpdate), nouvellesInfos)
+
+            if (response.data && response.data.token) {
+                LocalStorage.storeToken(response.data.token)
+            }
+            return successResponse(response.data, response.data.message);
         } catch (error) {
             console.error("Erreur lors de la validation du prospect:", error);
             return { success: false, error: "Erreur ors de la validation du prospect" };

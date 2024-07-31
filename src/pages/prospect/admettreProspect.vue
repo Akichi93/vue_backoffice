@@ -33,9 +33,7 @@
   </div>
 </template>
 <script>
-import AppStorage from "../../db/AppStorage.js";
 import { createToaster } from "@meforma/vue-toaster";
-import { v4 as uuidv4 } from 'uuid';
 import switchService from '../../services/switchService.js';
 const toaster = createToaster({
   /* options */

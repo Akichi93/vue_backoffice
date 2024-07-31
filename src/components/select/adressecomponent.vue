@@ -37,6 +37,4 @@ export default {
   components: { Multiselect },
 };
 </script>
-    
-<!-- <style src="@vueform/multiselect/themes/default.css"></style> -->
   
