@@ -293,32 +293,40 @@ export default {
   methods: {
     async getAdresse() {
       this.localisations = await switchService.getAdresse();
+      console.log(this.localisations)
     },
     async getProfession() {
       this.professions = await switchService.getProfession();
+      console.log(this.professions)
     },
     async storeProspect() {
-      this.errors = validateProspectForm(this.form);
+      try {
+        this.errors = validateProspectForm(this.form);
 
-      if (Object.keys(this.errors).length > 0) {
-        toaster.error(`Veuillez remplir tous les champs`, {
-          position: "top-right",
-        });
-        return;
-      }
+        if (Object.keys(this.errors).length > 0) {
+          toaster.error(`Veuillez remplir tous les champs`, {
+            position: "top-right",
+          });
+          return;
+        }
 
-      const entrepriseId = parseInt(localStorage.getItem("entreprise"), 10);
-      const userId = parseInt(localStorage.getItem("id"), 10);
+        const entrepriseId = parseInt(localStorage.getItem("entreprise"), 10);
+        const userId = parseInt(localStorage.getItem("id"), 10);
 
-      const response= await switchService.storeProspect(
-        this.form,
-        userId,
-        entrepriseId
-      );
+        const response = await switchService.storeProspect(
+          this.form,
+          userId,
+          entrepriseId
+        );
 
-      if (response) {
-        this.$router.push("/listprospect");
-        toaster.success(response.message, {
+        if (response) {
+          this.$router.push("/listprospect");
+          toaster.success('Prospect ajouté avec succès', {
+            position: "top-right",
+          });
+        }
+      } catch (error) {
+        toaster.error(`Une erreur est survenue: ${error.message}`, {
           position: "top-right",
         });
       }

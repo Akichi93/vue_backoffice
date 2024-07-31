@@ -188,15 +188,15 @@ export default {
     async editProspect() {
       try {
         const uuidProspectToUpdate = this.prospectoedit.uuidProspect;
-        const updatedProspects = await switchService.updateProspect(
+        const response = await switchService.updateProspect(
           this.prospectoedit,
           uuidProspectToUpdate
         );
 
         // Émettre un événement avec les prospects mis à jour
-        this.$emit("prospect-updated", updatedProspects);
+        this.$emit("prospect-updated", response);
 
-        toaster.success(`Propect modifié avec succès`, {
+        toaster.success(response.message, {
           position: "top-right",
         });
       } catch (error) {

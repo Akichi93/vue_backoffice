@@ -177,6 +177,7 @@ import changeProspect from "./changeProspect.vue";
 import prospectexport from "../../components/export/prospectexport.vue";
 import switchService from "../../services/switchService";
 import loadingcomponent from "../../components/loading/spinnercomponent.vue"
+
 export default {
   name: "listprospect",
   components: {
@@ -209,7 +210,7 @@ export default {
       try {
         this.isLoading = true;
         this.prospects = await switchService.getProspects();
-        console.log(this.prospects)
+        // console.log(this.prospects)
       } catch (error) {
         console.error("There was an error fetching the data:", error);
       } finally {
@@ -231,7 +232,8 @@ export default {
       try {
         this.prospectoedit = await switchService.getProspectByUuid(
           uuidProspect
-        );
+           );
+        
       } catch (error) {
         console.log(error);
       }
@@ -242,7 +244,7 @@ export default {
         this.prospects = await switchService.searchProspectsByName(this.q);
       } else {
         this.getProspects();
-      }
+         }
     },
 
     async refresh() {
