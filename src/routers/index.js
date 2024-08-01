@@ -26,6 +26,7 @@ import listprospect from "../pages/prospect/listProspect.vue";
 import createprospect from "../pages/prospect/createProspect.vue";
 import detailsprospect from "../pages/prospect/detailsProspect.vue";
 import listclient from "../pages/clients/listclient.vue";
+import detailsclient from "../pages/clients/detailsclient.vue";
 import listrelance from "../pages/relance/listrelance.vue";
 import createrelance from "../pages/relance/createrelance.vue";
 import listcontrat from "../pages/contrat/listcontrat.vue";
@@ -218,6 +219,13 @@ const routes = [
     path: '/listclient',
     name: 'listclient',
     component: listclient,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/detailsclient/:uuidClient',
+    name: 'detailsclient',
+    component: detailsclient,
+    props: true,
     meta: { requiresAuth: true }
   },
   {
