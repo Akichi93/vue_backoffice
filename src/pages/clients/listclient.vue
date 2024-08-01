@@ -7,14 +7,18 @@
         <!-- Breadcrumb Section -->
         <div class="row">
           <div class="col-md-12">
-            <div class="page-head-box d-flex align-items-center justify-content-between mb-4">
+            <div
+              class="page-head-box d-flex align-items-center justify-content-between mb-4"
+            >
               <h3 class="mb-0">Clients</h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                   <li class="breadcrumb-item">
                     <router-link to="/home">Tableau de bord</router-link>
                   </li>
-                  <li class="breadcrumb-item active" aria-current="page">Client</li>
+                  <li class="breadcrumb-item active" aria-current="page">
+                    Client
+                  </li>
                 </ol>
               </nav>
             </div>
@@ -55,7 +59,10 @@
         <div class="row">
           <div class="col-md-12">
             <div class="table-responsive">
-              <table id="tbl_exporttable_to_xls" class="table table-striped custom-table mb-0">
+              <table
+                id="tbl_exporttable_to_xls"
+                class="table table-striped custom-table mb-0"
+              >
                 <thead>
                   <tr>
                     <th>Nom du client</th>
@@ -84,7 +91,14 @@
                       >
                         <i class="fas fa-pen"></i>
                       </a>
-                      
+
+                      <router-link
+                        :to="{
+                          name: 'detailsclient',
+                          params: { uuidClient: client.uuidClient },
+                        }"
+                        ><i class="fas fa-eye"></i
+                      ></router-link>
                     </td>
                   </tr>
                 </tbody>
@@ -180,14 +194,20 @@ export default {
   background-color: #f1f1f1;
 }
 
-.btn-info, .btn-warning, .btn-primary, .btn-danger {
+.btn-info,
+.btn-warning,
+.btn-primary,
+.btn-danger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 6px 12px;
 }
 
-.btn-info i, .btn-warning i, .btn-primary i, .btn-danger i {
+.btn-info i,
+.btn-warning i,
+.btn-primary i,
+.btn-danger i {
   margin-right: 0;
 }
 </style>
