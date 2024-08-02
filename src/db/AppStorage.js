@@ -605,6 +605,39 @@ class AppStorage {
         return contratsAvecDonnees
     }
 
+    static async getContratByUuidClient(uuidClient) {
+        // Fetch all required data
+        const allContrats = await this.getData('contrats') || [];
+        const clients = await this.getData('clients') || [];
+        const compagnies = await this.getData('compagnies') || [];
+        const apporteurs = await this.getData('apporteurs') || [];
+        const branches = await this.getData('branches') || [];
+    
+        // Filter contracts where supprimer_contrat is 0 and matches the given uuidClient
+        const contrats = allContrats.filter(contrat => 
+            contrat.supprimer_contrat == 0 && contrat.uuidClient === uuidClient
+        );
+    
+        // Join the data with clients, apporteurs, compagnies, and branches
+        const contratsAvecDonnees = contrats.map(contrat => {
+            const client = clients.find(client => client.uuidClient === contrat.uuidClient);
+            const apporteur = apporteurs.find(apporteur => apporteur.uuidApporteur === contrat.uuidApporteur);
+            const compagnie = compagnies.find(compagnie => compagnie.uuidCompagnie === contrat.uuidCompagnie);
+            const branche = branches.find(branche => branche.uuidBranche === contrat.uuidBranche);
+    
+            return {
+                ...contrat,
+                client,
+                apporteur,
+                compagnie,
+                branche
+            };
+        });
+    
+        return contratsAvecDonnees;
+    }
+    
+
     static async getContratsOneExpire() {
         const allContrats = await this.getData('contrats') || [];
         const clients = await this.getData('clients') || [];

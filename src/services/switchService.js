@@ -403,8 +403,25 @@ class switchService {
             console.error("Error storing branch:", error);
             throw error;
         }
-    }
+    }  
+    
 
+
+    async getContratByUuidClient(uuidClient) {
+        this.refreshMode();
+        try {
+            if (this.currentMode === "Local") {
+                return await offlineService.getContratByUuidClient(uuidClient);
+            } else if (this.currentMode === "Ligne") {
+                return await onlineService.getContratByUuidClient(uuidClient);
+            } else {
+                throw new Error("Unsupported mode: " + this.currentMode);
+            }
+        } catch (error) {
+            console.error("Error storing branch:", error);
+            throw error;
+        }
+    } 
 
 
     async addProspectBranche(form, userId, entrepriseId, uuidProspect) {
@@ -513,7 +530,8 @@ class switchService {
             if (this.currentMode === "Local") {
                 return await offlineService.getClients();
             } else if (this.currentMode === "Ligne") {
-                return await onlineService.getClients();
+                const response = await onlineService.getClients();
+                return response.data;
             } else {
                 throw new Error("Unsupported mode: " + this.currentMode);
             }

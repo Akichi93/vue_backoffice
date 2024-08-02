@@ -94,7 +94,6 @@ import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import editprospectbranche from "../prospect/editprospectbranche.vue";
 import addprospectbranche from "../prospect/addprospectbranche.vue";
-import AppStorage from "../../db/AppStorage";
 import switchService from "../../services/switchService";
 export default {
   name: "detailsprospect",
