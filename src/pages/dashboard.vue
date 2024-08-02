@@ -116,16 +116,16 @@
       </div>
 
       <div class="row">
-        <div class="col-md-6" v-if="chartData && chartData.length > 0">
+        <div class="col-md-6">
           <Bar :data="chartData" />
         </div>
-        <div class="col-md-6" v-if="chartDonnees && chartDonnees.length > 0">
+        <div class="col-md-6">
           <Bar :data="chartDonnees" />
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-6" v-if="chartGraphs && chartGraphs.length > 0">
+        <div class="col-md-6">
           <Bar :data="chartGraphs" />
         </div>
       </div>
@@ -137,7 +137,6 @@
 import Header from "../layout/Header.vue";
 import Sidebar from "../layout/Sidebar.vue";
 import { Bar } from "vue-chartjs";
-import { apiUrl } from "../utils/constants/apiUrl";
 import {
   Chart as ChartJS,
   Title,
@@ -237,7 +236,7 @@ export default {
     },
 
     async getData() {
-      const token = localStorage.getItem("token");
+      const token = AppStorage.getToken();
 
       // Configurez les en-têtes de la requête
       const headers = {
