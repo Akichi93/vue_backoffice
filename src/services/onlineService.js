@@ -491,7 +491,9 @@ class OnlineService {
         try {
             const response = await AxiosService.get(apiUrl.getclient);
 
-            return response.data;
+            const data = response.data;
+
+            return successResponse(data, response.data);
         } catch (error) {
             console.error("Erreur lors de la récupération des clients:", error);
             return { success: false, error: "Erreur lors de l'ajout de la branche" };
@@ -527,11 +529,10 @@ class OnlineService {
 
     async getClientByUuid(uuid) {
         try {
-            const response = axios.get(apiUrl.seteditclient(uuid))
-            return response;
+            const response = await axios.get(apiUrl.seteditclient(uuid))
+            return successResponse(response.data.data, response.data.message);
 
         } catch (error) {
-            console.error("Erreur lors de l'ajout de la branche dans IndexedDB:", error);
             return { success: false, error: "Erreur lors de la récupération" };
         }
     }
@@ -551,7 +552,7 @@ class OnlineService {
                 sync: 1,
             };
 
-            const response = await axios.post(apiUrl.setupdateclient(uuidClientToUpdate), nouvellesInfos); // Utiliser AxiosService
+            const response = await AxiosService.post(apiUrl.setupdateclient(uuidClientToUpdate), nouvellesInfos); // Utiliser AxiosService
             return response.data;
         } catch (error) {
             console.error("Erreur lors de la mise à jour du client:", error);
@@ -853,6 +854,8 @@ class OnlineService {
         }
     }
 
+    // Contrats
+
     async getContrats() {
         try {
             const response = AxiosService.get(apiUrl.getcontrat)
@@ -873,6 +876,10 @@ class OnlineService {
             console.error("Erreur lors de la récupération des contrats:", error);
             return { success: false, error: "Erreur lors de la récupération" };
         }
+    }
+
+    async getContratByUuidClient(uuid){
+        
     }
 
     async getInfoContratByUuid(uuid) {

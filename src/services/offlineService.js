@@ -866,6 +866,14 @@ class OfflineService {
         }
     }
 
+    async getContratByUuidClient(uuid) {
+        try {
+            return await AppStorage.getContratByUuidClient(uuid);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
     async getInfoContratByUuid(uuid) {
         try {
             return await AppStorage.getInfoContratByUuid(uuid);
@@ -1505,7 +1513,7 @@ class OfflineService {
         return udpatedSinistre;
     }
 
-    async updateSinistreStatus(uuidSinistre){
+    async updateSinistreStatus(uuidSinistre) {
         const updatedSinistre = await AppStorage.updateSinistreStatus(uuidSinistre);
 
         return updatedSinistre;

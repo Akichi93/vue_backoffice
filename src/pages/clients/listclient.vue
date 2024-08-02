@@ -152,6 +152,7 @@ export default {
     async editClient(uuidClient) {
       try {
         this.clientoedit = await switchService.getClientByUuid(uuidClient);
+        
       } catch (error) {
         console.error(error);
       }
