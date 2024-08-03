@@ -316,37 +316,36 @@ export default {
     async logoutUser() {
       AppStorage.clear();
     },
-    async storeSync() {
-      try {
-        this.isLoading = true; // Start loading
-        const apiUrl = this.apiUrl;
-        const response = await axios.get(
-          `${apiUrl}/api/check-internet-connection`
-        );
+    //   try {
+    //     this.isLoading = true; // Start loading
+    //     const apiUrl = this.apiUrl;
+    //     const response = await axios.get(
+    //       `${apiUrl}/api/check-internet-connection`
+    //     );
 
-        if (response.status !== 200) {
-          // Si le statut HTTP n'est pas 200, lance une erreur
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+    //     if (response.status !== 200) {
+    //       // Si le statut HTTP n'est pas 200, lance une erreur
+    //       throw new Error(`HTTP error! Status: ${response.status}`);
+    //     }
 
-        const data = response.data;
-        this.isConnected = data.connected;
+    //     const data = response.data;
+    //     this.isConnected = data.connected;
 
-        if (this.isConnected) {
-          // Exécutez le service validateAndRefreshToken
-          await syncservice.validateAndRefreshToken();
-        } else {
-          console.log("Pas de connexion internet");
-        }
-      } catch (error) {
-        toaster.error("Erreur lors de la synchronisation.", {
-          position: "top-right",
-        });
-        console.error("Erreur lors de la synchronisation :", error);
-      } finally {
-        this.isLoading = false; // Stop loading
-      }
-    },
+    //     if (this.isConnected) {
+    //       // Exécutez le service validateAndRefreshToken
+    //       await syncservice.validateAndRefreshToken();
+    //     } else {
+    //       console.log("Pas de connexion internet");
+    //     }
+    //   } catch (error) {
+    //     toaster.error("Erreur lors de la synchronisation.", {
+    //       position: "top-right",
+    //     });
+    //     console.error("Erreur lors de la synchronisation :", error);
+    //   } finally {
+    //     this.isLoading = false; // Stop loading
+    //   }
+    // },
     refreshPage() {
       window.location.reload(true);
     },

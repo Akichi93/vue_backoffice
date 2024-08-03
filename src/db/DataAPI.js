@@ -7,7 +7,8 @@ import AxiosService from "../services/AxiosService";  // Import the AxiosService
 export default {
     async getGraveBranchesData() {
         try {
-            const newData = await AxiosService.get(apiUrl.getbranche);
+            const response = await AxiosService.get(apiUrl.getbranche);
+            const newData = response.data.data;
             await AppStorage.updateSyncIndexedDB("branches", newData);
         } catch (error) {
             console.error('Erreur lors de la récupération des données graves des branches:', error);
