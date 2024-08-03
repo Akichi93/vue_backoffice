@@ -1,11 +1,9 @@
 // src/services/SyncService.js
 import axios from 'axios';
 import { createToaster } from '@meforma/vue-toaster';
-import { useModalStore } from '../store/modalStore.js'; // Importez votre store modal
 import AppStorage from '../db/AppStorage.js';
 import DataAPI from '../db/DataAPI.js';
 import { apiUrl } from '../utils/constants/apiUrl.js';
-import router from '../routers';
 
 const toaster = createToaster({
     /* options */
@@ -18,7 +16,7 @@ const SyncService = {
     syncSuccessDisplayed: false,
 
     async checkAndSyncData() {
-        // TODO refreshToken If Token Expire
+        // TODO: refreshToken If Token Expire
         toaster.info('Début de la synchronisation des données...', { position: 'top-right' });
 
         const syncOrder = [
@@ -56,7 +54,7 @@ const SyncService = {
         }
 
         // Après la synchronisation, afficher un message de succès si des tables ont été synchronisées
-        if (!this.syncSuccessDisplayed) {
+        if (this.syncedTables.length > 0 && !this.syncSuccessDisplayed) {
             await this.retrieveGraveData(); // Récupération des données graves après synchronisation
             toaster.success('Synchronisation effectuée avec succès', { position: 'top-right' });
             this.syncSuccessDisplayed = true;
@@ -65,28 +63,9 @@ const SyncService = {
         }
     },
 
-  
-
     async validateAndRefreshToken() {
         const tokenIsValid = await this.checkTokenValidity();
         return tokenIsValid;
-        // console.log(tokenIsValid)
-
-        // if (!tokenIsValid) {
-        //    return false
-
-
-        // } else {
-        //     try {
-        //         await this.refreshToken();
-        //         await this.checkAndSyncData(); // Appeler la synchronisation des données après le rafraîchissement du token
-        //     } catch (error) {
-        //         console.error('Erreur lors du rafraîchissement du token:', error);
-        //         if (error.response && error.response.data.error === 'Token has expired and can no longer be refreshed') {
-        //             this.redirectToCourtage()
-        //         }
-        //     }
-        // }
     },
 
     async checkTokenValidity() {
@@ -98,7 +77,7 @@ const SyncService = {
             if (response.status === 200 && response.data.valid) {
                 return true;
             } else {
-                // console.error('Le token est invalide ou a expiré.');
+                console.error('Le token est invalide ou a expiré.');
                 return false;
             }
         } catch (error) {
@@ -199,6 +178,12 @@ const SyncService = {
             default:
                 console.warn(`La méthode de synchronisation pour ${dataType} n'est pas définie.`);
                 break;
+        }
+
+        // Assurez-vous que queue est toujours un tableau
+        if (!Array.isArray(queue)) {
+            console.error(`Erreur: les données pour ${dataType} ne sont pas un tableau.`);
+            return [];
         }
 
         // Filtrer les éléments à synchroniser avec sync === 0
@@ -303,11 +288,11 @@ const SyncService = {
                         await DataAPI.getGraveTarificationAccidentsData();
                         break;
                     default:
-                        console.warn(`La méthode de récupération des données graves pour ${table} n'est pas définie.`);
+                        console.warn(`Aucune action définie pour les données graves de ${table}.`);
                         break;
                 }
             } catch (error) {
-                console.error(`Erreur lors de la récupération des données graves pour ${table} :`, error);
+                console.error(`Erreur lors de la récupération des données graves pour ${table}:`, error);
             }
         }
     }
