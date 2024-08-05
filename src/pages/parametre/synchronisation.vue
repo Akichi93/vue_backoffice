@@ -50,15 +50,20 @@
               <div
                 class="card-header d-flex justify-content-between align-items-center"
               >
-                <h3 class="card-title mb-0">Synchronisation</h3>
-                <a
-                  @click="storeSync"
-                  :disabled="isLoading"
-                  class="btn btn-primary"
-                  style="width: auto"
-                >
-                  <i class="fa fa-spinner me-2"></i>Synchroniser
-                </a>
+                <template v-if="isLoading">
+                  <syncomponent></syncomponent>
+                </template>
+                <template v-else>
+                  <h3 class="card-title mb-0">Synchronisation</h3>
+                  <a
+                    @click="storeSync"
+                    :disabled="isLoading"
+                    class="btn btn-primary"
+                    style="width: auto"
+                  >
+                    <i class="fa fa-spinner me-2"></i>Synchroniser
+                  </a>
+                </template>
               </div>
             </div>
           </div>
@@ -68,7 +73,11 @@
       <!-- /Page Content -->
     </div>
     <!-- /Page Wrapper -->
-    <Modal :visible="showModal" :message="modalMessage" @close="showModal = false" />
+    <Modal
+      :visible="showModal"
+      :message="modalMessage"
+      @close="showModal = false"
+    />
   </div>
 </template>
 
@@ -76,7 +85,7 @@
 import Header from "../../layout/Header.vue";
 import Sidebar from "../../layout/Sidebar.vue";
 import Modal from "../../components/modal/modalcomponent.vue";
-import loadingcomponent from "../../components/loading/spinnercomponent.vue";
+import syncomponent from "../../components/loading/syncomponent.vue";
 import axios from "axios";
 import { createToaster } from "@meforma/vue-toaster";
 import syncservice from "../../services/syncService.js";
@@ -88,15 +97,15 @@ export default {
     Header,
     Sidebar,
     Modal,
-    loadingcomponent,
+    syncomponent,
   },
   data() {
     return {
       users: {},
-      isLoading: true,
+      isLoading: false,
       apiUrl: import.meta.env.VITE_API_BASE_URL,
       showModal: false,
-      modalMessage: '',
+      modalMessage: "",
     };
   },
   methods: {
@@ -140,15 +149,14 @@ export default {
 
         if (this.isConnected) {
           const verif = await syncservice.validateAndRefreshToken();
-          
 
           if (!verif) {
             // Show modal if verif is false
-            this.modalMessage = 'Votre session a expiré. Veuillez vous reconnecter.';
+            this.modalMessage =
+              "Votre session a expiré. Veuillez vous reconnecter.";
             this.showModal = true;
-          }else{
-            
-            syncservice.checkAndSyncData()
+          } else {
+            syncservice.checkAndSyncData();
           }
         } else {
           console.log("Pas de connexion internet");
