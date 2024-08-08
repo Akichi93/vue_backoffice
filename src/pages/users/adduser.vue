@@ -192,8 +192,7 @@ export default {
   methods: {
     async storeUser() {
       const response = await onlineService.storeUser(this.user);
-      const token = response.token;
-      localStorage.setItem("token", token);
+    
 
       this.$emit("user-add", response.user);
       toaster.success(`Nouvel utilisateur enregistré`, {

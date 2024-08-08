@@ -1120,12 +1120,17 @@ class OnlineService {
                 password: user.password,
                 contact: user.contact,
                 id_role: user.poste,
-                id_entreprise: localStorage.getItem("entreprise"),
+                adresse: user.adresse,
+                id_entreprise: LocalStorage.getEntreprise(),
             };
+            
 
-            const response = await AxiosService.post(apiUrl.postuser, user);
+            const response = await AxiosService.post(apiUrl.postuser, userData);
 
-            return response;
+            const token = response.data.token;
+            localStorage.setItem("token", token);
+
+            return response.data;
         } catch (error) {
             console.error("Erreur lors de l'ajout d'un utilisateur:", error);
             return { success: false, error: "Erreur lors de l'ajout d'un utilisateur" };

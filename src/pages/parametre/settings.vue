@@ -94,7 +94,7 @@
       <!-- /Page Content -->
     </div>
     <!-- /Page Wrapper -->
-    <adduser></adduser>
+    <adduser @user-add="refresh"></adduser>
   </div>
 </template>
 
@@ -132,8 +132,9 @@ export default {
         this.isLoading = false;
       }
     },
-    refresh(users) {
-      this.users = users.data;
+    refresh() {
+      // this.users = users.data;
+      this.getUsers();
     },
   },
 };
