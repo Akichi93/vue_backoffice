@@ -833,9 +833,28 @@ class AppStorage {
     }
 
     static async getAvenantsByUUIDApporteur(uuidApporteur) {
-        const allAvenants = await this.getData('avenants') || [];
-        return allAvenants.filter(avenant => avenant.uuidApporteur === uuidApporteur);
+        try {
+            const allAvenants = await this.getData('avenants') || [];
+            const allClients = await this.getData('clients') || [];
+    
+            const filteredAvenants = allAvenants.filter(avenant => avenant.uuidApporteur === uuidApporteur);
+    
+            const enrichedAvenants = filteredAvenants.map(avenant => {
+                const client = allClients.find(client => client.uuidclient === avenant.uuidclient);
+                return {
+                    ...avenant,
+                    clientName: client ? client.nom_client : 'Unknown',
+                    clientEmail: client ? client.email : 'Unknown'
+                };
+            });
+    
+            return enrichedAvenants;
+        } catch (error) {
+            console.error('Error fetching or processing data:', error);
+            return []; // Return an empty array or handle as appropriate
+        }
     }
+    
 
     static async getSommeCommissionsApporteur(uuidApporteur) {
         try {
